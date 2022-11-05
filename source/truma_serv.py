@@ -7,7 +7,9 @@
 #
 #
 #import logging
-# Version: 0.8.1
+# Version: 0.8.2
+#
+# change_log: HA_autoConfig für den status error_code, clock ergänzt
 #
 
 from mqtt_async import MQTTClient, config
@@ -45,6 +47,8 @@ HA_CONFIG = {
     "el_power_level":          ['homeassistant/sensor/el_level/config', '{"name": "truma_el_power_level", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'el_power_level"}'],
     "heating_mode":            ['homeassistant/sensor/heating_mode/config', '{"name": "truma_heating_mode", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'heating_mode"}'],
     "operating_status":        ['homeassistant/sensor/operating_status/config', '{"name": "truma_operating_status", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'operating_status"}'],
+    "error_code":              ['homeassistant/sensor/error_code/config', '{"name": "truma_error_code", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'error_code"}'],
+    "clock":                   ['homeassistant/sensor/clock/config', '{"name": "truma_clock", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'clock"}'],
     "set_target_temp_room":    ['homeassistant/select/target_temp_room/config', '{"name": "truma_set_roomtemp", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "command_topic": "' + HA_CTOPIC + 'target_temp_room", "options": ["0", "10", "15", "18", "20", "21", "22"] }'],
     "set_target_temp_water":   ['homeassistant/select/target_temp_water/config', '{"name": "truma_set_warmwater", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "command_topic": "' + HA_CTOPIC + 'target_temp_water", "options": ["0", "40", "60", "200"] }'],
     "set_heating_mode":        ['homeassistant/select/heating_mode/config', '{"name": "truma_set_heating_mode", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "command_topic": "' + HA_CTOPIC + 'heating_mode", "options": ["off", "eco", "high"] }'],
