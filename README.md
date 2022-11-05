@@ -49,7 +49,7 @@ The bin file contains both the python and the py files!
 This allows the whole project to be flashed onto the ESP32 in one go. Of course, esptool must be installed for this. In my case, the tool already finds the serial port of the ESP automatically. Otherwise, the port can of course be specified. The ESP must be in programming mode (gpio0 to ground at start-up). Command is:
 
 
-    esptool.py write_flash 0 flash_dump_esp32_lin_v08_4M.bin*.
+    esptool.py write_flash 0 flash_dump_esp32_lin_v08_4M.bin
 
 This isn't a partition, it is the full image of the ESP32. Therefore, it only works with the 4MB chips, the address 0 is not a typro.
 
