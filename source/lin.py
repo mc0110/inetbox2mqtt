@@ -2,6 +2,13 @@
 #
 # version 0.8.2
 #
+# this project is based on the LIN Specification Package Revision 2.2A
+#
+# The essential basis is to incorporate the results of the specification in such a way that 
+# there are no performance problems. Therefore, for example, RAW PIDs are processed in which 
+# the parity bits have not been separated. These are shown on pages 53ff of the specification. 
+# Thus 3C/3D with parity becomes 3C/7D. If this leads to confusion, I apologise.
+# This module has been optimised for high performance.  
 
 from tools import calculate_checksum, set_led
 import inetboxapp
@@ -202,7 +209,7 @@ class Lin:
         raw_pid = line[2]
         if raw_pid in self.DISPLAY_STATUS_PIDS: print(f"status-message found with {raw_pid:x}")
 
-# answer the d8-question directly
+# answer the 18-request (0x18 -> 0xd8 with parity) directly
         if raw_pid == 0xd8:
             self.d8_alive = True
             self.app.status["alive"][1] = True 
@@ -218,7 +225,7 @@ class Lin:
             else:
                 self._send_answer(bytearray.fromhex("fe ff ff ff ff ff ff ff 28".replace(" ","")))
                 return
-# send requested answer - but only, if I have the need to answer
+# send requested answer to 0x3d -> 0x7d with parity) but only, if I have the need to answer
         if raw_pid == 0x7d:
             if self.response_waiting():
                 if self.debug: print(f"in < {line.hex(" ")}")        
@@ -263,6 +270,7 @@ class Lin:
         cmd = line.hex(" ")
 # single frame messages - answers to send buffer
 # comments could be set "unshow" in info-log with a starting underline
+# attention: this are raw frames with checksum -> see specification for details
         cmd_ctrl = {
             "00 55 3c 7f 06 b2 00 17 46 00 1f 4b": [self.prepare_tl_str_response, "03 06 f2 17 46 00 1f 00 87", "_B2 - response request"],  # B2-Message I - Initialization started
             "00 55 03 aa 0a ff ff ff ff ff ff 48": [self.no_answer, "", "_NAD 03 response - ack"],               # reaction to B2 - ackn
