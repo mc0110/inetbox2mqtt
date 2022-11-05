@@ -1,6 +1,6 @@
 #
 #
-# version 0.8.1
+# version 0.8.2
 #
 
 from tools import calculate_checksum, set_led
@@ -233,6 +233,7 @@ class Lin:
 
         # the idea is to trigger events from the loop-timing
         # seeing completed rows at this point (rows means LIN-frames)
+        # but we don't use this functionality at the moment
         self.cnt_rows += 1
         self.cnt_rows = self.cnt_rows % self.CNT_ROWS_MAX
         if not(self.cnt_rows): self.display_status()
@@ -240,7 +241,12 @@ class Lin:
         if self.debug: print(f"in < {line.hex(" ")}")
 #        if len(line) != 12:
 #            return              # exit, length isn't correct
-        
+#
+
+# most of the following comments are only used in the test-phase
+# so the idea was, to hide all comments with a begining underline
+
+
 # multi-frame receive for buffer download from CPplus
         buf_trans_id = bytes([0x00, 0x55, 0x3c, 0x03])
         if (line[:4]==buf_trans_id) and (line[4] in range(0x21, 0x27)):
