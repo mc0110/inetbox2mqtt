@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: micropython-mqtt
+Version: 0.7b4
+Summary: Reliable MQTT client for MicroPython using asyncio
+Home-page: https://github.com/tve/micropython-mqtt
+Author: Thorsten von Eicken
+License: MIT
+
