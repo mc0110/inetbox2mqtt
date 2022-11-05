@@ -26,7 +26,7 @@ Pub_Prefix      = 'service/truma/control_status/'
 
 import credentials
 config.clean    = False
-config.set_last_will("service/truma/control_status/alive", "OFF", retain=False, qos=0)  # last will is important
+config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
 
 serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
 
