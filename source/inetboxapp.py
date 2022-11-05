@@ -1,6 +1,7 @@
 #
 #
-# version 0.8.1
+# version 0.8.2
+# slighty changes, hidden status display, typros
 #
 
 from tools import calculate_checksum
@@ -83,7 +84,7 @@ class InetboxApp:
 
 
 # Problem is, that micropython doesn't hold the correct order of the keys (like CPython > 3.7)
-# Workarround is 
+# Workaround is 
 
     STATUS_BUFFER_TYPES = {
         STATUS_BUFFER_HEADER_RECV_STATUS: {
@@ -160,7 +161,7 @@ class InetboxApp:
                     1: ["dummy", 1, False],
                     2: ["checksum", 1, False],
                     3: ["clock", 2, True],
-                    4: ["display", 22, True]
+                    4: ["display", 22, False]
         },
     }
 
