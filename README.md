@@ -41,7 +41,7 @@ To make it even easier to set up the inetbox simulator together with the [home-a
 
 After the chip has connected to the mqtt broker, it sends the installation codes. If the home-assistant server is also connected to the mqtt broker, the entities are all generated automatically. They all begin with 'truma_'. Since they are not persistent, this generation also takes place when the home-assistant server is restarted. 
 
-Of course, the home assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages.  
+Of course, the home assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) there is an example of a frontend solution in home assistant.
 
 # installation instructions
 ## quick-Start
