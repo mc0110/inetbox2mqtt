@@ -51,7 +51,7 @@ This allows the whole project to be flashed onto the ESP32 in one go. Of course,
 
     esptool.py write_flash 0 flash_dump_esp32_lin_v08_4M.bin
 
-This isn't a partition, it is the full image of the ESP32. Therefore, it only works with the 4MB chips, the address 0 is not a typro.
+This isn't a partition, it is the full image of the ESP32. Therefore, it only works with the 4MB chips, the address 0 is not a typo.
 
 After flashing, please reboot the chip and connect to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115700). 
 
@@ -92,8 +92,7 @@ For this I can recommend the [Thonny IDE](https://thonny.org/). Even though ther
 But this is certainly a matter of taste and the choice of the appropriate IDE is up to everyone.
 
 ### execution
-If you put all the files into the directory, the chip will start the programm after a reboot.
-A programm abort works with Ctrl-C. Since the files are set up in such a way that the programm starts directly after booting, the programm must first be interrupted. This is done with ctrl-C. 
+If you put all the files into the directory, the chip will start the program after a reboot.
+A program abort works with Ctrl-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with ctrl-C. 
 
 After that, you have full control with Thonny or another IDE and can change, save and execute the files.
-
