@@ -8,6 +8,7 @@
 # there are no performance problems. Therefore, for example, RAW PIDs are processed in which 
 # the parity bits have not been separated. These are shown on pages 53ff of the specification. 
 # Thus 3C/3D with parity becomes 3C/7D. If this leads to confusion, I apologise.
+# Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
 # This module has been optimised for high performance.  
 
 from tools import calculate_checksum, set_led
@@ -30,6 +31,7 @@ class Lin:
     stop_async = False
     log = logging.getLogger(__name__)
     cnt_in = 0
+# Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
     d8_alive = False
     set_led("D8", False)
 
@@ -174,6 +176,7 @@ class Lin:
         if not(self.cnt_in % self.CNT_IN_MAX):
             self.cnt_in=0
             self.app.status["alive"][1] = True 
+# Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
             if self.d8_alive:
                 self.app.status["alive"][0] = "ON"
             else:    
@@ -209,7 +212,7 @@ class Lin:
         raw_pid = line[2]
         if raw_pid in self.DISPLAY_STATUS_PIDS: print(f"status-message found with {raw_pid:x}")
 
-# answer the 18-request (0x18 -> 0xd8 with parity) directly
+# Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
         if raw_pid == 0xd8:
             self.d8_alive = True
             self.app.status["alive"][1] = True 
@@ -219,7 +222,7 @@ class Lin:
             if self.app.upload_buffer: self.updates_to_send = True
             if self.updates_to_send:
                 self.stop_async = True
-                self.log.info("D8 - update-requested")
+                self.log.info("0x18 - update-requested")
                 self._send_answer(bytearray.fromhex("ff ff ff ff ff ff ff ff 27".replace(" ","")))
                 return
             else:
