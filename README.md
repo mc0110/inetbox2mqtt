@@ -12,7 +12,11 @@ This project was developed on an ESP32. The current sources are tested according
 My solution for the ESP32 has so far only been tested with my own TRUMA / CPplus version. The LIN module for the ESP32 works logically a bit different than Daniel's software, because I had performance problems with a 1-1 port on the ESP32. On the other hand, the module in the current version has proven to be very stable and CPplus-compatible. **Nevertheless, it should be mentioned here that I naturally do not assume any guarantee for its use.**
 
 ## electrics
-Accordingly, for the wiring - connection of the LIN bus via the TJA1020 to the UART, please refer to the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. On the ESP32 I use the UART2 (tx - gpio17, rx - gpio16). These are therefore to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated with 5V. 
+Accordingly, for the wiring - connection of the LIN bus via the TJA1020 to the UART, please refer to the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. On the ESP32, I use the UART2 (**tx - gpio17, rx - gpio16**):
+
+![1](https://user-images.githubusercontent.com/65889763/200187420-7c787a62-4b06-4b8d-a50c-1ccb71626118.png)
+
+These are therefore to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated with 5V. 
 
 ## microPython
 After the first tests, I was amazed at how good and powerful the microPython platform is [see e.g. MicroPython.org](https://docs.micropython.org/en/latest/).
@@ -51,7 +55,7 @@ This allows the whole project to be flashed onto the ESP32 in one go. Of course,
 
     esptool.py write_flash 0 flash_dump_esp32_lin_v08_4M.bin
 
-This isn't a partition, it is the full image of the ESP32. Therefore, it only works with the 4MB chips, the address 0 is not a typro.
+This isn't a partition, it is the full image of the ESP32. Therefore, it only works with the 4MB chips, the address 0 is not a typo.
 
 After flashing, please reboot the chip and connect to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115700). 
 
@@ -92,8 +96,7 @@ For this I can recommend the [Thonny IDE](https://thonny.org/). Even though ther
 But this is certainly a matter of taste and the choice of the appropriate IDE is up to everyone.
 
 ### execution
-If you put all the files into the directory, the chip will start the programm after a reboot.
-A programm abort works with Ctrl-C. Since the files are set up in such a way that the programm starts directly after booting, the programm must first be interrupted. This is done with ctrl-C. 
+If you put all the files into the directory, the chip will start the program after a reboot.
+A program abort works with Ctrl-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with ctrl-C. 
 
 After that, you have full control with Thonny or another IDE and can change, save and execute the files.
-
