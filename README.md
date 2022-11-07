@@ -37,7 +37,7 @@ There is another additional feature. Since the ESP32 has so many gpio's, I progr
 gpio12 indicates when the MQTT connection is up. gpio14 indicates when the connection to the CPplus is established. 
 
 ## alive-topic
-Short digression: The CPplus only sends D8 requests if an INETBOX is registered. This can be recognised by the third entry in the index menu on the CPplus, among other things. The ESP32 answers these requests. Only when it receives D8 messages is the connection to the CPplus established and has the registration worked. This makes it easy to find out if there is an electrical problem. If the LED is lit, communication with the CPplus is established.
+Short digression: The CPplus only sends 0x18 (with parity it is 0xD8) requests if an INETBOX is registered. This can be recognised by the third entry in the index menu on the CPplus, among other things. The ESP32 answers these requests. Only when it receives 0x18 messages is the connection to the CPplus established and has the registration worked. This makes it easy to find out if there is an electrical problem. If the LED is lit, communication with the CPplus is established.
 The ESP32 also outputs this as a "alive" topic via the MQTT connection. This occurs approx. every 60sec. Connection OK, payload: ON, connection not OK, payload: OFF
 
 ## good news for home assistant-user
