@@ -1,3 +1,6 @@
+# MIT License
+# 
+# Copyright (c) 2022  Dr. Magnus Christ (mc0110)
 #
 #
 # version 0.8.2
