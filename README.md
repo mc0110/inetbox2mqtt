@@ -41,7 +41,7 @@ After the ESP32 has connected to the MQTT broker, it sends the installation code
 The Home Assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc), there is an example of a frontend solution in Home Assistant.
 
 ## MicroPython
-After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. However, the software did not run with a kernel from July (among other things, the bytearray.hex was not implemented there yet). Now is is ok.
+After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. However, the software did not run with a kernel from July (among other things, the bytearray.hex was not implemented there yet).
 
 The micropython MQTT packages are currently still experimental and cannot yet establish MQTT TLS connections. Thanks a lot to Thorsten [tve/mqboard](https://github.com/tve/mqboard) for his work.
 
