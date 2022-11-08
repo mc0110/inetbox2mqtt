@@ -40,9 +40,6 @@ After the ESP32 has connected to the MQTT broker, it sends the installation code
 
 The Home Assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc), there is an example of a frontend solution in Home Assistant.
 
-## Alive topic
-Short digression: The CPplus only sends 0x18 (with parity it is 0xD8) requests if an INETBOX is registered. This can be recognised by the third entry in the index menu on the CPplus, among other things. The ESP32 answers these requests. Only when it receives 0x18 messages, the connection to the CPplus is established and the registration has taken place. This makes it easy to find out if there is an electrical problem. If the LED (GPIO14, see ESP32 LEDs) is lit, communication with the CPplus is established. The ESP32 also outputs this as an "alive" topic via the MQTT connection (approx. every 60 sec): connection OK => payload: ON; connection not OK => payload: OFF.
-
 ## MicroPython
 After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. However, the software did not run with a kernel from July (among other things, the bytearray.hex was not implemented there yet). Now is is ok.
 
