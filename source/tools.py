@@ -16,6 +16,7 @@ def calculate_checksum(bytestring):
         cs = 0
     return cs
 
+
 # D8 is misleading, because the raw-PID is 0xD8, but the correct PID is "0x18"
 def set_led(s, b):
     PIN_MAP = {
@@ -26,3 +27,7 @@ def set_led(s, b):
     if b: p.value(0)
     else: p.value(1)
     
+
+def get_gpio(p):
+    pass
+
