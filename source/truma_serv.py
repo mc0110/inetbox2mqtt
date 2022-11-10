@@ -1,3 +1,7 @@
+# MIT License
+#
+# Copyright (c) 2022  Dr. Magnus Christ (mc0110)
+#
 # TRUMA-inetbox-simulation
 #
 # Credentials and MQTT-server-adress must be filled
