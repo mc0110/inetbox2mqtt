@@ -11,12 +11,12 @@
 #
 #
 #
-# Version: 0.8.3
+# Version: 0.8.4
 #
 # change_log:
 # 0.8.2 HA_autoConfig für den status error_code, clock ergänzt
 # 0.8.3 encrypted credentials, including duo_control, improve the MQTT-detection
-#
+# 0.8.4 Tested with RP pico w R2040 - only UART-definition must be changed
 #
 
 from mqtt_async import MQTTClient, config
@@ -26,7 +26,7 @@ from tools import set_led
 from lin import Lin
 from duo_control import duo_ctrl
 
-from machine import UART
+from machine import UART, Pin
 
 debug_lin       = False
 
@@ -49,6 +49,8 @@ config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, q
 
 # ESP32-specific hw-UART (#2)
 serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
+# RP2 pico w -specific hw-UART (#2)
+# serial          = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
 
 # Initialize the lin-object
 lin = Lin(serial, debug_lin)

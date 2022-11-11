@@ -1,18 +1,19 @@
 # inetbox2mqtt
-# microPython version for ESP32
+# microPython version for ESP32 and RP pico w
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include Truma DuoControl over GPIO-connections**
+- **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
 The software is a derivative of the github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett. 
 Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/muccc/WomoLIN), these cool projects have become possible.
 
-This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. First tests on a Raspberry Pi 2 and Pico W were successful, too. However, the source code for these has not yet been published.
+This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RPi pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RPI Pico W** for details. 
 
 ## Disclaimer
 I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box.  
 
-The LIN module for the ESP32 works logically a bit different than Daniel's software, because I had performance problems with a 1:1 port for the ESP32. On the other hand, the module in the current version for the ESP32 has proven to be very stable and CPplus-compatible. **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
+The LIN module for the ESP32/RPi pico works logically a bit different than Daniel's software. On the other hand, the module in the current version for the ESP32 has proven to be very stable and CPplus-compatible. **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
 ## Electrics
 For the wiring of the LIN bus via the TJA1020 to the UART, please refer to the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. On the ESP32, I use the UART2 (**Tx - GPIO17, Rx - GPIO16**):
@@ -104,3 +105,12 @@ For placing the files and creating the credentials on the ESP32, it does not nee
 If everything is correctly set up and the ESP32 is rebooted, it should connect to the MQTT broker with a `connected` confirmation message.
 
 Then you can establish the connection between the ESP32 and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
+
+### Running on a RPi pico W
+Micropython can be installed very easily on the RPI pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
+ 
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The only adjustment is to change the UART port and use the correct UART pins.
+
+    serial = UART(1, baudrate=9600, tx=pin(4), rx=pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+
+To do this, in ***truma_serv.py*** the corresponding line for the ESP32 must be commented out and replaced by the corresponding line. As far as I know, only the 2nd alternative works for the installation (see above). If anyone sees better possibilities, I would be grateful for a hint. 
