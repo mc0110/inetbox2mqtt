@@ -1,5 +1,5 @@
 # inetbox2mqtt
-# microPython version
+# microPython version for ESP32
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include Truma DuoControl over GPIO-connections**
 
@@ -19,7 +19,7 @@ For the wiring of the LIN bus via the TJA1020 to the UART, please refer to the p
 
 ![1](https://user-images.githubusercontent.com/65889763/200187420-7c787a62-4b06-4b8d-a50c-1ccb71626118.png)
 
-These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3 V levels, even if the TJA1020 is operated at 5 V. 
+These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
 
 ## MQTT topics - almost the same, but not exactly the same
 The MQTT commands ***(set-topics)*** are identical to Daniel's command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
@@ -97,7 +97,7 @@ The entries are then displayed again for confirmation, and the query is repeated
 
 The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the ESP32.
  
-You can't directly write (and edit) this file. If you want to generate the file *credentials.dat*, please refer to my library crypto_keys. There you will find an example of how to generate the file using Python. 
+You can't directly write (and edit) this file. If you want to generate the file *credentials.dat*, please refer to my library [crypto_keys](https://github.com/mc0110/crypto_keys). There you will find an example of how to generate the file using Python. 
 
 For placing the files and creating the credentials on the ESP32, it does not need to be connected to the CPplus.
 
