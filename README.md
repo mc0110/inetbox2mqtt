@@ -9,7 +9,9 @@ Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/m
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. First tests on a Raspberry Pi 2 and Pico W were successful, too. However, the source code for these has not yet been published.
 
 ## Disclaimer
-My solution for the ESP32 has so far only been tested with my own TRUMA/CPplus version. The LIN module for the ESP32 works logically a bit different than Daniel's software, because I had performance problems with a 1:1 port for the ESP32. On the other hand, the module in the current version for the ESP32 has proven to be very stable and CPplus-compatible. **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
+I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box.  
+
+The LIN module for the ESP32 works logically a bit different than Daniel's software, because I had performance problems with a 1:1 port for the ESP32. On the other hand, the module in the current version for the ESP32 has proven to be very stable and CPplus-compatible. **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
 ## Electrics
 For the wiring of the LIN bus via the TJA1020 to the UART, please refer to the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. On the ESP32, I use the UART2 (**Tx - GPIO17, Rx - GPIO16**):
@@ -21,14 +23,33 @@ These are to be connected to the TJA1020. No level shift is needed (thanks to th
 ## MQTT topics - almost the same, but not exactly the same
 The MQTT commands ***(set-topics)*** are identical to Daniel's command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
 
-We will try to keep the topics and payloads as equal as possible. However, the published topics look a little different. The ESP32 only sends selected topics and omits all the timers, checksum, command_counter, etc. (all self-explanatory). If there is a need for adaptation, I am at your disposal. The timing for the sending of the topic has also been modified, i.e. the ESP32 only sends a topic if something has changed for the individual topic. This is different with Daniel's program, which always writes the whole status register. With my program, there is an alive topic, which shows the status of the connection to the MQTT broker and to the CPplus (see also ESP32 LEDs).
+We will try to keep the topics and payloads as equal as possible. However, the published topics look a little different. The ESP32 only sends selected topics and omits all the timers, checksum, command_counter, etc. (all self-explanatory). If there is a need for adaptation, I am at your disposal. The timing for the sending of the topic has also been modified, i.e. the ESP32 only sends a topic if something has changed for the individual topic. This is different with Daniel's program, which always writes the whole status register. With my program, there is an alive topic, which shows the status of the connection to the MQTT broker and to the CPplus (see also ESP32 GPIOs and LEDs).
 
-## ESP32 LEDs
+## ESP32 GPIOs and LEDs
 Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
 
             GPIO-pin ----- 300-600 Ohm resistor ----- LED ----- +3.3V
 
 GPIO12 indicates when the MQTT connection is up. GPIO14 indicates when the connection to the CPplus is established. 
+
+## Integration of Truma DuoControl
+Another functionality has been created in the system. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py).
+
+The status changes of two GPIO inputs (GPIO18 and GPIO19) and the GPIO outputs (GPIO22 and GPIO23) are now published to the broker. 
+
+The associated topics are
+
+- service/truma/control_center/duo_ctrl_gas_green
+- service/truma/control_center/duo_ctrl_gas_red
+- service/truma/control_center/duo_ctrl_i
+- service/truma/control_center/duo_ctrl_ii
+
+with the payloads ON/OFF. The outputs can be controlled with the SET commands
+
+- service/truma/set/duo_ctrl_i
+- service/truma/set/duo_ctrl_ii
+
+Inputs and outputs are inverted, i.e. the inputs react with ON when connected to GND, the outputs switch to GND level when ON.
 
 ## Alive topic
 Short digression: The CPplus only sends 0x18 (with parity it is 0xD8) requests if an INETBOX is registered. This can be recognised by the third entry in the index menu on the CPplus, among other things. The ESP32 answers these requests. Only when it receives 0x18 messages, the connection to the CPplus is established and the registration has taken place. This makes it easy to find out if there is an electrical problem. If the LED (GPIO14, see ESP32 LEDs) is lit, communication with the CPplus is established. The ESP32 also outputs this as an "alive" topic via the MQTT connection (approx. every 60 sec): connection OK => payload: ON; connection not OK => payload: OFF.
@@ -68,13 +89,14 @@ If you put all files into the root directory of the ESP32 - either as complete .
 After that, you have full control with Thonny or another microPyhton IDE and can change, save, and execute the .py files.
 
 ### Credentials
-On first run of the program, the ESP32 will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). These are then written in plain text to a file *credentials.py* on the ESP32.
+On first run of the program, the ESP32 will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). 
+These are written in an encrypted file *credentials.dat* on the ESP32.
 
 The entries are then displayed again for confirmation, and the query is repeated until you have confirmed with ***yes***.
 
-The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.py* remains on the ESP32.
+The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the ESP32.
  
-Alternatively, you can directly write (and edit) this file with a microPython IDE into the root directory of the ESP32. In this case, there is no query of the credentials, as the file *credentials.py* is already available on the ESP32.
+You can't directly write (and edit) this file. If you want to generate the file *credentials.dat*, please refer to my library crypto_keys. There you will find an example of how to generate the file using Python. 
 
 For placing the files and creating the credentials on the ESP32, it does not need to be connected to the CPplus.
 

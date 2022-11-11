@@ -28,6 +28,21 @@ def set_led(s, b):
     else: p.value(1)
     
 
-def get_gpio(p):
-    pass
+# pin, inverted
+def get_gpio(p, i):
+    if i:
+        p0 = Pin(p, Pin.IN, Pin.PULL_UP)
+    else:
+        p0 = Pin(p, Pin.IN, Pin.PULL_DOWN)
+    v = (p0.value() != i)    
+#    print("check pin", p, " inv: ", i, " Val: ", v)
+    return v
+
+
+# pin, inverted, value ("ON", "OFF")
+def set_gpio(p, i, v):
+    p0 = Pin(p, Pin.OUT)
+    v = (v != i)
+    p0.value(v)
+#    print("set pin", p, " inv: ", i, " to: ", v)
 
