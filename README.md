@@ -1,6 +1,7 @@
 # inetbox2mqtt
-# microPython inetbox2mqtt
-**communicate over MQTT protocol to simulate a TRUMA INETBOX**
+# microPython version
+- **communicate over MQTT protocol to simulate a TRUMA INETBOX**
+- **include Truma DuoControl over GPIO-connections**
 
 ## Acknowledgement
 The software is a derivative of the github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett. 
@@ -33,9 +34,9 @@ Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be con
 GPIO12 indicates when the MQTT connection is up. GPIO14 indicates when the connection to the CPplus is established. 
 
 ## Integration of Truma DuoControl
-Another functionality has been created in the system. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py).
+Another functionality has been added. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py). 
 
-The status changes of two GPIO inputs (GPIO18 and GPIO19) and the GPIO outputs (GPIO22 and GPIO23) are now published to the broker. 
+The status changes of two GPIO inputs (GPIO18 and GPIO19) and the GPIO outputs (GPIO22 and GPIO23) are now also published to the broker. The reaction time for status-changes is approx. 10s. 
 
 The associated topics are
 
