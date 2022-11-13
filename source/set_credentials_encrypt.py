@@ -74,7 +74,7 @@ if not(find("credentials.dat", "/")):
     c.fn_write_encrypt(fn, "WIFIPW:" + Wifi_PW)
     c.fn_write_encrypt(fn, "MQTT:" + MQTT)
     c.fn_write_encrypt(fn, "UN:" + UName)
-    c.fn_write_encrypt(fn, "USW:" + UPW)
+    c.fn_write_encrypt(fn, "UPW:" + UPW)
     c.fn_write_eof_encrypt(fn)
     fn.close()
 else:

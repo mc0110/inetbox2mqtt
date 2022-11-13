@@ -87,5 +87,6 @@ class fn_crypto:
                 f.close()
                 return str(s[s.find(":")+1:], 'utf-8')
             s = self.fn_read_decrypt(f)
-        f.close()    
-        return 0    
+        f.close()
+        print('Err in crypto_keys: key not found')
+        return ''    
