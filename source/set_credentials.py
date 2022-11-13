@@ -16,6 +16,8 @@
 #
 #
 # You can use this short snippet for decrypt your encrypted credentials
+
+
 # #############
 #
 # from crypto_keys import fn_crypto as crypt
