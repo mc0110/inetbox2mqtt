@@ -72,5 +72,27 @@ Control of the TRUMA CPplus with a lovelance card in home assistant
             name: Warmwasser (0, 40, 60, 200)
 
 
-The example shows the automatically generated entities and works without automations, etc.
 
+
+# Here is an example of a simple GAUGE implementation of the MHU6050 Leveling Wizard
+
+![grafik](https://user-images.githubusercontent.com/10268240/202903478-bbf7741f-cc21-48a2-918b-e94c15f7c373.png)
+
+            title: test-imu 
+                  - type: gauge
+                    entity: sensor.pan1pitch
+                    min: -20
+                    max: 20
+                    needle: true
+                    name: Pitch
+                    unit: °
+                  - type: gauge
+                    entity: sensor.pan1roll
+                    name: Roll
+                    unit: °
+                    min: -20
+                    max: 20
+                    needle: true
+
+
+Both examples show the automatically generated entities and works without automations, etc.
