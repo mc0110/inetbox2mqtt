@@ -74,7 +74,7 @@ Control of the TRUMA CPplus with a lovelance card in home assistant
 
 
 
-# Here is an example of a simple GAUGE implementation of the MHU6050 Leveling Wizard
+# Here is an example of a simple GAUGE implementation of the MPU6050 Leveling Wizard
 
 ![grafik](https://user-images.githubusercontent.com/10268240/202903478-bbf7741f-cc21-48a2-918b-e94c15f7c373.png)
 
