@@ -11,13 +11,14 @@
 #
 #
 #
-# Version: 0.8.4
+# Version: 0.8.5
 #
 # change_log:
 # 0.8.2 HA_autoConfig für den status error_code, clock ergänzt
 # 0.8.3 encrypted credentials, including duo_control, improve the MQTT-detection
 # 0.8.4 Tested with RP pico w R2040 - only UART-definition must be changed
-#
+# 0.8.5 Added support for MPU6050 implementing a 2D-spiritlevel, added board-based autoconfig for UART,
+#       added config variables for activating duoControl and spirit-level features 
 
 from mqtt_async import MQTTClient, config
 import uasyncio as asyncio
@@ -25,8 +26,10 @@ from crypto_keys import fn_crypto as crypt
 from tools import set_led
 from lin import Lin
 from duo_control import duo_ctrl
-
-from machine import UART, Pin
+from spiritlevel import spirit_level
+import uos
+import time
+from machine import UART, Pin, I2C
 
 debug_lin       = False
 
@@ -34,6 +37,11 @@ debug_lin       = False
 S_TOPIC_1       = 'service/truma/set/'
 S_TOPIC_2       = 'homeassistant/status'
 Pub_Prefix      = 'service/truma/control_status/' 
+Pub_SL_Prefix   = 'service/spiritlevel/status/'
+
+#Config Features
+activate_duoControl  = True
+activate_spiritlevel = True
 
 # Decrypt your encrypted credentials
 c = crypt()
@@ -47,16 +55,33 @@ config.keepalive = 60  # last will after 60sek off
 
 config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
 
-# ESP32-specific hw-UART (#2)
-serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
-# RP2 pico w -specific hw-UART (#2)
-# serial          = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
-
+if ("ESP32" in uos.uname().machine):
+    print("Found ESP32 Board, using UART2 on GPIO 16 and 17")
+    # ESP32-specific hw-UART (#2)
+    serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
+elif ("RP2040" in uos.uname().machine):
+    # RP2 pico w -specific hw-UART (#2)
+    print("Found Raspberry Pico Board, using UART1 on GPIO 4 and 5")
+    serial          = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+else:
+    print ("No compatible Board found!")
+    
 # Initialize the lin-object
 lin = Lin(serial, debug_lin)
-# Initialize the duo-ctrl-object
-dc = duo_ctrl()
 
+if activate_duoControl:
+    # Initialize the duo-ctrl-object
+    dc = duo_ctrl()
+else:
+    dc = None
+
+if activate_spiritlevel:
+    # Initialize the i2c and spirit-level Object
+    i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+    time.sleep(1.5)
+    sl = spirit_level(i2c)
+else:
+    sl = None
 
 
 # Auto-discovery-function of home-assistant (HA)
@@ -186,14 +211,22 @@ async def main(client):
             except:
                 print("Error in LIN status publishing")
         if not(dc == None):        
-            s =dc.get_all(True)
+            s = dc.get_all(True)
             for key in s.keys():
                 print(f'publish {key}:{s[key]}')
                 try:
                     await client.publish(Pub_Prefix+key, str(s[key]), qos=1)
                 except:
                     print("Error in duo_ctrl status publishing")
-
+        if not(sl == None):        
+            s = sl.get_all()
+            for key in s.keys():
+                print(f'publish {key}:{s[key]}')
+                try:
+                    await client.publish(Pub_SL_Prefix+key, str(s[key]), qos=1)
+                except:
+                    print("Error in spirit_level status publishing")
+#Pub_SL_Prefix
 # loop-count / fired every min                
         i += 1
         if not(i % 6):
@@ -219,12 +252,22 @@ async def dc_loop():
         dc.loop()
         await asyncio.sleep(10)
 
+async def sl_loop():
+    await asyncio.sleep(5) # Delay at begin
+    print("spirit-level-loop is running")
+    while True:
+        sl.loop()
+        #print("Angle X: " + str(sl.get_roll()) + "      Angle Y: " +str(sl.get_pitch()) )
+        await asyncio.sleep_ms(100)
 
 config.subs_cb  = callback
 config.connect_coro = conn_callback
 config.wifi_coro = wifi_status
-HA_CONFIG.update(dc.HA_DC_CONFIG)
 
+if not(dc == None):
+    HA_CONFIG.update(dc.HA_DC_CONFIG)
+if not(sl == None):
+    HA_CONFIG.update(sl.HA_SL_CONFIG)
     
 loop = asyncio.get_event_loop()
 client = MQTTClient(config)
@@ -234,5 +277,8 @@ a=asyncio.create_task(main(client))
 b=asyncio.create_task(lin_loop())
 if not(dc == None):
     c=asyncio.create_task(dc_loop())
+if not(sl == None):
+    d=asyncio.create_task(sl_loop())
 loop.run_forever()
+
 
