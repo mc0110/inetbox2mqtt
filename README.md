@@ -1,7 +1,8 @@
 # inetbox2mqtt
 # microPython version for ESP32 and RP pico w
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **include Truma DuoControl over GPIO-connections**
+- **include optional Truma DuoControl over GPIO-connections**
+- **include optional MPU6050 Sensor for spiritlevel-feature**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
@@ -52,6 +53,20 @@ with the payloads ON/OFF. The outputs can be controlled with the SET commands
 - service/truma/set/duo_ctrl_ii
 
 Inputs and outputs are inverted, i.e. the inputs react with ON when connected to GND, the outputs switch to GND level when ON.
+
+## Integration of MPU6050 for spiritlevel-Feature
+A second optional feature has been added. For leveling of an RV-car a
+MPU6050 IMU (inertial measurement unit) can be connected to the I2C bus. 
+I2C bus 0 with GPIO 0 and 1 are used.
+
+Every 500ms the acceleration and gyroscopic values are read and combined and filtered by a [Kalman-Filter](https://www.navlab.net/Publications/Introduction_to_Inertial_Navigation_and_Kalman_Filtering.pdf).
+For the moment the result (pitch and roll angle) is published via MQTT
+every 10s.
+
+The associated topics are
+
+- service/spiritlevel/spirit_level_pitch
+- service/spiritlevel/spirit_level_roll
 
 ## Alive topic
 Short digression: The CPplus only sends 0x18 (with parity it is 0xD8) requests if an INETBOX is registered. This can be recognised by the third entry in the index menu on the CPplus, among other things. The ESP32 answers these requests. Only when it receives 0x18 messages, the connection to the CPplus is established and the registration has taken place. This makes it easy to find out if there is an electrical problem. If the LED (GPIO14, see ESP32 LEDs) is lit, communication with the CPplus is established. The ESP32 also outputs this as an "alive" topic via the MQTT connection (approx. every 60 sec): connection OK => payload: ON; connection not OK => payload: OFF.
@@ -111,8 +126,7 @@ Micropython can be installed very easily on the RPI pico W. Please use a current
 
 ![grafik](https://user-images.githubusercontent.com/10268240/201338579-29c815ca-e5ef-4f25-b015-1749a59b3e99.png)
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The only adjustment is to change the UART port and use the correct UART pins.
-
-    serial = UART(1, baudrate=9600, tx=pin(4), rx=pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
-
-To do this, in ***truma_serv.py*** the corresponding line for the ESP32 must be commented out and replaced by the corresponding line. As far as I know, only the 2nd alternative works for the installation (see above). If anyone sees better possibilities, I would be grateful for a hint. 
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
+nothing es is to do. 
+Electrically on Raspberry pico W hardware the UART 1 is used with the GPIO
+Pin 4 and 5. 
