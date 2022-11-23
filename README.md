@@ -28,12 +28,18 @@ The MQTT commands ***(set-topics)*** are identical to Daniel's command usage [IN
 
 We will try to keep the topics and payloads as equal as possible. However, the published topics look a little different. The ESP32 only sends selected topics and omits all the timers, checksum, command_counter, etc. (all self-explanatory). If there is a need for adaptation, I am at your disposal. The timing for the sending of the topic has also been modified, i.e. the ESP32 only sends a topic if something has changed for the individual topic. This is different with Daniel's program, which always writes the whole status register. With my program, there is an alive topic, which shows the status of the connection to the MQTT broker and to the CPplus (see also ESP32 GPIOs and LEDs).
 
-## ESP32 GPIOs and LEDs
+## ESP32 GPIOs and LEDs - Debugging will be easier
 Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
 
             GPIO-pin ----- 300-600 Ohm resistor ----- LED ----- +3.3V
 
-GPIO12 indicates when the MQTT connection is up. GPIO14 indicates when the connection to the CPplus is established. 
+GPIO12 indicates when the MQTT connection is up. 
+
+GPIO14 indicates when the connection to the CPplus is established.
+
+The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx, defective TJA 1020) can be very time-consuming and annoying. Therefore GPIO14 has been supplemented to the extent that the LED already flickers slightly when signals are registered on the port rx line (equivalent is tx-output on the TJA 1020). This also happens before an ***CPplus INIT***, in other words a registration of the inetbox2mqtt at the CPplus has taken place. In this way, it can be detected very quickly whether there are connection problems on the rx line. If the INIT process has taken place, the LED lights up brightly. 
+
+*Attention: The CPplus does not transmit continuously, therefore transmission pauses of 15-25s are normal.* 
 
 ## Integration of Truma DuoControl
 Another functionality has been added. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py). 
