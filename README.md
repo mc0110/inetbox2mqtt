@@ -1,5 +1,6 @@
-# inetbox2mqtt
-# microPython version for ESP32 and RP pico w
+# inetbox2mqtt -> Control your TRUMA heater over a MQTT broker
+If you use this code give me a star, please. Thanks in advance.
+## microPython version for ESP32 and RP pico w
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
