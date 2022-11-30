@@ -41,7 +41,7 @@ Pub_SL_Prefix   = 'service/spiritlevel/status/'
 
 #Config Features
 activate_duoControl  = True
-activate_spiritlevel = True
+activate_spiritlevel = False
 
 # Decrypt your encrypted credentials
 c = crypt()
