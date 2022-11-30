@@ -3,6 +3,8 @@
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
+   
+  *this feature is currently not executable and will be revised*
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
