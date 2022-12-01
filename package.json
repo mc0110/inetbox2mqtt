@@ -1,7 +1,7 @@
 {
     "urls": [
-      ["/conversions.py", "github.com/mc0110/inetbox2mqtt/tree/main/source/conversions.py"],
-      ["/crypto_keys.py", "github.com/mc0110/inetbox2mqtt/tree/main/source/crypto_keys.py"]
+      ["/conversions.py", "https://github.com/mc0110/inetbox2mqtt/tree/main/source/conversions.py"],
+      ["/crypto_keys.py", "https://github.com/mc0110/inetbox2mqtt/tree/main/source/crypto_keys.py"]
     ],
     "deps": [
       ["",""],
