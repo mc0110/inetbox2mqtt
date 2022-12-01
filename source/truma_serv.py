@@ -19,6 +19,7 @@
 # 0.8.4 Tested with RP pico w R2040 - only UART-definition must be changed
 # 0.8.5 Added support for MPU6050 implementing a 2D-spiritlevel, added board-based autoconfig for UART,
 #       added config variables for activating duoControl and spirit-level features 
+# 0.8.6 added board-based autoconfig for I2C bus definition
 
 from mqtt_async import MQTTClient, config
 import uasyncio as asyncio
@@ -74,7 +75,7 @@ elif ("RP2040" in uos.uname().machine):
     if activate_spiritlevel:
         print("activate spirit_level set to true, using I2C-0 on GPIO 0 and 1")
         # Initialize the i2c and spirit-level Object
-        i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+        i2c = I2C(0, sda=Pin(2), scl=Pin(3), freq=400000)
         time.sleep(1.5)
         sl = spirit_level(i2c)
     else:
