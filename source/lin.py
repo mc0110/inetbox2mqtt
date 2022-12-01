@@ -14,7 +14,7 @@
 # Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
 # This module has been optimised for high performance.  
 
-from tools import calculate_checksum, set_led
+from tools import calculate_checksum, set_led, toggle_led, dtoggle_led
 import inetboxapp
 import logging
 
@@ -90,6 +90,7 @@ class Lin:
         self.serial.write(databytes)
         self.serial.flush()
         if self.debug: print("out > ", databytes.hex(" "))
+        toggle_led("D8")
 
 
     def prepare_tl_str_response(self, message_str, info_str):
@@ -196,6 +197,7 @@ class Lin:
         # So there is a much higher probability for synchronizing
         if not(self.serial.any()):
             return
+        dtoggle_led("D8")
         line = self.serial.read(1)
         if self.loop_state: # this means level 2
             if line[0] == 0x55: # here it is clear, we saw a correct synchronizing

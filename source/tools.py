@@ -17,17 +17,27 @@ def calculate_checksum(bytestring):
     return cs
 
 
+PIN_MAP = {
+   "MQTT": 14,
+   "D8"  : 12
+    }
+
+
 # D8 is misleading, because the raw-PID is 0xD8, but the correct PID is "0x18"
 def set_led(s, b):
-    PIN_MAP = {
-        "MQTT": 14,
-        "D8"  : 12
-        }
     p = Pin(PIN_MAP[s], Pin.OUT)
     if b: p.value(0)
     else: p.value(1)
     
-
+def toggle_led(s):
+    p = Pin(PIN_MAP[s], Pin.OUT)
+    p.value(not(p.value()))
+    
+def dtoggle_led(s):
+    p = Pin(PIN_MAP[s], Pin.OUT)
+    p.value(not(p.value()))
+    p.value(not(p.value()))
+ 
 # pin, inverted
 def get_gpio(p, i):
     if i:
@@ -37,7 +47,6 @@ def get_gpio(p, i):
     v = (p0.value() != i)    
 #    print("check pin", p, " inv: ", i, " Val: ", v)
     return v
-
 
 # pin, inverted, value ("ON", "OFF")
 def set_gpio(p, i, v):
