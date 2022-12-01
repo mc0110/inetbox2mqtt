@@ -77,7 +77,7 @@ MPU6050 IMU (inertial measurement unit) can be connected to the I2C bus.
 
 Different pins are required here:
 
-For **ESP32** please use I2C bus with SDA (GPIO32) and SCL (GPIO33).
+For **ESP32** please use I2C bus with SDA (GPIO26) and SCL (GPIO25).
 For **RPI pico w** please use I2C bus 1 with SDA (GPIO02) and SCL (GPIO03).
 
 Every 500ms the acceleration and gyroscopic values are read and combined and filtered by a [Kalman-Filter](https://www.navlab.net/Publications/Introduction_to_Inertial_Navigation_and_Kalman_Filtering.pdf).
