@@ -1,0 +1,12 @@
+{
+    "urls": [
+      ["/conversions.py", "github.com/mc0110/inetbox2mqtt/tree/main/source/conversions.py"],
+      ["/crypto_keys.py", "github.com/mc0110/inetbox2mqtt/tree/main/source/crypto_keys.py"]
+    ],
+    "deps": [
+      ["collections-defaultdict", "latest"],
+      ["os-path", "latest"]
+    ],
+    "version": "0.84"
+  }
+  
