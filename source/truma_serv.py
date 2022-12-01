@@ -59,10 +59,26 @@ if ("ESP32" in uos.uname().machine):
     print("Found ESP32 Board, using UART2 on GPIO 16 and 17")
     # ESP32-specific hw-UART (#2)
     serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
+    if activate_spiritlevel:
+        print("activate spirit_level set to true, using I2C- on GPIO 25 and 26")
+        # Initialize the i2c and spirit-level Object
+        i2c = I2C(1, sda=Pin(26), scl=Pin(25), freq=400000)
+        time.sleep(1.5)
+        sl = spirit_level(i2c)
+    else:
+        sl = None
 elif ("RP2040" in uos.uname().machine):
     # RP2 pico w -specific hw-UART (#2)
     print("Found Raspberry Pico Board, using UART1 on GPIO 4 and 5")
     serial          = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+    if activate_spiritlevel:
+        print("activate spirit_level set to true, using I2C-0 on GPIO 0 and 1")
+        # Initialize the i2c and spirit-level Object
+        i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+        time.sleep(1.5)
+        sl = spirit_level(i2c)
+    else:
+        sl = None
 else:
     print ("No compatible Board found!")
     
@@ -74,14 +90,6 @@ if activate_duoControl:
     dc = duo_ctrl()
 else:
     dc = None
-
-if activate_spiritlevel:
-    # Initialize the i2c and spirit-level Object
-    i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
-    time.sleep(1.5)
-    sl = spirit_level(i2c)
-else:
-    sl = None
 
 
 # Auto-discovery-function of home-assistant (HA)
