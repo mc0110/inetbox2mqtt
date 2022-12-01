@@ -57,6 +57,12 @@ if not(find("credentials.dat", "/")):
         print()
         UPW = input("User-Password: ")
         print()
+        ADC=""
+        while ADC != "1" and ADC != "0":  
+            ADC = input("Activate addon duoControl (1/0): ") 
+        ASL=""
+        while ASL != "1" and ASL != "0":  
+            ASL = input("Activate addon spiritLevel (1/0): ")    
         print("Your inputs are:")
         print()
         print(f"SSID       : {SSID}")
@@ -64,6 +70,10 @@ if not(find("credentials.dat", "/")):
         print(f"MQTT-Server: {MQTT}")
         print(f"Username   : {UName}")
         print(f"User-PW    : {UPW}")
+        print()
+        print("Addon:")
+        print(f"DuoControl : {'activate' if (ADC=='1') else 'off'}")
+        print(f"spiritLevel: {'activate' if (ASL=='1') else 'off'}")
         print()
         a = input("ok for you (yes/no): ")
         
@@ -75,6 +85,8 @@ if not(find("credentials.dat", "/")):
     c.fn_write_encrypt(fn, "MQTT:" + MQTT)
     c.fn_write_encrypt(fn, "UN:" + UName)
     c.fn_write_encrypt(fn, "UPW:" + UPW)
+    c.fn_write_encrypt(fn, "ADC:" + ADC)
+    c.fn_write_encrypt(fn, "ASL:" + ASL)
     c.fn_write_eof_encrypt(fn)
     fn.close()
 else:

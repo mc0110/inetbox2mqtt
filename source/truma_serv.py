@@ -40,9 +40,6 @@ S_TOPIC_2       = 'homeassistant/status'
 Pub_Prefix      = 'service/truma/control_status/' 
 Pub_SL_Prefix   = 'service/spiritlevel/status/'
 
-#Config Features
-activate_duoControl  = True
-activate_spiritlevel = False
 
 # Decrypt your encrypted credentials
 c = crypt()
@@ -54,14 +51,23 @@ config.password = c.get_decrypt_key("credentials.dat", "UPW")
 config.clean     = True
 config.keepalive = 60  # last will after 60sek off
 
+#Config addon features - possible to set it manually or over credentials
+#activate_duoControl  = False
+#activate_spiritlevel = False
+activate_duoControl  = (c.get_decrypt_key("credentials.dat", "ADC")=="1")
+activate_spiritlevel = (c.get_decrypt_key("credentials.dat", "ASL")=="1")
+
 config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
 
+# hw-specific configuration
 if ("ESP32" in uos.uname().machine):
-    print("Found ESP32 Board, using UART2 on GPIO 16 and 17")
+    print("Found ESP32 Board, using UART2 for LIN on GPIO 16(rx), 17(tx)")
     # ESP32-specific hw-UART (#2)
-    serial          = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no
+    serial = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no 2
+    if activate_duoControl:
+        print("Activate duoControl set to true, using GPIO 18,19 as input, 22,23 as output")
     if activate_spiritlevel:
-        print("activate spirit_level set to true, using I2C- on GPIO 25 and 26")
+        print("Activate spirit_level set to true, using I2C- on GPIO 25(scl), 26(sda)")
         # Initialize the i2c and spirit-level Object
         i2c = I2C(1, sda=Pin(26), scl=Pin(25), freq=400000)
         time.sleep(1.5)
@@ -70,10 +76,12 @@ if ("ESP32" in uos.uname().machine):
         sl = None
 elif ("RP2040" in uos.uname().machine):
     # RP2 pico w -specific hw-UART (#2)
-    print("Found Raspberry Pico Board, using UART1 on GPIO 4 and 5")
-    serial          = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+    print("Found Raspberry Pico Board, using UART1 for LIN on GPIO 4(tx), 5(rx)")
+    serial = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+    if activate_duoControl:
+        print("Activate duoControl set to true, using GPIO 18,19 as input, 22,23 as output")
     if activate_spiritlevel:
-        print("activate spirit_level set to true, using I2C-0 on GPIO 0 and 1")
+        print("Activate spirit_level set to true, using I2C-0 on GPIO 3(scl), 2(sda)")
         # Initialize the i2c and spirit-level Object
         i2c = I2C(0, sda=Pin(2), scl=Pin(3), freq=400000)
         time.sleep(1.5)
