@@ -105,26 +105,43 @@ After the first tests, I was amazed af how good and powerful the [microPython.or
 The micropython MQTT packages are currently still experimental and cannot yet establish MQTT TLS connections. Thanks a lot to Thorsten [tve/mqboard](https://github.com/tve/mqboard) for his work.
 
 ## Installation instructions
-### Alternative 1: With esptool
-The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_dump_esp32_lin_v083_4M.bin
+### Alternative 1: OTA-Installation with mip
+Wer die inetbox2mqtt nur zum Laufen bringen möchte, für den eignet sich dieser Weg, der auch für beide ports funktioniert. Dieser Weg ist auch der schnellste Weg, denn der gesamte Installationsprozess sollte nicht länger als 10min dauern.
 
-This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
+To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
 
-After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115200) fur further steps like checking if everything is working ok.
 
-### Alternative 2: With a microPython IDE
+
+    >>>import network
+    >>>st = network.WLAN(network.STA_IF)
+    >>>st.active(True)
+    >>>st.connect('<yourSSID>','<YourWifiPW>')
+    >>>print(st.ifconfig())
+    >>>import mip
+    >>>mip.install('github:mc0110/inetbox2mqtt/source/bootloader/main.py','/')
+    >>>import main
+
+
+### Alternative 3: With a microPython IDE
 Handling the *.py files and adapting and testing them is much easier if you use a microPython IDE. I can recommend the [Thonny IDE](https://thonny.org/), which is available on various platforms (Windows, macOS, Linux) and can also handle different hardware (e.g. ESP8266, ESP32, Raspberry Pi 2).
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version 19.1-608.
 
 Then all .py files (including the lib sub-directory) must be loaded onto the ESP32 via the IDE.
 
+### Alternative 3: With esptool - only works with the ESP32
+The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
+
+    esptool.py write_flash 0 flash_dump_esp32_lin_v0842_4M.bin
+
+This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
+
+After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115200) fur further steps like checking if everything is working ok.
+
+
 ### Execution
 If you put all files into the root directory of the ESP32 - either as complete .bin file with the esptool, or as .py files with a microPython IDE - the ESP32 will start the program after a reboot. You can abort a program in the IDE with CTRL-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with CTRL-C.
-
-After that, you have full control with Thonny or another microPyhton IDE and can change, save, and execute the .py files.
 
 ### Credentials
 On first run of the program, the ESP32 will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). 
