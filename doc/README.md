@@ -1,7 +1,8 @@
 # Example of a front-end realisation
 Control of the TRUMA CPplus with a lovelance card in home assistant
 
-![](https://github.com/mc0110/inetbox2mqtt/blob/main/doc/Truma_HA_frontend.jpg)
+![grafik](https://user-images.githubusercontent.com/10268240/205453364-b1dbf6ee-b9e2-4b22-9816-325be939b3a4.png)
+
 
     type: vertical-stack
     cards:
