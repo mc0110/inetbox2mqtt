@@ -107,25 +107,28 @@ The micropython MQTT packages are currently still experimental and cannot yet es
 ## Installation instructions
 
 ### Alternative 1: OTA-Installation with mip
-If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes.
+If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
 
+The way I am following at the moment is as follows:
+
+- Install Micropython on the port
+- Wifi connection via terminal
+- loading the web application via terminal
+
+You must enter the commands from the console line by line in the REPL interface. The last import command reloads the entire installation.
 
     >>>import network
     >>>st = network.WLAN(network.STA_IF)
     >>>st.active(True)
     >>>st.connect('<yourSSID>','<YourWifiPW>')
-    >>>print(st.ifconfig())
     >>>import mip
     >>>mip.install('github:mc0110/inetbox2mqtt/source/bootloader/main.py','/')
     >>>import main
 
-
 ### Alternative 2: With a microPython IDE
 Handling the *.py files and adapting and testing them is much easier if you use a microPython IDE. I can recommend the [Thonny IDE](https://thonny.org/), which is available on various platforms (Windows, macOS, Linux) and can also handle different hardware (e.g. ESP8266, ESP32, Raspberry Pi 2).
-
-To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version 19.1-608.
 
 Then all .py files (including the lib sub-directory) must be loaded onto the ESP32 via the IDE.
 
@@ -138,25 +141,33 @@ This is not a partition but the full image for the ESP32 and only works with the
 
 After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115200) fur further steps like checking if everything is working ok.
 
-
 ### Execution
-If you put all files into the root directory of the ESP32 - either as complete .bin file with the esptool, or as .py files with a microPython IDE - the ESP32 will start the program after a reboot. You can abort a program in the IDE with CTRL-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with CTRL-C.
+If you put all files into the root directory of the ESP32 - either as complete .bin file with the esptool, or as .py files with a microPython IDE - the port (ESP32/RPI pico) will start the program after a reboot. You can abort a program in the IDE with CTRL-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with CTRL-C.
 
 ### Credentials
-On first run of the program, the ESP32 will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). 
+On first run of the program, the port will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). 
 These are written in an encrypted file *credentials.dat* on the ESP32.
 
 The entries are then displayed again for confirmation, and the query is repeated until you have confirmed with ***yes***.
 
 The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the ESP32.
- 
+
+If you want to renew the credentials, you have to interrupt the processing after reboot with ctrl-C and then to enter the commands:
+
+    >>>import os
+    >>>os.remove("credentials.dat")
+    >>>
+
+
+After the next reboot you will be reask for credentials.
+
 You can't directly write (and edit) this file. If you want to generate the file *credentials.dat*, please refer to my library [crypto_keys](https://github.com/mc0110/crypto_keys). There you will find an example of how to generate the file using Python. 
 
-For placing the files and creating the credentials on the ESP32, it does not need to be connected to the CPplus.
+For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus.
 
 If everything is correctly set up and the ESP32 is rebooted, it should connect to the MQTT broker with a `connected` confirmation message.
 
-Then you can establish the connection between the ESP32 and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
+Then you can establish the connection between the port and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
 
 ### Running on a RPi pico W
 Micropython can be installed very easily on the RPI pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
