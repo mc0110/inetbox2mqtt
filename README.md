@@ -107,10 +107,9 @@ The micropython MQTT packages are currently still experimental and cannot yet es
 ## Installation instructions
 
 ### Alternative 1: OTA-Installation with mip
-Wer die inetbox2mqtt nur zum Laufen bringen möchte, für den eignet sich dieser Weg, der auch für beide ports funktioniert. Dieser Weg ist auch der schnellste Weg, denn der gesamte Installationsprozess sollte nicht länger als 10min dauern.
+If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes.
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
-
 
 
     >>>import network
@@ -123,7 +122,7 @@ To do this, you first have to install an up to date microPython version, to be f
     >>>import main
 
 
-### Alternative 3: With a microPython IDE
+### Alternative 2: With a microPython IDE
 Handling the *.py files and adapting and testing them is much easier if you use a microPython IDE. I can recommend the [Thonny IDE](https://thonny.org/), which is available on various platforms (Windows, macOS, Linux) and can also handle different hardware (e.g. ESP8266, ESP32, Raspberry Pi 2).
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version 19.1-608.
