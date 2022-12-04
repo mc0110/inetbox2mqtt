@@ -145,18 +145,19 @@ After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g
 If you put all files into the root directory of the ESP32 - either as complete .bin file with the esptool, or as .py files with a microPython IDE - the port (ESP32/RPI pico) will start the program after a reboot. You can abort a program in the IDE with CTRL-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with CTRL-C.
 
 ### Credentials
-On first run of the program, the port will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, username and password). 
-These are written in an encrypted file *credentials.dat* on the ESP32.
+On first run of the program, the port will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, broker-user and broker-password). 
+After that, you can activate the desired addons. For the spirit level addon, the MPU6050 is necessary and must be connected, otherwise you will receive error messages.
+
+These are written in an encrypted file *credentials.dat* on the port.
 
 The entries are then displayed again for confirmation, and the query is repeated until you have confirmed with ***yes***.
 
-The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the ESP32.
+The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the port.
 
 If you want to renew the credentials, you have to interrupt the processing after reboot with ctrl-C and then to enter the commands:
 
     >>>import os
     >>>os.remove("credentials.dat")
-    >>>
 
 
 After the next reboot you will be reask for credentials.
