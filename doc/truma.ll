@@ -1,39 +1,18 @@
 type: vertical-stack
 cards:
-  - type: entity
-    entity: sensor.truma_clock
-    name: TRUMA Zeit
-  - show_name: false
-    show_icon: true
-    show_state: true
-    type: glance
-    entities:
-      - entity: sensor.truma_heating_mode
-        name: Lüfter
-        icon: mdi:fan-auto
-      - entity: sensor.truma_energy_mix
-        name: Energie
-        icon: mdi:fuel-cell
-      - entity: sensor.truma_el_power_level
-        name: El-Mode
-        icon: mdi:lightning-bolt-outline
-    columns: 3
-    title: Status
-  - show_name: false
-    show_icon: true
-    show_state: true
-    type: glance
-    entities:
-      - entity: sensor.truma_operating_status
-        name: Mode
-        icon: mdi:state-machine
-      - entity: sensor.truma_error_code
-        icon: mdi:head-question
-      - entity: binary_sensor.truma_alive
-        name: Lin-Kom
-      - entity: sensor.truma_target_temp_room
-      - entity: sensor.truma_target_temp_water
-    columns: 3
+  - type: horizontal-stack
+    cards:
+      - type: entity
+        entity: sensor.truma_clock
+        icon: mdi:clock-digital
+        name: TRUMA
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: binary_sensor.truma_alive
+        columns: 1
   - type: horizontal-stack
     cards:
       - show_name: true
@@ -74,7 +53,7 @@ cards:
           target:
             entity_id: climate.truma_water
           data:
-            temperature: 65
+            temperature: 200
         show_name: true
         show_icon: true
     title: Wasser
@@ -132,3 +111,58 @@ cards:
         icon: mdi:home-lightning-bolt
         show_state: true
     title: Energie
+  - type: horizontal-stack
+    cards:
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: sensor.truma_energy_mix
+            name: Energie
+            icon: mdi:fuel-cell
+          - entity: sensor.truma_el_power_level
+            name: El-Mode
+            icon: mdi:lightning-bolt-outline
+        columns: 2
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: sensor.truma_operating_status
+            name: Mode
+            icon: mdi:state-machine
+          - entity: sensor.truma_error_code
+            icon: mdi:head-question
+        columns: 2
+    title: Status
+  - type: horizontal-stack
+    cards:
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: sensor.truma_target_temp_room
+            name: Target Room
+            icon: mdi:home-thermometer
+        columns: 1
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: sensor.truma_target_temp_water_named
+            name: Target Water
+            icon: mdi:water-boiler-auto
+        columns: 1
+      - show_name: false
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: sensor.truma_heating_mode
+            name: Lüfter
+            icon: mdi:fan-auto
+        columns: 1
