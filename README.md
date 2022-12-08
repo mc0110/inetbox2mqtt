@@ -20,7 +20,13 @@ The LIN module for the ESP32/RPi pico works logically a bit different than Danie
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
 ## Electrics
-For the wiring of the LIN bus via the TJA1020 to the UART, please refer to the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. 
+There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
+
+The electrical connection via the TJA1020 to the UART of the ESP32/RPI pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
+
+![grafik](https://user-images.githubusercontent.com/10268240/206511684-806cda73-a47d-4070-86ac-6de7d999c5d6.png)
+
+For examples of connection errors, please refer to [Connection Errors](https://github.com/mc0110/inetbox2mqtt/issues/20). Please refer also for more details of the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. 
 
 On the **ESP32** we recommend the use of UART2 (**Tx - GPIO17, Rx - GPIO16**):
 
