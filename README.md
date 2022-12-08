@@ -39,9 +39,46 @@ On the **RPI pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05*
 These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
 
 ## MQTT topics - almost the same, but not exactly the same
-The MQTT commands ***(set-topics)*** are identical to Daniel's command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
 
-We will try to keep the topics and payloads as equal as possible. However, the published topics look a little different. The ESP32 only sends selected topics and omits all the timers, checksum, command_counter, etc. (all self-explanatory). If there is a need for adaptation, I am at your disposal. The timing for the sending of the topic has also been modified, i.e. the ESP32 only sends a topic if something has changed for the individual topic. This is different with Daniel's program, which always writes the whole status register. With my program, there is an alive topic, which shows the status of the connection to the MQTT broker and to the CPplus (see also ESP32 GPIOs and LEDs).
+The ***service/truma/control_status/#*** topics can be received. They include the current status of CPplus and TRUMA 
+If your heater is off and you start with a set-command or with an input at the CPplus there is a delay of 1-2min before you'll see the first values. This is a normal behavior.
+
+
+| Status Topic | Payload | Function |
+--------|---------|----------|
+| service/truma/control_status/# ||subcribing all status-entries|
+| alive|on/off|connection control|
+| clock| hh:mm| CPplus time|
+| current_temp_room| temperature in °C (0, 5-30°C)| show current room temperature|
+| target_temp_room| temperature in °C (0, 5-30°C)| show target room temperature|
+| current_temp_water| temperature in °C (0-70°C)| show current water temperature|
+| target_temp_water| temperature in °C (0-70°C)| show target water temperature|
+| energy_mix| gas, mix, electricity| mode of operation|
+| el_power_level| 0, 900, 1800| electrical max. consumption|
+| heating_mode| off, eco, high| fan state|
+| operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
+| error_code| 0-xx| TRUMA error codes|
+
+If you want to subscribe, you need the full topic e.g. ***service/truma/control_status/current_temp_water***
+
+If you want to set values, then you must use the corresponding set-topics. The list of set-topics and valid payloads can be found here.
+
+| Set Topic | Payload | Function |
+--------|---------|----------|
+| service/truma/set/ ||first part of the set-topics|
+| target_temp_room| temperature in °C (0, 5-30°C)| set target room temperature|
+| target_temp_water| 0, 40, 60, 200| set target water temperature (= off, eco, high, boost)|
+| energy_mix| gas, mix, electricity| set mode of operation|
+| el_power_level| 0, 900, 1800| set electrical max. consumption|
+| heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
+
+To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
+
+The same applies to energy_mix and el_power_level, which should be set together. 
+
+For further explanation see command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
+
+An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) of a complete control system from a smart home solution can be found in the docs - an example of bidirectional operation from Home Assistant. Bidirectional means that the values can be set both in the CPplus display and in the home assistant frontend and are passed through in each case.
 
 ## Status LEDs - Debugging will be easier
 Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
