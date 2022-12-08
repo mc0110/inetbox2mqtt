@@ -1,7 +1,8 @@
 # Example of a front-end realisation
 Control of the TRUMA CPplus with a lovelance card in home assistant
 
-![grafik](https://user-images.githubusercontent.com/10268240/205453364-b1dbf6ee-b9e2-4b22-9816-325be939b3a4.png)
+![grafik](https://user-images.githubusercontent.com/10268240/206495832-0511af4f-29f3-4eaf-b196-728ea1779255.png)
+
 
 You find the lovelance-card also as file in this directory. 
 You need the corresponding truma.yaml file in the configuration.yaml or in a separate file. 
