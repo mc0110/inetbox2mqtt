@@ -162,13 +162,13 @@ The way I am following at the moment is as follows:
 
 You must enter the commands from the console line by line in the REPL interface. The last import command reloads the entire installation.
 
-    >>>import network
-    >>>st = network.WLAN(network.STA_IF)
-    >>>st.active(True)
-    >>>st.connect('<yourSSID>','<YourWifiPW>')
-    >>>import mip
-    >>>mip.install('github:mc0110/inetbox2mqtt/source/bootloader/main.py','/')
-    >>>import main
+    import network
+    st = network.WLAN(network.STA_IF)
+    st.active(True)
+    st.connect('<yourSSID>','<YourWifiPW>')
+    import mip
+    mip.install('github:mc0110/inetbox2mqtt/bootloader/main.py','/')
+    import main
 
 ### Alternative 2: With a microPython IDE
 Handling the *.py files and adapting and testing them is much easier if you use a microPython IDE. I can recommend the [Thonny IDE](https://thonny.org/), which is available on various platforms (Windows, macOS, Linux) and can also handle different hardware (e.g. ESP8266, ESP32, Raspberry Pi 2).
