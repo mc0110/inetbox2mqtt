@@ -11,7 +11,7 @@
 # 0.2 cleand up some code
 
 from imu import MPU6050
-from Kalman import KalmanAngle
+from kalman import KalmanAngle
 import time
 import math
 
