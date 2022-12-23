@@ -19,7 +19,8 @@
 # s.active(True)
 # s.connect("<yourSSID>","<YourWifiPW>")
 # print('network config:', s.ifconfig())
-# mip.install("github:mc0110/inetbox2mqtt/source/bootloader/main.py","/")
+# import mip
+# mip.install("github:mc0110/wifimanager/bootloader/main.py","/")
 # 
 # import main
 #
@@ -28,37 +29,26 @@
 
 
 
-import time, os
+import time, machine
 import mip
 #sleep to give some boards time to initialize, for example Rpi Pico W
 time.sleep(3)
 
 # bootloader for the whole suite
-tree = "github:mc0110/inetbox2mqtt/source"
+tree = "github:mc0110/inetbox2mqtt"
 
-env = [
-    ["Kalman.py", "/"],
-    ["boot.py", "/"],
-    ["conversions.py", "/"],
-    ["crypto_keys.py", "/"],
-    ["duo_control.py", "/"],
-    ["imu.py", "/"],
-    ["inetboxapp.py", "/"],
-    ["lin.py", "/"],
-    ["main.py", "/"],
-    ["set_credentials_encrypt.py", "/"],
-    ["spiritlevel.py", "/"],
-    ["tools.py", "/"],
-    ["truma_serv.py", "/"],
-    ["vector3d.py", "/"],
-    ["logging.py", "/lib/"],
-    ["mqtt_async.py", "/lib/"],
+env = [       
+    ["/lib/", "crypto_keys.py", "/lib"],
+    ["/lib/", "connect.py", "/lib"],
+    ["/src/", "cred.py", "/"],
     ]
 
 for i in range(len(env)):
-    mip.install(tree+env[i][1]+env[i][0], target= env[i][1])
+    mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
 
 
-import set_credentials_encrypt
-import truma_serv
+import cred
+cred.set_cred_json()
+cred.update_repo()
 
+machine.reset()
