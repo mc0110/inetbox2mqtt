@@ -45,6 +45,7 @@ def update_repo():
         ["/lib/", "crypto_keys.py", "/lib"],
         ["/lib/", "connect.py", "/lib"],
         ["/lib/", "gen_html.py", "/lib"],
+        ["/lib/", "kalman.py", "/ib"],
         ["/lib/", "web_os.py", "/lib"],
         
         ["/src/", "web_os_run.py", "/"],
@@ -60,7 +61,6 @@ def update_repo():
         ["/src/", "duo_control.py", "/"],
         ["/src/", "spiritlevel.py", "/"],
         ["/src/", "imu.py", "/"],
-        ["/src/", "kalman.py", "/"],
         ["/src/", "vector3d.py", "/"],
         ]
 
