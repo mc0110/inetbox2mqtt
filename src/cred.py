@@ -45,7 +45,7 @@ def update_repo():
         ["/lib/", "crypto_keys.py", "/lib"],
         ["/lib/", "connect.py", "/lib"],
         ["/lib/", "gen_html.py", "/lib"],
-        ["/lib/", "kalman.py", "/ib"],
+        ["/lib/", "kalman.py", "/lib"],
         ["/lib/", "web_os.py", "/lib"],
         
         ["/src/", "web_os_run.py", "/"],
