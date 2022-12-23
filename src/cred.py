@@ -19,7 +19,7 @@ def set_cred_json():
      "UN": ["text", "Broker User:", "4"],
      "UPW": ["text", "Broker password:", "5"],
      "HOSTNAME": ["text", "Hostname:", "6"],
-     "ADC": ["checkbox", "Addon DuoControl :", "7"]
+     "ADC": ["checkbox", "Addon DuoControl :", "7"],
      "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
 #     "OSR": ["checkbox", "OS Web:", "9"],
      }
