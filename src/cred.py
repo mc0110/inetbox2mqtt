@@ -51,7 +51,6 @@ def update_repo():
         ["/src/", "cred.py", "/"],
         ["/src/", "boot.py", "/"],
         ["/src/", "main.py", "/"],
-        ["/src/", "main1.py", "/"],
         
         ["/src/", "tools.py", "/"],
         ["/src/", "conversions.py", "/"],
@@ -61,7 +60,7 @@ def update_repo():
         ["/src/", "duo_control.py", "/"],
         ["/src/", "spiritlevel.py", "/"],
         ["/src/", "imu.py", "/"],
-        ["/src/", "Kalman.py", "/"],
+        ["/src/", "kalman.py", "/"],
         ["/src/", "vector3d.py", "/"],
         ]
 
