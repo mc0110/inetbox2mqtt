@@ -37,6 +37,8 @@ time.sleep(3)
 # bootloader for the whole suite
 tree = "github:mc0110/inetbox2mqtt"
 
+# mip.install(tree)
+
 env = [       
     ["/lib/", "crypto_keys.py", "/lib"],
     ["/lib/", "connect.py", "/lib"],
