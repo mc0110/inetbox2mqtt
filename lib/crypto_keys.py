@@ -80,13 +80,13 @@ class fn_crypto:
         
 
     def get_decrypt_key(self, fn, key):
-        f = open(fn, "rb")
-        s = self.fn_read_decrypt(f)
-        while s != "":
-            if s.find(key) > -1:
-                f.close()
-                return str(s[s.find(":")+1:], 'utf-8')
+        with open(fn, "rb") as f:
             s = self.fn_read_decrypt(f)
-        f.close()
+            while s != "":
+                if s.find(key) > -1:
+                    f.close()
+                    return str(s[s.find(":")+1:], 'utf-8')
+                s = self.fn_read_decrypt(f)
+            f.close()
         print('Err in crypto_keys: key not found')
         return ''    
