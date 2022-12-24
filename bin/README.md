@@ -8,4 +8,4 @@ The .bin file contains both the python and the .py files. This allows the whole 
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
-After flashing, please reboot the ESP32. It will start with an access point on 192.168.4.1. After connecting with wifi you can start a browser to http://192.168.4.1. Now you should input the credentials. After you have done everything, press the button for "normal run" and restart the chip. It will than start without web frontend. 
+After flashing, please reboot the ESP32. It will start with an access point on IP 192.168.4.1. After connecting with wifi you can start a browser to http://192.168.4.1. Now you should input the credentials. After you have done everything, press the button for "normal run" and restart the chip. It will than start without web frontend. 
