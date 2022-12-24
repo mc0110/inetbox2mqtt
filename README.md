@@ -1,9 +1,10 @@
 # inetbox2mqtt -> Control your TRUMA heater over a MQTT broker
-If you use this code give me a star, please. Thanks in advance.
 ## microPython version for ESP32 and RP pico w
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
+- **input credentials over web-frontend**
+- **OTA-updating implemented**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
@@ -15,7 +16,7 @@ This project here was developed and tested for an ESP32 (first generation) with 
 ## Disclaimer
 I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box. 
 
-The LIN module for the ESP32/RPi pico works logically a bit different than Daniel's software. On the other hand, the module in the current version for the ESP32/RPI pico w has proven to be very stable and CPplus-compatible. 
+The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
@@ -170,46 +171,27 @@ You must enter the commands from the console line by line in the REPL interface.
     mip.install('github:mc0110/inetbox2mqtt/bootloader/main.py','/')
     import main
 
-### Alternative 2: With a microPython IDE
-Handling the *.py files and adapting and testing them is much easier if you use a microPython IDE. I can recommend the [Thonny IDE](https://thonny.org/), which is available on various platforms (Windows, macOS, Linux) and can also handle different hardware (e.g. ESP8266, ESP32, Raspberry Pi 2).
 
-Then all .py files (including the lib sub-directory) must be loaded onto the ESP32 via the IDE.
-
-### Alternative 3: With esptool - only works with the ESP32
+### Alternative 2: With esptool - only works with the ESP32
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_dump_esp32_lin_v0842_4M.bin
+    esptool.py write_flash 0 flash_dump_esp32_lin_v10_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
 After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115200) fur further steps like checking if everything is working ok.
 
-### Execution
-If you put all files into the root directory of the ESP32 - either as complete .bin file with the esptool, or as .py files with a microPython IDE - the port (ESP32/RPI pico) will start the program after a reboot. You can abort a program in the IDE with CTRL-C. Since the files are set up in such a way that the program starts directly after booting, the program must first be interrupted. This is done with CTRL-C.
 
 ### Credentials
-On first run of the program, the port will ask for the credentials for the MQTT broker (IP, Wifi SSID and password, broker-user and broker-password). 
-After that, you can activate the desired addons. For the spirit level addon, the MPU6050 is necessary and must be connected, otherwise you will receive error messages.
+After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
 
-These are written in an encrypted file *credentials.dat* on the port.
+After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
 
-The entries are then displayed again for confirmation, and the query is repeated until you have confirmed with ***yes***.
+After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
 
-The process of providing the credentials for an initial setup does not have to be repeated, as long as the file *credentials.dat* remains on the port.
+For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus. You can also swap between 2 different credential-files, e.g. you are working on your computer at home for configuring and then swap to the RV-credentials in your motorhome.
 
-If you want to renew the credentials, you have to interrupt the processing after reboot with ctrl-C and then to enter the commands:
-
-    >>>import os
-    >>>os.remove("credentials.dat")
-
-
-After the next reboot you will be reask for credentials.
-
-You can't directly write (and edit) this file. If you want to generate the file *credentials.dat*, please refer to my library [crypto_keys](https://github.com/mc0110/crypto_keys). There you will find an example of how to generate the file using Python. 
-
-For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus.
-
-If everything is correctly set up and the ESP32 is rebooted, it should connect to the MQTT broker with a `connected` confirmation message.
+If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with a 2 confirmation messages.
 
 Then you can establish the connection between the port and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
 
