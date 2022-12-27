@@ -17,8 +17,8 @@ class Gen_Html():
             "": 'No help description available',
         }
     
-    def __init__(self):
-        self.wifi = connect.Wifi()
+    def __init__(self, w):
+        self.wifi = w
         self.JSON = self.wifi.read_cred_json()
         self.wifi.connect()
         self.refresh_connect_state()
@@ -213,7 +213,7 @@ class Gen_Html():
             dir = dir + "/"
         if dir[0] != "/":
             dir = "/" + dir
-        f = open("tmp/fm.html","w")    
+        f = open("fm.html","w")    
         f.write(self.handleHeader("Filemanager  '" + dir + "'", ""))
         f.write("<div><div>")
         f.write(gen_dir_back_href())
@@ -231,7 +231,7 @@ class Gen_Html():
         f.write("<br><br>" + self.handleUpload(dir) + "<br><br>") 
         f.write(self.handleFooter("/","Back", ""))
         f.close()
-        return "./tmp/fm.html"
+        return "fm.html"
 
 
     def handleScan_Networks(self):

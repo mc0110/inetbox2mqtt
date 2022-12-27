@@ -11,17 +11,21 @@ from gen_html import Gen_Html
 from nanoweb import HttpError, Nanoweb, send_file
 
 
-gh = Gen_Html()
+def init(w):
+    global gh
+    gh = Gen_Html(w)
 
 # Declare route directly with decorator
 #@naw.route('/')
 async def index(r):
+    global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleRoot(""))
     if gh.reboot: reset()
 
 #@naw.route('/ta')    
 async def toggle_ap(r):
+    global gh
     if not(gh.wifi.set_sta()):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
@@ -33,6 +37,7 @@ async def toggle_ap(r):
     
 #@naw.route('/ts')
 async def toggle_sta(r):
+    global gh
     if not(gh.wifi.set_ap()):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
@@ -43,20 +48,24 @@ async def toggle_sta(r):
         await r.write(gh.handleRoot(""))
         
 async def toggle_run_mode(r):
-        gh.wifi.run_mode(not(gh.wifi.run_mode()))
-        gh.refresh_connect_state()
-        await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleRoot(""))
+    global gh
+    gh.wifi.run_mode(not(gh.wifi.run_mode()))
+    gh.refresh_connect_state()
+    await r.write("HTTP/1.1 200 OK\r\n\r\n")
+    await r.write(gh.handleRoot(""))
 
 async def creds(r):
+    global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleCredentials(gh.JSON))
 
 async def scan_networks(r):
+    global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleScan_Networks())
 
 async def cp(r):
+    global gh
     json = {}
     # convert JSON to json_result = {key: value}
     for i in gh.JSON.keys():        
@@ -75,6 +84,7 @@ async def cp(r):
 
 
 async def del_cred(r):
+    global gh
     gh.wifi.delete_creds()
     print("Credentials moved to bak")
     gh.refresh_connect_state()
@@ -83,6 +93,7 @@ async def del_cred(r):
 
 
 async def swp_cred(r):
+    global gh
     gh.wifi.swap_creds()
     print("Credentials swapped")
     gh.refresh_connect_state()
@@ -90,6 +101,7 @@ async def swp_cred(r):
     await r.write(gh.handleCredentials(gh.JSON))
     
 async def res_cred(r):
+    global gh
     gh.wifi.restore_creds()
     gh.refresh_connect_state()
     print("Credentials restored")
@@ -97,6 +109,7 @@ async def res_cred(r):
     await r.write(gh.handleCredentials(gh.JSON))
     
 async def ur(r):
+    global gh
     if gh.wifi.set_sta():
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("Repo will be updated", "/ur1", "Continue"))
@@ -105,6 +118,7 @@ async def ur(r):
         await r.write(gh.handleMessage("You need a STA-internet-connection", "/", "Back"))
 
 async def ur1(r):
+    global gh
     import cred
     cred.update_repo()    
     gh.refresh_connect_state()
@@ -113,12 +127,14 @@ async def ur1(r):
     await r.write(gh.handleMessage("Repo is updated", "/", "Back"))
 
 async def reboot(r):
+    global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device will be rebooted", "/", "Continue"))
     gh.reboot = True
 
 
 async def upload(r):
+    global gh
     dir = r.url.strip("/upload/")
     if dir == "__":
         dir = "/"
@@ -145,6 +161,7 @@ async def upload(r):
         await send_file(r, rp)
 
 async def fm(r):
+    global gh
     filename = r.param["fn"]
     direct = r.param["dir"]
 
@@ -169,6 +186,7 @@ async def fm(r):
 
 
 async def set_dir(r):
+    global gh
     new_dir = r.url[5:]
     if new_dir.startswith("__"):
         rp = gh.handleFiles("/")
