@@ -56,7 +56,7 @@ class Wifi():
 
     def connect(self):
         if (self.ap_if == None): self.set_ap(1)
-        if (self.creds()): self.set_sta(1)
+        if (self.creds()) and (self.sta_if == None): self.set_sta(1)
             
     def run_mode(self, set=-1):
         if set == -1:
