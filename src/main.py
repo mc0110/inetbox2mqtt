@@ -14,9 +14,12 @@ import lib.connect as connect
 w=connect.Wifi()
 
 if w.creds() and w.set_sta(1) and w.run_mode():
-    print("Normal mode activated - for chance to OS-mode type in terminal:")
+    print("Normal mode activated - for change to OS-mode type in terminal:")
     print(">>>import os")
-    print(">>>os.remove('run_mode.dat'")    
+    print(">>>os.remove('run_mode.dat')") 
+    print("alternative you can send")
+    print("via mqtt: topic: service/truma/send/os_run payload:1") 
+    print("via mqtt: topic: service/truma/send/reboot payload:1") 
     import truma_serv
 else:
     print("OS mode activated")
