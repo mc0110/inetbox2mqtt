@@ -10,11 +10,21 @@ import web_os as os
 from nanoweb import Nanoweb
 import uasyncio as asyncio
 
-# debug=True for debugging
+connect = None
 
+# debug=True for debugging
+async def mqtt_blink():
+    global connect
+    while True:
+        await asyncio.sleep(1) # Update every 10sec
+        connect.set_led(2)
+        
+        
 def run(w):
+    global connect
     naw = Nanoweb(80)
-    os.init(w)
+    connect = w
+    os.init(connect)
 
     naw.STATIC_DIR = "/"
     naw.routes = {
@@ -36,8 +46,8 @@ def run(w):
          '/dir*': os.set_dir,
      }
 
-
     loop = asyncio.get_event_loop()
     loop.create_task(naw.run())
+    loop.create_task(mqtt_blink())
     loop.run_forever()        
 

@@ -17,7 +17,7 @@
 
 
 
-import network, os, sys, time, json
+import network, os, sys, time, json, tools
 from lib.crypto_keys import fn_crypto as crypt
 
 
@@ -45,8 +45,17 @@ class Wifi():
         print("Detected " + self.python + " on port: " + self.platform)
         if self.platform == 'rp2':
             import rp2
-            rp2.country('DE')    
-
+            rp2.country('DE')
+            
+    def set_led(self, s=0):
+        if s == 1:
+            tools.set_led("MQTT", 1)
+            return
+        if s == 2:
+            tools.toggle_led("MQTT")
+        else:
+            tools.set_led("MQTT", 0)
+        
     def read_cred_json(self):
         with open(self.CRED_JSON, "r") as f: j=json.load(f)
         return j
@@ -70,7 +79,10 @@ class Wifi():
             else: 
                 return 0
         if set == 0:
-            os.remove(self.run_fn)
+            try:
+                os.remove(self.run_fn)
+            except:
+                pass
             return 0
         
 
@@ -191,7 +203,8 @@ class Wifi():
         return self.ap_if
 
 
-    def set_sta(self, sta=-1):  
+    def set_sta(self, sta=-1):
+        self.set_led(2)
         if sta == -1:  # default value returns current state
             return int((self.sta_if != None))
         self.sta_if = network.WLAN(network.STA_IF)
@@ -224,11 +237,14 @@ class Wifi():
             print(".",end='')
             i += 1
             time.sleep(1)
+            self.set_led(2)
             if i>60:
                 print("Connection couldn't be established - aborted")
                 self.run_mode(0)
+                self.set_led(0)
                 return self.set_ap(1)  # sta-cred wrong, established ap-connection
         print("STA connection connected successful")
+        self.set_led(1)
         print(self.get_state())
         return self.sta_if
 
