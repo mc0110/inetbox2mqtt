@@ -84,7 +84,12 @@ An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) of a complete
 ## Status LEDs - Debugging will be easier
 Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
 
-            GPIO-pin ----- 300-600 Ohm resistor ----- LED ----- +3.3V
+<div align = center>
+
+![grafik](https://user-images.githubusercontent.com/10268240/209949544-1eac67dc-dc59-463a-9d05-04cbe6861b6d.png)
+
+</div>
+
 
 GPIO12 indicates when the MQTT connection is up. 
 
