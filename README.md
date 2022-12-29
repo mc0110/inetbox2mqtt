@@ -84,7 +84,12 @@ An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) of a complete
 ## Status LEDs - Debugging will be easier
 Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
 
-            GPIO-pin ----- 300-600 Ohm resistor ----- LED ----- +3.3V
+<div align = center>
+
+![grafik](https://user-images.githubusercontent.com/10268240/209949544-1eac67dc-dc59-463a-9d05-04cbe6861b6d.png)
+
+</div>
+
 
 GPIO12 indicates when the MQTT connection is up. 
 
@@ -96,6 +101,9 @@ The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx,
 
 ## Integration of Truma DuoControl
 Another functionality has been added. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py). 
+
+![grafik](https://user-images.githubusercontent.com/10268240/209955598-e75b7240-bfaf-43e4-a554-82e53861f494.png)
+
 
 The status changes of two GPIO inputs (GPIO18 and GPIO19) and the GPIO outputs (GPIO22 and GPIO23) are now also published to the broker. The reaction time for status-changes is approx. 10s. 
 
