@@ -42,6 +42,7 @@ class Wifi():
             self.cred_fn = self.CRED_FN
         self.platform = str(sys.platform)
         self.python = '{} {} {}'.format(sys.implementation.name,'.'.join(str(s) for s in sys.implementation.version), sys.implementation._mpy)
+        print("Detected " + self.python + " on port: " + self.platform)
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')    
@@ -241,6 +242,17 @@ class Wifi():
             c.fn_write_eof_encrypt(fn)
             fn.close()
 
+    # read json-file and move the credentials into a dict {key: value}
+    def read_json_creds(self):
+            JSON = self.read_cred_json()
+            json = {}
+            # convert JSON to json_result = {key: value}
+            for i in JSON.keys():        
+                json[i] = "0"
+            # take results from cred-file {key: value}    
+            a = self.read_creds(json)
+            return a
+
     # take and decrypt the values from encrypted file into the given dict (l) -> return
     def read_creds(self, l):
         ro = {}
@@ -250,7 +262,6 @@ class Wifi():
             for key in ro.keys():
                 ro[key] = c.get_decrypt_key(self.cred_fn, key) 
         return ro   
-
 
     def delete_creds(self):
         if self.creds():
