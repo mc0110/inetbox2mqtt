@@ -1,5 +1,22 @@
-# inetbox2mqtt -> Control your TRUMA heater over a MQTT broker
-## microPython version for ESP32 and RP pico w
+<div align = center>
+
+# inetbox2mqtt
+## Control your TRUMA heater over a MQTT broker
+
+### microPython version for ESP32 and RP pico w
+<br/>
+
+[![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
+ &nbsp;
+[![Badge Version](https://img.shields.io/github/v/release/mc0110/inetbox2mqtt?include_prereleases&color=yellow&logo=DocuSign&logoColor=white)](https://github.com/mc0110/inetbox2mqtt/blob/main/README.md)
+ &nbsp; 
+![Badge Hit Counter](https://visitor-badge.laobi.icu/badge?page_id=https://github.com/mc0110/inetbox2mqtt/README.md)
+<br/><br/>
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+
+</div>
+<br>
+
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
@@ -24,18 +41,28 @@ The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI p
 There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
 
 The electrical connection via the TJA1020 to the UART of the ESP32/RPI pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
+<div align = center>
 
 ![grafik](https://user-images.githubusercontent.com/10268240/206511684-806cda73-a47d-4070-86ac-6de7d999c5d6.png)
+
+</div>
 
 For examples of connection errors, please refer to [Connection Errors](https://github.com/mc0110/inetbox2mqtt/issues/20). Please refer also for more details of the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. 
 
 On the **ESP32** we recommend the use of UART2 (**Tx - GPIO17, Rx - GPIO16**):
 
+<div align = center>
+
 ![1](https://user-images.githubusercontent.com/65889763/200187420-7c787a62-4b06-4b8d-a50c-1ccb71626118.png)
+
+</div>
 
 On the **RPI pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05**):
 
+<div align = center>
+
 ![grafik](https://user-images.githubusercontent.com/10268240/201338579-29c815ca-e5ef-4f25-b015-1749a59b3e99.png)
+</div>
 
 These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
 
@@ -44,34 +71,44 @@ These are to be connected to the TJA1020. No level shift is needed (thanks to th
 The ***service/truma/control_status/#*** topics can be received. They include the current status of CPplus and TRUMA 
 If your heater is off and you start with a set-command or with an input at the CPplus there is a delay of 1-2min before you'll see the first values. This is a normal behavior.
 
+<div align = center>
 
 | Status Topic | Payload | Function |
 --------|---------|----------|
 | service/truma/control_status/# ||subcribing all status-entries|
-| alive|on/off|connection control|
-| clock| hh:mm| CPplus time|
-| current_temp_room| temperature in °C (0, 5-30°C)| show current room temperature|
-| target_temp_room| temperature in °C (0, 5-30°C)| show target room temperature|
-| current_temp_water| temperature in °C (0-70°C)| show current water temperature|
-| target_temp_water| temperature in °C (0-70°C)| show target water temperature|
-| energy_mix| gas, mix, electricity| mode of operation|
-| el_power_level| 0, 900, 1800| electrical max. consumption|
-| heating_mode| off, eco, high| fan state|
-| operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
-| error_code| 0-xx| TRUMA error codes|
+| service/truma/control_status/alive|on/off|connection control|
+| service/truma/control_status/clock| hh:mm| CPplus time|
+| service/truma/control_status/current_temp_room| temperature in °C (0, 5-30°C)| show current room temperature|
+| service/truma/control_status/target_temp_room| temperature in °C (0, 5-30°C)| show target room temperature|
+| service/truma/control_status/current_temp_water| temperature in °C (0-70°C)| show current water temperature|
+| service/truma/control_status/target_temp_water| temperature in °C (0-70°C)| show target water temperature|
+| service/truma/control_status/energy_mix| gas, mix, electricity| mode of operation|
+| service/truma/control_status/el_power_level| 0, 900, 1800| electrical max. consumption|
+| service/truma/control_status/heating_mode| off, eco, high| fan state|
+| service/truma/control_status/operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
+| service/truma/control_status/error_code| 0-xx| TRUMA error codes|
+
+</div>
 
 If you want to subscribe, you need the full topic e.g. ***service/truma/control_status/current_temp_water***
 
 If you want to set values, then you must use the corresponding set-topics. The list of set-topics and valid payloads can be found here.
 
+<div align = center>
+
 | Set Topic | Payload | Function |
 --------|---------|----------|
-| service/truma/set/ ||first part of the set-topics|
-| target_temp_room| temperature in °C (0, 5-30°C)| set target room temperature|
-| target_temp_water| 0, 40, 60, 200| set target water temperature (= off, eco, high, boost)|
-| energy_mix| gas, mix, electricity| set mode of operation|
-| el_power_level| 0, 900, 1800| set electrical max. consumption|
-| heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
+| service/truma/set/target_temp_room| temperature in °C (0, 5-30°C)| set target room temperature|
+| service/truma/set/target_temp_water| 0, 40, 60, 200| set target water temperature (= off, eco, high, boost)|
+| service/truma/set/energy_mix| gas, mix, electricity| set mode of operation|
+| service/truma/set/el_power_level| 0, 900, 1800| set electrical max. consumption|
+| service/truma/set/heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
+| **System commands** | |
+| service/truma/set/reboot| 1| reboot the port|
+| service/truma/set/run_os| 1| set mode OS-RUN|
+| service/truma/set/ota_update| 1| download current version from GITHUB|
+
+</div>
 
 To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
 
@@ -79,10 +116,13 @@ The same applies to energy_mix and el_power_level, which should be set together.
 
 For further explanation see command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
 
-An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) of a complete control system from a smart home solution can be found in the docs - an example of bidirectional operation from Home Assistant. Bidirectional means that the values can be set both in the CPplus display and in the home assistant frontend and are passed through in each case.
+The system commands are an extension of the command scope and allow restarting the port, changing the operating mode and updating the software status with the GITHUB release. 
 
-## Status LEDs - Debugging will be easier
-Since the ESP32 has so many GPIOs, I programmed two LEDs. The LEDs are to be connected in negative logic:
+An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) for a complete control system of a Smart Home solution can be found in the Docs - it shows the capability of bidirectional operation of Home Assistant. Bidirectional means that the values can be set in the CPplus display as well as in the Home Assistant frontend and are passed through in each case.
+
+## Status LEDs are showing the operating mode
+
+The operating mode is indicated by 2 GPIO outputs. This gives the option of displaying the current mode with 2 LEDs. The LEDs are to be connected in negative logic:
 
 <div align = center>
 
@@ -102,8 +142,12 @@ The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx,
 ## Integration of Truma DuoControl
 Another functionality has been added. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py). 
 
+<div align = center>
+
+
 ![grafik](https://user-images.githubusercontent.com/10268240/209955598-e75b7240-bfaf-43e4-a554-82e53861f494.png)
 
+</div>
 
 The status changes of two GPIO inputs (GPIO18 and GPIO19) and the GPIO outputs (GPIO22 and GPIO23) are now also published to the broker. The reaction time for status-changes is approx. 10s. 
 
@@ -154,7 +198,6 @@ The Home Assistant's own MQTT broker, which is available as an add-on, can also 
 ## MicroPython
 After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. However, the software did not run with a kernel from July (among other things, the bytearray.hex was not implemented there yet).
 
-The micropython MQTT packages are currently still experimental and cannot yet establish MQTT TLS connections. Thanks a lot to Thorsten [tve/mqboard](https://github.com/tve/mqboard) for his work.
 
 ## Installation instructions
 
@@ -206,5 +249,5 @@ Then you can establish the connection between the port and the LIN bus. This con
 ### Running on a RPi pico W
 Micropython can be installed very easily on the RPI pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
