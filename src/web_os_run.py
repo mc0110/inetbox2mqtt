@@ -16,7 +16,7 @@ connect = None
 async def mqtt_blink():
     global connect
     while True:
-        await asyncio.sleep(1) # Update every 10sec
+        await asyncio.sleep(0.5) # Update every 10sec
         connect.set_led(2)
         
         

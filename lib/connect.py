@@ -43,6 +43,8 @@ class Wifi():
         self.platform = str(sys.platform)
         self.python = '{} {} {}'.format(sys.implementation.name,'.'.join(str(s) for s in sys.implementation.version), sys.implementation._mpy)
         print("Detected " + self.python + " on port: " + self.platform)
+        tools.set_led("D8",0)
+        tools.set_led("MQTT",0)        
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')
