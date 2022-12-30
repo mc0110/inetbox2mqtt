@@ -88,7 +88,6 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/error_code| 0-xx| TRUMA error codes|
 
 
-If you want to subscribe, you need the full topic e.g. ***service/truma/control_status/current_temp_water***
 
 If you want to set values, then you must use the corresponding set-topics. The list of set-topics and valid payloads can be found here.
 
