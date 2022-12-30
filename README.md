@@ -71,7 +71,6 @@ These are to be connected to the TJA1020. No level shift is needed (thanks to th
 The ***service/truma/control_status/#*** topics can be received. They include the current status of CPplus and TRUMA 
 If your heater is off and you start with a set-command or with an input at the CPplus there is a delay of 1-2min before you'll see the first values. This is a normal behavior.
 
-<div align = center>
 
 | Status Topic | Payload | Function |
 --------|---------|----------|
@@ -88,13 +87,11 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
 | service/truma/control_status/error_code| 0-xx| TRUMA error codes|
 
-</div>
 
 If you want to subscribe, you need the full topic e.g. ***service/truma/control_status/current_temp_water***
 
 If you want to set values, then you must use the corresponding set-topics. The list of set-topics and valid payloads can be found here.
 
-<div align = center>
 
 | Set Topic | Payload | Function |
 --------|---------|----------|
@@ -108,7 +105,6 @@ If you want to set values, then you must use the corresponding set-topics. The l
 | service/truma/set/run_os| 1| set mode OS-RUN|
 | service/truma/set/ota_update| 1| download current version from GITHUB|
 
-</div>
 
 To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
 
