@@ -27,7 +27,7 @@ async def toggle_ap(r):
     global gh
     if not(gh.wifi.set_sta()):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
+        await r.write(gh.handleRedirect("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
     else:
         gh.wifi.set_ap(not(gh.wifi.set_ap()))
         gh.refresh_connect_state()
@@ -39,7 +39,7 @@ async def toggle_sta(r):
     global gh
     if not(gh.wifi.set_ap()):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
+        await r.write(gh.handleRedirect("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back"))
     else:    
         gh.wifi.set_sta(not(gh.wifi.set_sta()))
         gh.refresh_connect_state()
@@ -111,10 +111,10 @@ async def ur(r):
     global gh
     if gh.wifi.set_sta():
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleMessage("Repo will be updated", "/ur1", "Continue"))
+        await r.write(gh.handleRedirect("For repo-update press 'UPDATE'", "/ur1", "UPDATE"))
     else:
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleMessage("You need a STA-internet-connection", "/", "Back"))
+        await r.write(gh.handleRedirect("You need a STA-internet-connection", "/", "Back"))
 
 async def ur1(r):
     global gh
@@ -123,12 +123,12 @@ async def ur1(r):
     gh.refresh_connect_state()
     print("Repo is updated")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Repo is updated", "/", "Back"))
+    await r.write(gh.handleRedirect("Repo is updated", "/", "Back"))
 
 async def reboot(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Device will be rebooted", "/", "Continue"))
+    await r.write(gh.handleRedirect("Device will be rebooted", "/", "Continue"))
     gh.wifi.reboot = True
 
 

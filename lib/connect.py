@@ -34,6 +34,8 @@ class Wifi():
     platform = ""
     python = ""
     appname = "undefined"
+    reboot = False
+
         
     def __init__(self, fn=None):
         self.connect_log = ""
@@ -46,6 +48,7 @@ class Wifi():
         print("Detected " + self.python + " on port: " + self.platform)
         tools.set_led("D8",0)
         tools.set_led("MQTT",0)        
+        self.reboot = False
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')

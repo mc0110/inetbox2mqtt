@@ -128,18 +128,16 @@ class Gen_Html():
       return tmp
 
     def handleMessage(self, message, blnk, bttn_name):
-        # refresh-object with (time, url)
-        tmp = self.handleHeader("Message", refresh = ("5", "/"))
+        tmp = self.handleHeader("Message")
         tmp += "<div class='message'>" + message + "</div>"
         tmp += self.handleFooter(blnk,bttn_name, "")
         return tmp
     
-    def handleRedirect(self, blnk):
-        message = ""
-        bttn_name = ""
+    def handleRedirect(self, message, blnk, bttn_name):
+        # refresh-object with (time, url)
         tmp = self.handleHeader("Message", refresh = ("5", "/"))
         tmp += "<div class='message'>" + message + "</div>"
-        tmp += self.handleFooter(blnk,bttn_name, sc)
+        tmp += self.handleFooter(blnk,bttn_name, "")
         return tmp
 
 
