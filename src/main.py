@@ -14,8 +14,6 @@ time.sleep(3)
 w=connect.Wifi()
 w.set_appname(appname)
 
-import lib.connect as connect
-w=connect.Wifi()
 
 if w.creds() and w.set_sta(1) and w.run_mode():
     print("Normal mode activated - for chance to OS-mode type in terminal:")
