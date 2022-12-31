@@ -24,7 +24,6 @@ class Gen_Html():
         # connection will be established
         self.wifi.connect()
         self.refresh_connect_state()
-        self.reboot = False
         
     def refresh_connect_state(self):
         # collect state information
