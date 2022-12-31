@@ -33,6 +33,7 @@ class Wifi():
     scanliste = []
     platform = ""
     python = ""
+    appname = "undefined"
         
     def __init__(self, fn=None):
         self.connect_log = ""
@@ -65,6 +66,9 @@ class Wifi():
     def write_cred_json(self, j):
         with open(self.CRED_JSON, "w") as f: json.dump(j, f)
         return
+
+    def set_appname(self, an):
+        self.appname = an
 
     def connect(self):
         if (self.ap_if == None): self.set_ap(1)

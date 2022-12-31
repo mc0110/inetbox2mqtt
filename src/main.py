@@ -6,9 +6,13 @@
 # 
 import time
 import lib.connect as connect
+appname = "inetbox2mqtt"
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
 time.sleep(3)
+
+w=connect.Wifi()
+w.set_appname(appname)
 
 import lib.connect as connect
 w=connect.Wifi()

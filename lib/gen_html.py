@@ -16,10 +16,12 @@ class Gen_Html():
             "files": 'Filemanager with full access to the ports filesystem. You see the sub-directories as links',
             "": 'No help description available',
         }
-    
+    # w-parameter is the connect-object    
     def __init__(self, w):
         self.wifi = w
+        # generate the json-definition for credentials
         self.JSON = self.wifi.read_cred_json()
+        # connection will be established
         self.wifi.connect()
         self.refresh_connect_state()
         self.reboot = False
@@ -43,13 +45,17 @@ class Gen_Html():
                 self.CONNECT_STATE["cred_" + key] = val
         
 
-    def head(self):
+    def head(self, refresh=None):
         tmp = '''
             <!DOCTYPE html>
             <html lang='en'>
             
             <head>
                 <meta charset='UTF-8'>
+             '''
+        if refresh != None:
+            tmp += '<meta http-equiv="refresh" content="' + refresh[0] + '; url=' + refresh[1] + '">'
+        tmp += '''       
                 <meta name= viewport content='width=device-width, initial-scale=1.0,'>
                 <meta Content-Type='application/x-www-form-urlencoded'>
                     <style type='text/css'>
@@ -69,7 +75,7 @@ class Gen_Html():
         '''
         return tmp
 
-    def handleHeader(self, title, hlpkey):
+    def handleHeader(self, title = "", hlpkey = None, refresh = None):
         def str_keys(pre):
             s = pre.strip("_")+": "
             ap_k = []
@@ -81,11 +87,12 @@ class Gen_Html():
                 s += "&nbsp;(" + key[len(pre):] + " = " + str(self.CONNECT_STATE[key]) + ")&nbsp;"
             return s
         
-        tmp = self.head()
+        tmp = self.head(refresh)
         tmp += "<body class='body_style'><div class='center'>"
-        tmp += "<h2>" + "   " + title + "</h2>"
+        tmp += "<h2>" + self.wifi.appname + " " + title + "</h2>"
         tmp += "</div>"
-        tmp += "<div class='help'>" + self.HLP_TXT.get(hlpkey) + "</div>"
+        if hlpkey != None:
+            tmp += "<div class='help'>" + self.HLP_TXT.get(hlpkey) + "</div>"
         tmp += "<div class='status'><div class='status_title'>State-info:<br></div>"
         tmp += str_keys("ap_") + "<br>"
         tmp += str_keys("sta_") + "<br>"
@@ -122,7 +129,8 @@ class Gen_Html():
       return tmp
 
     def handleMessage(self, message, blnk, bttn_name):
-        tmp = self.handleHeader("OS-Manager Message ","")
+        # refresh-object with (time, url)
+        tmp = self.handleHeader("Message", refresh = ("5", "/"))
         tmp += "<div class='message'>" + message + "</div>"
         tmp += self.handleFooter(blnk,bttn_name, "")
         return tmp
@@ -130,8 +138,7 @@ class Gen_Html():
     def handleRedirect(self, blnk):
         message = ""
         bttn_name = ""
-        sc = "<script> document.addEventListener('DOMContentLoaded', function () {window.location = '/';});</script>"
-        tmp = self.handleHeader("OS-Manager Message ","")
+        tmp = self.handleHeader("Message", refresh = ("5", "/"))
         tmp += "<div class='message'>" + message + "</div>"
         tmp += self.handleFooter(blnk,bttn_name, sc)
         return tmp
@@ -139,9 +146,15 @@ class Gen_Html():
 
     # Main Page
     def handleRoot(self, Comment):
-        tmp = self.handleHeader("OS-Manager  " + Comment, "root")
-        tmp += self.handleGet("/ta","AccessPoint")
-        tmp += self.handleGet("/ts","STA_Mode")
+        tmp = self.handleHeader()
+        if self.wifi.set_ap():
+            tmp += self.handleGet("/ta","Reset AccessPoint")
+        else:    
+            tmp += self.handleGet("/ta","Start AccessPoint")
+        if self.wifi.set_sta():
+            tmp += self.handleGet("/ts","Reset STA Connect")
+        else:    
+            tmp += self.handleGet("/ts","Start STA Connect")
         tmp += self.handleGet("/wc","Credentials")
         tmp += self.handleGet("/dir/__","Filemanager")
         tmp += self.handleGet("/ur","Update Repo") + "<p>"
