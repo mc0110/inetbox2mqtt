@@ -49,7 +49,7 @@ async def loop(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if gh.update:
-        await r.write(gh.handleMessage("Update is running -> " + gh.update_comment, "/", "Back",("5","/loop")))
+        await r.write(gh.handleMessage("Update is running -> " + gh.update_comment, "/", "Back",("1","/loop")))
     else:    
         await r.write(gh.handleMessage("Update finalized", "/", "Back",("5","/")))
         
