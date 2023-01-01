@@ -27,7 +27,7 @@ async def command_loop():
             reset()
         if gh.update:
             import cred
-            for i in cred1.update_repo():
+            for i in cred.update_repo():
                 print(i)
                 gh.update_comment = i
             gh.refresh_connect_state()
