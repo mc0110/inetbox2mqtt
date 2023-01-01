@@ -26,7 +26,11 @@ async def command_loop():
             await asyncio.sleep(10) # Update every 10sec
             reset()
         if gh.update:
-            await asyncio.sleep(20) # Update every 10sec
+            import cred1
+            for i in cred1.update_repo():
+                print(i)
+            gh.refresh_connect_state()
+#            await asyncio.sleep(20) # Update every 10sec
             gh.update = False
         gh.wifi.set_led(2)
         
@@ -176,9 +180,6 @@ async def ur(r):
 #@naw.route('/rc')
 async def ur1(r):
     global gh
-#     import cred
-#     cred.update_repo()    
-#     gh.refresh_connect_state()
     gh.update = True
     print("Repo update initiated")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
