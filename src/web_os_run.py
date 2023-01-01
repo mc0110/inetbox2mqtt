@@ -14,27 +14,20 @@ import uasyncio as asyncio
 
 connect = None
 
-# debug=True for debugging
-async def command_loop():
-    global connect
-    while True:
-        await asyncio.sleep(0.5) # Update every 10sec
-        if connect.reboot:
-            await asyncio.sleep(10) # Update every 10sec
-            reset()    
-        connect.set_led(2)
-        
         
 def run(w):
     global connect
-    naw = Nanoweb(80)
+    # debug=True for debugging
+    naw = Nanoweb(80) #, debug = True)
     connect = w
     os.init(connect)
 
     naw.STATIC_DIR = "/"
     naw.routes = {
          '/': os.index,
+         '/loop': os.loop,
          '/ta': os.toggle_ap,
+         '/ts1': os.set_sta,
          '/ts': os.toggle_sta,
          '/rm': os.toggle_run_mode,
          '/wc': os.creds,
@@ -53,6 +46,6 @@ def run(w):
 
     loop = asyncio.get_event_loop()
     loop.create_task(naw.run())
-    loop.create_task(command_loop())
+    loop.create_task(os.command_loop())
     loop.run_forever()        
 

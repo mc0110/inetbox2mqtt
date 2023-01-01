@@ -3,7 +3,7 @@ import lib.connect as connect
 import gc
 
 class Gen_Html():
-    CR_M    = "    (c) Magnus Christ (2022) "
+    CR_M    = "MIT (c) Dr. Magnus Christ (2022) "
 
     CONNECT_STATE = ""
 
@@ -16,6 +16,9 @@ class Gen_Html():
             "files": 'Filemanager with full access to the ports filesystem. You see the sub-directories as links',
             "": 'No help description available',
         }
+    update = False
+    reboot = False
+    
     # w-parameter is the connect-object    
     def __init__(self, w):
         self.wifi = w
@@ -102,15 +105,13 @@ class Gen_Html():
         return tmp;
 
 
-    def handleFooter(self, link, name, script):
+    def handleFooter(self, link = "/", name = "Back"):
         tmp = ""
-        tmp += "<div>"+self.handleGet(link,name)+"</div>"
-        tmp += script
-    #    tmp += "<script src='/jquery224.js'></script>"
-    #    tmp += "<script src='/gh.js'></script>"
+        if link != "":
+            tmp += "<div>"+self.handleGet(link,name)+"</div>"
         tmp += '<br><div class="center">This&nbsp; <span>' + self.CONNECT_STATE["port"] + '</span>&nbsp;  is running on&nbsp; <span>' + self.CONNECT_STATE["python"] + '</span></div>'
+        tmp += '<br><div class="center">' + self.CR_M + '</div>'
         tmp += " </body></html>"
-        #print(tmp)
         return tmp
 
     def handleGet(self, lnk, name):
@@ -127,22 +128,14 @@ class Gen_Html():
       tmp += "</div> \n"
       return tmp
 
-    def handleMessage(self, message, blnk, bttn_name):
-        tmp = self.handleHeader("Message")
+    def handleMessage(self, message, blnk, bttn_name, refresh = None):
+        tmp = self.handleHeader("Message", None, refresh)
         tmp += "<div class='message'>" + message + "</div>"
-        tmp += self.handleFooter(blnk,bttn_name, "")
+        tmp += self.handleFooter(blnk,bttn_name)
         return tmp
-    
-    def handleRedirect(self, message, blnk, bttn_name):
-        # refresh-object with (time, url)
-        tmp = self.handleHeader("Message", refresh = ("5", "/"))
-        tmp += "<div class='message'>" + message + "</div>"
-        tmp += self.handleFooter(blnk,bttn_name, "")
-        return tmp
-
 
     # Main Page
-    def handleRoot(self, Comment):
+    def handleRoot(self, Comment = ""):
         tmp = self.handleHeader()
         if self.wifi.set_ap():
             tmp += self.handleGet("/ta","Reset AccessPoint")
@@ -160,7 +153,7 @@ class Gen_Html():
         else:    
             tmp += self.handleGet("/rm", "OS-Run")+"<p>"
         tmp += self.handleGet("/rb","Reboot") + "<p> \n"
-        tmp += self.handleFooter("/","Back", "")
+        tmp += self.handleFooter()
         return tmp
 
     def handleFileAction(self, link, dir, fn):
@@ -224,7 +217,7 @@ class Gen_Html():
         if dir[0] != "/":
             dir = "/" + dir
         f = open("fm.html","w")    
-        f.write(self.handleHeader("Filemanager  '" + dir + "'", ""))
+        f.write(self.handleHeader("Filemanager  '" + dir + "'"))
         f.write("<div><div>")
         f.write(gen_dir_back_href())
         s = os.ilistdir(dir)   # directories
@@ -239,21 +232,21 @@ class Gen_Html():
             dir = '/__/'
         f.write("</div></div>")
         f.write("<br><br>" + self.handleUpload(dir) + "<br><br>") 
-        f.write(self.handleFooter("/","Back", ""))
+        f.write(self.handleFooter())
         f.close()
         return "fm.html"
 
 
     def handleScan_Networks(self):
-        tmp = self.handleHeader("Wifi-Networks", "");
+        tmp = self.handleHeader("Wifi-Networks", refresh = ("20", "/scan"));
         tmp += self.wifi.scan_html()  
         tmp += "<br>" + self.handleGet("/scan", "Rescan") + self.handleGet("/wc", "Back to Input")
-        tmp += self.handleFooter("/","Back", "")
+        tmp += self.handleFooter()
         return tmp
 
 
     def handleCredentials(self, json_form):
-        tmp = self.handleHeader("Credentials", "");
+        tmp = self.handleHeader("Credentials");
         tmp += "<p>"+ self.handleGet("/scan","Scan Wifis") + "</p> \n"
         if self.wifi.creds():
             tmp +="<p>" + self.handleGet("/dc","Delete Credentials") + "\n"
@@ -276,7 +269,7 @@ class Gen_Html():
                 tmp += "<label for='" + e[0] + "'>" + e[1][1] + "</label> <input type='" + e[1][0] + "' name='" + e[0] +"' placeholder='" + e[0] + "' value=''> <br><br> \n"
         tmp += "<input type='submit' class='button' name='SUBMIT' value='Store Creds'></form>"
         tmp += "</p>"    
-        tmp += self.handleFooter("/","Back", "")
+        tmp += self.handleFooter()
         return tmp
 
 

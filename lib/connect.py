@@ -34,7 +34,6 @@ class Wifi():
     platform = ""
     python = ""
     appname = "undefined"
-    reboot = False
 
         
     def __init__(self, fn=None):
@@ -48,7 +47,6 @@ class Wifi():
         print("Detected " + self.python + " on port: " + self.platform)
         tools.set_led("D8",0)
         tools.set_led("MQTT",0)        
-        self.reboot = False
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')
@@ -205,11 +203,11 @@ class Wifi():
         if not(sta):
             print("AP_WLAN switched off")
             self.ap_if = None
-            return None
+            return 0
         else:
             print("Access-Point enabled")
         print(self.get_state())
-        return self.ap_if
+        return 1
 
 
     def set_sta(self, sta=-1):
@@ -233,16 +231,17 @@ class Wifi():
         print('Connecting with credentials to network...')
         self.sta_if.active(False)
         time.sleep(1)
+        err = 0
         try:
             self.sta_if.active(True)
             self.sta_if.connect(ssid, wifipw)
         except:
-            pass
+            err = 1
         # only running on ESP32
         if self.platform == 'esp32':
             self.sta_if.config(hostname = self.hostname)
         i = 0
-        while not(self.sta_if.isconnected()):
+        while not(self.sta_if.isconnected()) and not(err):
             print(".",end='')
             i += 1
             time.sleep(1)
@@ -251,11 +250,15 @@ class Wifi():
                 print("Connection couldn't be established - aborted")
                 self.run_mode(0)
                 self.set_led(0)
-                return self.set_ap(1)  # sta-cred wrong, established ap-connection
+                self.set_ap(1)  # sta-cred wrong, established ap-connection
+                return 0  # sta-cred wrong, established ap-connection
+        if err:
+            self.set_ap(1)
+            return 0    
         print("STA connection connected successful")
         self.set_led(1)
         print(self.get_state())
-        return self.sta_if
+        return 1
 
     # write values from the given dict (l) to crypt-file (needs crypto_keys_lib)
     def store_creds(self, l):
