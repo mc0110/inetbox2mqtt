@@ -72,9 +72,9 @@ def update_repo():
                 mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
                 errno = 0
             except:
-‚                errno += 1
-        s = env[i][1]
-        if errno:
-            s += " couldn't be loaded"
-        else: s += " loaded"    
-        yield s
+                errno += 1
+            s = env[i][1]
+            if errno:
+                s += " couldn't be loaded"
+            else: s += " loaded"    
+            yield s

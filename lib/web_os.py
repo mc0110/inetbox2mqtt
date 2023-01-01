@@ -30,6 +30,7 @@ async def command_loop():
             for i in cred.update_repo():
                 print(i)
                 gh.update_comment = i
+                await asyncio.sleep(2) # sleep for 500ms
             gh.refresh_connect_state()
 #            await asyncio.sleep(20) # Update every 10sec
             gh.update = False
