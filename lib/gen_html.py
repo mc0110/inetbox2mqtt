@@ -17,6 +17,7 @@ class Gen_Html():
             "": 'No help description available',
         }
     update = False
+    update_comment = ""
     reboot = False
     
     # w-parameter is the connect-object    

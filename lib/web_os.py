@@ -26,9 +26,10 @@ async def command_loop():
             await asyncio.sleep(10) # Update every 10sec
             reset()
         if gh.update:
-            import cred1
+            import cred
             for i in cred1.update_repo():
                 print(i)
+                gh.update_comment = i
             gh.refresh_connect_state()
 #            await asyncio.sleep(20) # Update every 10sec
             gh.update = False
@@ -47,7 +48,7 @@ async def loop(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if gh.update:
-        await r.write(gh.handleMessage("Update is running", "/", "Back",("10","/loop")))
+        await r.write(gh.handleMessage("Update is running" + gh.update_comment, "/", "Back",("5","/loop")))
     else:    
         await r.write(gh.handleMessage("Update finalized", "/", "Back",("5","/")))
         
@@ -181,9 +182,12 @@ async def ur(r):
 async def ur1(r):
     global gh
     gh.update = True
-    print("Repo update initiated")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
+    if gh.wifi.platform == 'rpi2':
+        await r.write(gh.handleMessage("Repo update isn't available for rpi2-platform", "/", "Back",("5","/")))
+    else:              
+        print("Repo update initiated")
+        await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
 
 #@naw.route('/rb')
 async def reboot(r):
