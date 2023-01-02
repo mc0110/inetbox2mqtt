@@ -15,7 +15,6 @@ w=connect.Wifi()
 w.set_appname(appname)
 w.set_sta(1)
 
-w.run_mode(2)
 
 if w.run_mode() > 1:
     
