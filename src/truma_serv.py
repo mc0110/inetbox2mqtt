@@ -41,6 +41,7 @@ connect = None
 lin = None
 dc = None
 sl = None
+repo_update = False
 
 # Change the following configs to suit your environment
 S_TOPIC_1       = 'service/truma/set/'
@@ -96,17 +97,17 @@ def callback(topic, msg, retained, qos):
                 print("reboot device request via mqtt")
                 reset()
             return    
-        if topic == "run_os":
+        if topic == "os_run":
             if msg == "1":
                 print("switch to os_run -> AP-access: 192.168.4.1:80")
                 connect.run_mode(0)
                 reset()
             return    
         if topic == "ota_update":
+            global repo_update
             if msg == "1":
                 print("update software via OTA")
-                import cred
-                cred.update_repo()    
+                repo_update = True
             return
         if topic in lin.app.status.keys():
             print("inet-key:", topic, msg)
@@ -175,6 +176,7 @@ async def set_ha_autoconfig(c):
 
 # main publisher-loop
 async def main(client):
+    global repo_update
     print("main-loop is running")
     set_led("MQTT", False)
     err_no = 1
@@ -196,6 +198,12 @@ async def main(client):
     i = 0
     while True:
         await asyncio.sleep(10) # Update every 10sec
+        if repo_update:
+            import cred
+            for i in cred.update_repo():
+                print i    
+                await asyncio.sleep(1) # every 1sec
+            repo_update = False
         s =lin.app.get_all(True)
         for key in s.keys():
             print(f'publish {key}:{s[key]}')
