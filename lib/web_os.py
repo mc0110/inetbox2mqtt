@@ -100,7 +100,7 @@ async def toggle_run_mode(r):
     if not(gh.wifi.creds()):
         await r.write(gh.handleMessage("You couldn't switch run-mode without credentials", "/", "Back",("5","/")))
     else:    
-        gh.wifi.run_mode(not(gh.wifi.run_mode()))
+        gh.wifi.run_mode(1 - gh.wifi.run_mode())
         gh.refresh_connect_state()
         await r.write(gh.handleRoot())
 
