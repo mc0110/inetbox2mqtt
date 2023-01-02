@@ -5,7 +5,8 @@
 # This is part of the wifimanager package
 # 
 import time
-import lib.connect as connect
+import connect
+import machine
 appname = "inetbox2mqtt"
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
