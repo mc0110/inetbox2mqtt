@@ -246,4 +246,9 @@ Micropython can be installed very easily on the RPI pico W. Please use a current
  
 Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
-Unfortunately, the OTA loading concept does not work via browser or MQTT command. The behaviour of the port is very different from the behaviour of the ESP32. With the ESP32, the OTA process works perfectly.
+
+Unfortunately, the web frontend does not work very well. Even if no errors occur, the response times to browser requests are sometimes very delayed.
+
+ Since the software runs perfectly on the ESP32, I suspect there is still a bug in the uasyncio module. So if you are using this chip, please be patient. However, it is still possible to enter the credentials with this chip without any problems. 
+ 
+ Only the OTA loading concept does not work via browser or MQTT command. The behaviour of the port is very different from the behaviour of the ESP32. With the ESP32, the OTA process works perfectly.
