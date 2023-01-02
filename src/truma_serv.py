@@ -201,7 +201,7 @@ async def main(client):
         if repo_update:
             import cred
             for i in cred.update_repo():
-                print i    
+                print(i)    
                 await asyncio.sleep(1) # every 1sec
             repo_update = False
         s =lin.app.get_all(True)
