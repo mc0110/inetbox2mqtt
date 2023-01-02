@@ -182,13 +182,13 @@ async def ur(r):
 #@naw.route('/rc')
 async def ur1(r):
     global gh
-    gh.update = True
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if gh.wifi.platform == 'rp2':
         await r.write(gh.handleMessage("Repo update isn't available for rpi2-platform", "/", "Back",("5","/")))
     else:              
         print("Repo update initiated")
-        await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
+        gh.update = True
+        await r.write(gh.handleMessage("Repo update initiated", "/loop", "Continue",("5","/loop")))
 
 #@naw.route('/rb')
 async def reboot(r):
