@@ -74,15 +74,20 @@ class Wifi():
     def connect(self):
         if (self.ap_if == None): self.set_ap(1)
         if (self.creds()) and (self.sta_if == None): self.set_sta(1)
-            
+
+    # run-modes (0: OS-run, 1: normal-run 2: ota-upload)
     def run_mode(self, set=-1):
         if set == -1:
-            return int(self.run_fn in os.listdir("/"))
-        if set == 1:
+            if (self.run_fn in os.listdir("/")):
+                with open(self.run_fn, "r") as f: a = f.read()
+                print("RUN-Mode ", a)
+                return int(str(a))
+            else: return 0
+        if set > 0:
             if self.creds():
                 with open(self.run_fn, "w") as f:
-                    f.write("1")
-                return 1
+                    f.write(str(set))
+                return set
             else: 
                 return 0
         if set == 0:
@@ -215,8 +220,9 @@ class Wifi():
         if sta == -1:  # default value returns current state
             return int((self.sta_if != None))
         self.sta_if = network.WLAN(network.STA_IF)
-        time.sleep_ms(1)     # without delay we see on an ESP32 a system fault and reboot
+        time.sleep(1)     # without delay we see on an ESP32 a system fault and reboot
         self.sta_if.active(sta)   # activate the interface
+        time.sleep(1)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
             print("STA_WLAN switched off")
             self.sta_if = None
