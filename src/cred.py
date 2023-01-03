@@ -29,11 +29,10 @@ def set_cred_json():
     w.write_cred_json(j)
 
 
+
 def update_repo():
-    import time, os
     import mip
     #sleep to give some boards time to initialize, for example Rpi Pico W
-    time.sleep(3)
 
     # bootloader for the whole suite
     tree = "github:mc0110/inetbox2mqtt"
@@ -54,6 +53,7 @@ def update_repo():
         ["/src/", "main.py", "/"],
         
         ["/src/", "tools.py", "/"],
+        ["/src/", "release.py", "/"],
         ["/src/", "conversions.py", "/"],
         ["/src/", "lin.py", "/"],
         ["/src/", "inetboxapp.py", "/"],
@@ -76,3 +76,20 @@ def update_repo():
             s = env[i][1]
             st = (errno == 0)
             yield (s, st)
+
+def read_rel():
+    import mip
+    
+    errno = 1
+    try:
+        mip.install("github:mc0110/inetbox2mqtt/release.py", "/")
+        errno = 0
+        import release.py
+        q = release.rel_no
+    except:
+        errno = 1
+    if not(errno):
+        return q
+    else:
+        return "no"
+
