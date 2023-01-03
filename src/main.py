@@ -9,7 +9,7 @@ import connect
 import machine
 
 appname = "inetbox2mqtt"
-rel_no = "1.5.2"
+rel_no = "1.5.3"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
@@ -33,20 +33,12 @@ if (w.run_mode() > 1) and (w.set_sta()):
             status = status and st
         if not(status):
             machine.reset()
-        else:    
-            w.run_mode(w.run_mode() - 2)
+        el(w.run_mode() - 2)
+            machine.soft_reset()
     else:
         print("release is actual")
         w.run_mode(w.run_mode() - 2)
 
 if w.creds() and w.set_sta() and (w.run_mode() == 1):
     print("Normal mode activated - for chance to OS-mode type in terminal:")
-    print(">>>import os")
-    print(">>>os.remove('run_mode.dat'")    
-    import truma_serv
-    truma_serv.run(w)
-else:
-    print("OS mode activated")
-    import web_os_run
-    web_os_run.run(w)
     
