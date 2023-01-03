@@ -21,7 +21,7 @@
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
 - **input credentials over web-frontend**
-- **OTA-updating implemented**
+- **OTA-updating support**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
@@ -33,6 +33,8 @@ This project here was developed and tested for an ESP32 (first generation) with 
 ## Disclaimer
 I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box. 
 
+Please note that this simulation only works on a CPplus to which no Inetbox is connected. In particular, communication with a TRUMA INet X is not supported.
+
 The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
@@ -41,6 +43,7 @@ The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI p
 There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
 
 The electrical connection via the TJA1020 to the UART of the ESP32/RPI pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
+
 <div align = center>
 
 ![grafik](https://user-images.githubusercontent.com/10268240/206511684-806cda73-a47d-4070-86ac-6de7d999c5d6.png)
@@ -247,8 +250,4 @@ Micropython can be installed very easily on the RPI pico W. Please use a current
 Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
 
-Unfortunately, the web frontend does not work very well. Even if no errors occur, the response times to browser requests are sometimes very delayed.
 
- Since the software runs perfectly on the ESP32, I suspect there is still a bug in the uasyncio module. So if you are using this chip, please be patient. However, it is still possible to enter the credentials with this chip without any problems. 
- 
- Only the OTA loading concept does not work via browser or MQTT command. The behaviour of the port is very different from the behaviour of the ESP32. With the ESP32, the OTA process works perfectly.
