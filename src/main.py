@@ -33,7 +33,8 @@ if (w.run_mode() > 1) and (w.set_sta()):
             status = status and st
         if not(status):
             machine.reset()
-        el(w.run_mode() - 2)
+        else:
+            w.run_mode(w.run_mode() - 2)
             machine.soft_reset()
     else:
         print("release is actual")
