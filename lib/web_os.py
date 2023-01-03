@@ -40,8 +40,8 @@ async def command_loop():
         if repo_update:
             import cred
             rel_new = cred.read_rel()
-            if (rel_new != rel_no):
-                repo_update_comment = ""
+            repo_update_comment = ""
+            if (rel_new != gh.wifi.rel_no):
                 for i, st in cred.update_repo():
                     print(i, st)
                     if st:
