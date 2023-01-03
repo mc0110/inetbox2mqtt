@@ -146,8 +146,10 @@ class Gen_Html():
         tmp += self.handleGet("/wc","Credentials")
         tmp += self.handleGet("/dir/__","Filemanager")
         tmp += self.handleGet("/ur","Update Repo") + "<p>"
-        if self.wifi.run_mode():
+        if self.wifi.run_mode() == 1:
             tmp += self.handleGet("/rm", "Normal Run")+"<p>"
+        elif self.wifi.run_mode() == 2:
+            tmp += self.handleGet("/rm", "Update-Mode")+"<p>"
         else:    
             tmp += self.handleGet("/rm", "OS-Run")+"<p>"
         tmp += self.handleGet("/rb","Soft Reboot") + "<p> \n"

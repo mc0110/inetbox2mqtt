@@ -116,8 +116,12 @@ async def toggle_run_mode(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if not(gh.wifi.creds()):
         await r.write(gh.handleMessage("You couldn't switch run-mode without credentials", "/", "Back",("5","/")))
-    else:    
-        gh.wifi.run_mode(1 - gh.wifi.run_mode())
+    else:
+        a = gh.wifi.run_mode()
+        if a < 2:
+            a += 1
+        else: a = 0    
+        gh.wifi.run_mode(a)
         gh.refresh_connect_state()
         await r.write(gh.handleRoot())
 
@@ -151,7 +155,7 @@ async def cp(r):
     gh.wifi.store_creds(json)
     gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/wc")))
+    await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/")))
 #    await r.write(gh.handleRoot())
 
 
