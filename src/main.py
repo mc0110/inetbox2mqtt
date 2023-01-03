@@ -24,7 +24,7 @@ w.set_sta(1)
 if (w.run_mode() > 1) and (w.set_sta()):
     import cred
     rel_new = cred.read_rel()
-    if (rel_new != "no") and (rel_new != rel_no):
+    if (rel_new != rel_no):
         print("Update-Process startetd")
         status = True
         cred.set_cred_json()

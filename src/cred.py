@@ -79,7 +79,7 @@ def update_repo():
 
 def read_rel():
     import mip    
-    mip.install("github:mc0110/inetbox2mqtt/src/release.py", "")
+    mip.install("github:mc0110/inetbox2mqtt/src/release.py", target = "/")
     import release
     q = release.rel_no
     return q

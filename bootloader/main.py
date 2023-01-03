@@ -20,7 +20,7 @@
 # s.connect("<yourSSID>","<YourWifiPW>")
 # print('network config:', s.ifconfig())
 # import mip
-# mip.install("github:mc0110/wifimanager/bootloader/main.py","/")
+# mip.install("github:mc0110/wifimanager/bootloader/main.py", target = "/")
 # 
 # import main
 #
