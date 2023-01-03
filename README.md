@@ -224,11 +224,11 @@ You must enter the commands from the console line by line in the REPL interface.
 ### Alternative 2: With esptool - only works with the ESP32
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v13_4M.bin
+    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
-After flashing, please reboot the ESP32 and connect it to a serial terminal (e.g. miniterm, putty, serialport) (baud rate: 115200) fur further steps like checking if everything is working ok.
+After flashing, please reboot the ESP32. It will open an AP (see Credentials). After flashing, I recommend triggering the OTA update once to get the latest version.
 
 
 ### Credentials
