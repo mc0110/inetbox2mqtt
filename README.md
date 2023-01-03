@@ -100,7 +100,7 @@ If you want to set values, then you must use the corresponding set-topics. The l
 | service/truma/set/heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
 | **System commands** | |
 | service/truma/set/reboot| 1| reboot the port|
-| service/truma/set/run_os| 1| set mode OS-RUN|
+| service/truma/set/os_run| 1| set mode OS-RUN|
 | service/truma/set/ota_update| 1| download current version from GITHUB|
 
 
