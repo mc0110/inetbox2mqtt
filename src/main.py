@@ -7,26 +7,33 @@
 import time
 import connect
 import machine
+
 appname = "inetbox2mqtt"
+rel_no = "1.4.1"
+
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
 time.sleep(3)
 
 w=connect.Wifi()
-w.set_appname(appname)
+w.appname = appname
+w.rel_no = rel_no
 w.set_sta(1)
 
 
 if w.run_mode() > 1:
     
     print("Update-Process startetd")
+    status = True
     import cred
     cred.set_cred_json()
-    for i in cred.update_repo():
-        print(i)
-    w.run_mode(w.run_mode() - 2)     
-    machine.soft_reset()
-    
+    for i, st in cred.update_repo():
+        print(i, st)
+        status = status and st
+    if not(status):
+        machine.reset()
+    else:    
+        w.run_mode(w.run_mode() - 2)
     
 else:
     if w.creds() and w.set_sta() and (w.run_mode() == 1):

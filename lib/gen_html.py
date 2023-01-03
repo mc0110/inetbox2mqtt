@@ -108,7 +108,7 @@ class Gen_Html():
         if link != "":
             tmp += "<div>"+self.handleGet(link,name)+"</div>"
         tmp += '<br><div class="center">This&nbsp; <span>' + self.CONNECT_STATE["port"] + '</span>&nbsp;  is running on&nbsp; <span>' + self.CONNECT_STATE["python"] + '</span></div>'
-        tmp += '<br><div class="center">' + self.CR_M + '</div>'
+        tmp += '<br><div class="center">' + self.CR_M + 'RelNo:' + self.wifi.rel_no + '</div>'
         tmp += " </body></html>"
         return tmp
 

@@ -74,7 +74,5 @@ def update_repo():
             except:
                 errno += 1
             s = env[i][1]
-            if errno:
-                s += " couldn't be loaded"
-            else: s += " loaded"    
-            yield s
+            st = (errno == 0)
+            yield (s, st)
