@@ -94,13 +94,13 @@ def callback(topic, msg, retained, qos):
         if topic == "reboot":
             if msg == "1":
                 print("reboot device request via mqtt")
-                reset()
+                soft_reset()
             return    
         if topic == "os_run":
             if msg == "1":
                 print("switch to os_run -> AP-access: 192.168.4.1:80")
                 connect.run_mode(0)
-                reset()
+                soft_reset()
         if topic == "ota_update":
             if msg == "1":
                 print("update software via OTA")
@@ -187,7 +187,7 @@ async def main(client):
             if err_no > 10:
             # there will be no connection possible - reboot and start web-frontend
                 connect.run_mode(0)
-                reset()
+                soft_reset()
             
     await del_ha_autoconfig(client)
     await set_ha_autoconfig(client)

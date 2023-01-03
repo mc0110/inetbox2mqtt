@@ -16,9 +16,6 @@ class Gen_Html():
             "files": 'Filemanager with full access to the ports filesystem. You see the sub-directories as links',
             "": 'No help description available',
         }
-    update = False
-    update_comment = ""
-    reboot = False
     
     # w-parameter is the connect-object    
     def __init__(self, w):
@@ -153,7 +150,8 @@ class Gen_Html():
             tmp += self.handleGet("/rm", "Normal Run")+"<p>"
         else:    
             tmp += self.handleGet("/rm", "OS-Run")+"<p>"
-        tmp += self.handleGet("/rb","Reboot") + "<p> \n"
+        tmp += self.handleGet("/rb","Soft Reboot") + "<p> \n"
+        tmp += self.handleGet("/rb1","Hard Reboot") + "<p> \n"
         tmp += self.handleFooter()
         return tmp
 
