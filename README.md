@@ -8,10 +8,6 @@
 
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
  &nbsp;
-[![Badge Version](https://img.shields.io/github/v/release/mc0110/inetbox2mqtt?include_prereleases&color=yellow&logo=DocuSign&logoColor=white)](https://github.com/mc0110/inetbox2mqtt/blob/main/README.md)
- &nbsp; 
-![Badge Hit Counter](https://visitor-badge.laobi.icu/badge?page_id=https://github.com/mc0110/inetbox2mqtt/README.md)
-<br/><br/>
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
 
 </div>
