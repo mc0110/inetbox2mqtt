@@ -32,7 +32,7 @@ from duo_control import duo_ctrl
 from spiritlevel import spirit_level
 # import uos
 import time
-from machine import UART, Pin, I2C, reset
+from machine import UART, Pin, I2C, soft_reset
 
 debug_lin = False
 
@@ -105,7 +105,7 @@ def callback(topic, msg, retained, qos):
             if msg == "1":
                 print("update software via OTA")
                 connect.run_mode(3)
-                reset()
+                soft_reset()
         if topic in lin.app.status.keys():
             print("inet-key:", topic, msg)
             try:

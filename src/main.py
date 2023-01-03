@@ -25,7 +25,7 @@ if w.run_mode() > 1:
     for i in cred.update_repo():
         print(i)
     w.run_mode(w.run_mode() - 2)     
-    machine.reset()
+    machine.soft_reset()
     
     
 else:

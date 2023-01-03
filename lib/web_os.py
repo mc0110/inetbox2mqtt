@@ -5,7 +5,7 @@
 # This is part of the wifimanager package
 # 
 # 
-from machine import reset
+from machine import soft_reset as reset
 from gen_html import Gen_Html
 from nanoweb import HttpError, Nanoweb, send_file
 import uasyncio as asyncio

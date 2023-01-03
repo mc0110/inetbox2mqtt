@@ -19,6 +19,7 @@
 
 import network, os, sys, time, json, tools
 from lib.crypto_keys import fn_crypto as crypt
+from machine import reset, soft_reset
 
 
 class Wifi():
@@ -220,9 +221,9 @@ class Wifi():
         if sta == -1:  # default value returns current state
             return int((self.sta_if != None))
         self.sta_if = network.WLAN(network.STA_IF)
-        time.sleep(1)     # without delay we see on an ESP32 a system fault and reboot
+        time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
         self.sta_if.active(sta)   # activate the interface
-        time.sleep(1)     # without delay we see on an ESP32 a system fault and reboot
+        time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
             print("STA_WLAN switched off")
             self.sta_if = None
@@ -236,7 +237,7 @@ class Wifi():
         self.hostname  = c.get_decrypt_key(self.cred_fn, "HOSTNAME")
         print('Connecting with credentials to network...')
         self.sta_if.active(False)
-        time.sleep(1)
+        time.sleep(2)
         err = 0
         try:
             self.sta_if.active(True)
@@ -252,9 +253,12 @@ class Wifi():
             i += 1
             time.sleep(1)
             self.set_led(2)
-            if i>60:
+            if i>30:
                 print("Connection couldn't be established - aborted")
-                self.run_mode(0)
+                if self.run_mode() < 2:
+                    self.run_mode(0)
+                else:    
+                    soft_reset()
                 self.set_led(0)
                 self.set_ap(1)  # sta-cred wrong, established ap-connection
                 return 0  # sta-cred wrong, established ap-connection
