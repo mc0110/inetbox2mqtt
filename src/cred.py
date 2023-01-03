@@ -78,18 +78,9 @@ def update_repo():
             yield (s, st)
 
 def read_rel():
-    import mip
-    
-    errno = 1
-    try:
-        mip.install("github:mc0110/inetbox2mqtt/release.py", "/")
-        errno = 0
-        import release.py
-        q = release.rel_no
-    except:
-        errno = 1
-    if not(errno):
-        return q
-    else:
-        return "no"
+    import mip    
+    mip.install("github:mc0110/inetbox2mqtt/src/release.py", "//")
+    import release.py
+    q = release.rel_no
+    return q
 
