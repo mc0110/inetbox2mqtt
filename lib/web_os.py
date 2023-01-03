@@ -38,14 +38,21 @@ async def command_loop():
             await asyncio.sleep(10) # Update every 10sec
             soft_reset()
         if repo_update:
-            repo_update_comment = ""
             import cred
-            for i in cred.update_repo():
-                print(i)
-                repo_update_comment = i
-                await asyncio.sleep(2) # sleep for 500ms
-            gh.refresh_connect_state()
-#            await asyncio.sleep(20) # Update every 10sec
+            rel_new = cred.read_rel()
+            if (rel_new != rel_no):
+                repo_update_comment = ""
+                for i, st in cred.update_repo():
+                    print(i, st)
+                    if st:
+                        repo_update_comment = i + " loaded"
+                    else:
+                        repo_update_comment = i + " not successful"    
+                    await asyncio.sleep(2) # sleep for 500ms
+                gh.refresh_connect_state()
+            else:    
+                repo_update_comment = "repo up to date"
+                await asyncio.sleep(5) # sleep
             repo_update = False
         gh.wifi.set_led(2)
         
