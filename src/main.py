@@ -24,7 +24,7 @@ w.set_sta(1)
 if (w.run_mode() > 1):
     # if run_mode > 1, then there should be credentials
     # rp2 needs sometimes more than 1 reboot for wifi-connection
-    if (w.set_sta()): machine.reset()
+    if not(w.set_sta()): machine.reset()
     import cred
     # download the release-no from repo
     rel_new = cred.read_repo_rel()
