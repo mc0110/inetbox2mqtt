@@ -101,11 +101,13 @@ def callback(topic, msg, retained, qos):
                 print("switch to os_run -> AP-access: 192.168.4.1:80")
                 connect.run_mode(0)
                 soft_reset()
+            return    
         if topic == "ota_update":
             if msg == "1":
                 print("update software via OTA")
                 connect.run_mode(3)
                 soft_reset()
+            return    
         if topic in lin.app.status.keys():
             print("inet-key:", topic, msg)
             try:
