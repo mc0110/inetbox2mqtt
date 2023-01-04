@@ -20,27 +20,35 @@ w.appname = appname
 w.rel_no = rel_no
 w.set_sta(1)
 
-
-if (w.run_mode() > 1) and (w.set_sta()):
+# run-mode > 1 means OTA-repo-checks
+if (w.run_mode() > 1):
+    # if run_mode > 1, then there should be credentials
+    # rp2 needs sometimes more than 1 reboot for wifi-connection
+    if (w.set_sta()): machine.reset()
     import cred
-    rel_new = cred.read_rel()
+    # download the release-no from repo
+    rel_new = cred.read_repo_rel()
     if (rel_new != rel_no):
-        print("Update-Process startetd")
+        print("Update-Process starts ....")
         status = True
         cred.set_cred_json()
         for i, st in cred.update_repo():
             print(i, st)
             status = status and st
+        # if status = False, then process wasn't successful    
         if not(status):
             machine.reset()
         else:
+            # Repo download was successful
+            # run_mode must be reset to the original value 
             w.run_mode(w.run_mode() - 2)
-            machine.soft_reset()
+            machine.reset()
     else:
         print("release is actual")
         w.run_mode(w.run_mode() - 2)
         machine.soft_reset()
-    
+
+# normal mode (run mode == 1) or OS run mode (run_mode == 0) execution    
 else:
     if w.creds() and w.set_sta() and (w.run_mode() == 1):
         print("Normal mode activated - for chance to OS-mode type in terminal:")
