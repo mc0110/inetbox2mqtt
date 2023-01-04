@@ -39,7 +39,7 @@ async def command_loop():
             soft_reset()
         if repo_update:
             import cred
-            rel_new = cred.read_rel()
+            rel_new = cred.read_repo_rel()
             repo_update_comment = ""
             if (rel_new != gh.wifi.rel_no):
                 for i, st in cred.update_repo():
