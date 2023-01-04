@@ -77,7 +77,7 @@ def update_repo():
             st = (errno == 0)
             yield (s, st)
 
-def read_rel():
+def read_repo_rel():
     import mip
     import time
     try:
