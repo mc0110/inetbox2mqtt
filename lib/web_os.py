@@ -158,7 +158,7 @@ async def cp(r):
     gh.wifi.store_creds(json)
     gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/wc")))
+    await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/")))
 #    await r.write(gh.handleRoot())
 
 
