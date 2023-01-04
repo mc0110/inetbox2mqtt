@@ -79,12 +79,15 @@ def update_repo():
 
 def read_rel():
     import mip
+    import time
     try:
         mip.install("github:mc0110/inetbox2mqtt/src/release.py", target = "/")
     except:
         import machine
         machine.reset()
+    time.sleep(1)    
     import release
     q = release.rel_no
+    print("Repo relase-no: " + q)
     return q
 
