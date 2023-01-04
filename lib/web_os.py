@@ -234,12 +234,11 @@ async def h_reboot(r):
 #@naw.route('/upload')
 async def upload(r):
     global gh
-    dir = r.url.strip("/upload/")
+    dir = r.url[7:]
     if dir == "__":
         dir = "/"
     else:
         dir = "/" + dir.strip("/") + "/"    
-
     if r.method == "POST":
         # obtain the filename and size from request headers
         filename = r.headers['Content-Disposition'].split('filename=')[1].strip('"')
@@ -254,10 +253,10 @@ async def upload(r):
             f.close()        
         print('Successfully saved file: ' + dir + filename)
         await r.write("HTTP/1.1 201 Upload \r\n" )
+        await send_file(r, gh.handleFiles(dir))
     else:
-        rp = gh.handleFiles(dir)
         await r.write("HTTP/1.1 200 OK\r\n")
-        await send_file(r, rp)
+        await send_file(r, gh.handleFiles(dir))
 
 #@naw.route('/fm*')
 async def fm(r):
