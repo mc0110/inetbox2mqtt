@@ -280,9 +280,9 @@ async def fm(r):
         await r.write("Content-Type: application/octet-stream\r\n")
         await r.write("Content-Disposition: attachment; filename=%s\r\n\r\n" % filename)
         await send_file(r, direct+filename)
-        rp = gh.handleFiles(direct)
-        await r.write("HTTP/1.1 200 OK\r\n")
-        await send_file(r, rp)
+        # rp = gh.handleFiles(direct)
+        # await r.write("HTTP/1.1 200 OK\r\n")
+        # await send_file(r, rp)
 
 
 #@naw.route('/dir*')
