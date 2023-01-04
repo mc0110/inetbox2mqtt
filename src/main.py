@@ -39,6 +39,7 @@ if (w.run_mode() > 1) and (w.set_sta()):
     else:
         print("release is actual")
         w.run_mode(w.run_mode() - 2)
+        machine.soft_reset()
     
 else:
     if w.creds() and w.set_sta() and (w.run_mode() == 1):
