@@ -52,7 +52,7 @@ for i in range(len(env)):
 
 import cred
 cred.set_cred_json()
-for i in cred.update_repo():
-    print(i)
+for i,j in cred.update_repo():
+    print(i, j)
 
 machine.reset()
