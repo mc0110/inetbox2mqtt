@@ -10,7 +10,8 @@
 
 
 def set_cred_json():
-    import connect
+    import json
+    CRED_JSON = "cred.json"
 
     j = {
      "SSID": ["text", "SSID:", "1"],
@@ -23,11 +24,7 @@ def set_cred_json():
      "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
 #     "OSR": ["checkbox", "OS Web:", "9"],
      }
-    
-
-    w=connect.Wifi()
-    w.write_cred_json(j)
-
+    with open(CRED_JSON, "w") as f: json.dump(j, f)
 
 
 def update_repo():
