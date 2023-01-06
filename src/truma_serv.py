@@ -41,6 +41,7 @@ connect = None
 lin = None
 dc = None
 sl = None
+client = None
 
 # Change the following configs to suit your environment
 S_TOPIC_1       = 'service/truma/set/'
@@ -261,6 +262,7 @@ def run(w):
     global lin
     global dc
     global sl
+    global client
     connect = w
 
     # Decrypt your encrypted credentials
