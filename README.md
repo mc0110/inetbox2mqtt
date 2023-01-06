@@ -17,7 +17,7 @@
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
 - **input credentials over web-frontend**
-- **OTA-updating support**
+- **OTA-updating support with releasing (1.5.7)**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 
 ## Acknowledgement
@@ -226,6 +226,10 @@ This is not a partition but the full image for the ESP32 and only works with the
 
 After flashing, please reboot the ESP32. It will open an AP (see Credentials). After flashing, I recommend triggering the OTA update once to get the latest version.
 
+### Releasing
+There are two release numbers that must match, one in main.py and one in realese.py. 
+The update process looks at this and if the numbers are different, then the software is updated during the update.
+
 
 ### Credentials
 After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
@@ -246,4 +250,4 @@ Micropython can be installed very easily on the RPI pico W. Please use a current
 Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
 
-
+Experience currently shows that the micropython wifi connection with the PI2 pico w is not optimal. The ESP32 is much more stable. This makes the update process for the pico more of a lottery and should only be carried out under control. On the other hand, the RP2 pico has a larger memory and is otherwise very robust in operation. Everyone should decide for themselves what is more important to them, especially since the RP2 pico w boards are much smaller than the breakboards for the ESP32.
