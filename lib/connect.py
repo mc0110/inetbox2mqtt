@@ -26,7 +26,8 @@ class Wifi():
     
     CRED_FN = "credentials.dat"
     CRED_JSON = "cred.json"
-    run_fn = "run_mode.dat"
+    BOOT_CNT = "boot.dat"
+    RUN_MODE = "run_mode.dat"
     ap_if = None
     sta_if = None
     cred_fn = None
@@ -82,28 +83,50 @@ class Wifi():
         if (self.ap_if == None): self.set_ap(1)
         if (self.creds()) and (self.sta_if == None): self.set_sta(1)
 
-    # run-modes (0: OS-run, 1: normal-run 2: ota-upload)
+    # run-modes (0: OS-run, 1: normal-run 2,3: ota-upload)
     def run_mode(self, set=-1):
         if set == -1:
-            if (self.run_fn in os.listdir("/")):
-                with open(self.run_fn, "r") as f: a = f.read()
+            if (self.RUN_MODE in os.listdir("/")):
+                with open(self.RUN_MODE, "r") as f: a = f.read()
                 print("RUN-Mode ", a)
                 return int(str(a))
             else: return 0
         if set > 0:
             if self.creds():
-                with open(self.run_fn, "w") as f:
-                    f.write(str(set))
+                with open(self.RUN_MODE, "w") as f: f.write(str(set))
+                self.boot_count(10)
                 return set
             else: 
                 return 0
         if set == 0:
             try:
-                os.remove(self.run_fn)
+                os.remove(self.RUN_MODE)
             except:
                 pass
             return 0
         
+    # boot-counts
+    def boot_count(self, set=-1):
+        if set == -1:
+            if (self.BOOT_CNT in os.listdir("/")):
+                with open(self.BOOT_CNT, "r") as f: a = f.read()
+                print("Boot tries left: ", a)
+                a = int(str(a))
+                self.boot_count(a - 1)
+                return a
+            else: return 0
+        if set > 0:
+            if self.creds():
+                with open(self.BOOT_CNT, "w") as f: f.write(str(set))
+                return set
+            else: 
+                return 0
+        if set == 0:
+            try:
+                os.remove(self.BOOT_CNT)
+            except:
+                pass
+            return 0
 
     def get_state(self):
         def get_ap(ap, id):
@@ -261,10 +284,17 @@ class Wifi():
             self.set_led(2)
             if i>30:
                 print("Connection couldn't be established - aborted")
-                if self.run_mode() < 2:
-                    self.run_mode(0)
-                else:    
+                self.sta_if.active(False)
+                self.sta_if = None
+                if self.run_mode() == 1:
+                    if self.boot_count():
+                        reset()
+                    else:    
+                        self.run_mode(0)
+                        
+                elif self.run_mode() > 1:  
                     soft_reset()
+
                 self.set_led(0)
                 self.set_ap(1)  # sta-cred wrong, established ap-connection
                 return 0  # sta-cred wrong, established ap-connection

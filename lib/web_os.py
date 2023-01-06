@@ -129,7 +129,7 @@ async def toggle_run_mode(r):
         else: a=0    
         gh.wifi.run_mode(a)
         gh.refresh_connect_state()
-        await r.write(gh.handleRoot())
+        await r.write(gh.handleMessage("RUN mode changed", "/", "Back",("5","/")))
 
 #@naw.route('/wc')
 # Generate the credential form    
