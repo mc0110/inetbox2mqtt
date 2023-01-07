@@ -15,7 +15,7 @@
 
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **input credentials over web-frontend**
-- **OTA-updating support with releasing (1.5.7)**
+- **OTA-updating support with releasing (currently 1.5.9)**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
