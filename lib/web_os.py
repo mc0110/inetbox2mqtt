@@ -47,9 +47,12 @@ async def command_loop():
             if not(repo_update): return
             import cred
             rel_new = cred.read_repo_rel()
-            repo_update_comment = ""
+            repo_update_comment = " update to rel: " + rel_new
             repo_success = True
             if (rel_new != gh.wifi.rel_no):
+                repo_update_comment = " update to rel: " + rel_new
+                await asyncio.sleep(5) # sleep for 5s to send it to browser
+                # loop for update-process
                 for i, st in cred.update_repo():
                     print(i, st)
                     repo_success = repo_success and st
@@ -59,7 +62,7 @@ async def command_loop():
                         repo_update_comment = i + " not successful"    
                     await asyncio.sleep(5) # sleep for 500ms
                 # gh.refresh_connect_state()
-            else:    
+            else: # no update neccesary   
                 repo_update_comment = "repo up to date"
                 await asyncio.sleep(5) # sleep
             repo_update = False
