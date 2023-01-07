@@ -17,11 +17,13 @@ def init(w):
     global reboot
     global soft_reboot
     global repo_update
+    global repo_success
     gc.enable()
     gh = Gen_Html(w)
     reboot = False
     soft_reboot = False
     repo_update = False
+    repo_success = False
 
 
 async def command_loop():
@@ -29,6 +31,7 @@ async def command_loop():
     global soft_reboot
     global repo_update
     global repo_update_comment
+    global repo_success
     while True:
         await asyncio.sleep(3) # Update every 10sec
         if reboot:
@@ -38,12 +41,16 @@ async def command_loop():
             await asyncio.sleep(10) # Update every 10sec
             soft_reset()
         if repo_update:
+            await asyncio.sleep(10) # Update every 10sec
+            if not(repo_update): return
             import cred
             rel_new = cred.read_repo_rel()
             repo_update_comment = ""
+            repo_success = True
             if (rel_new != gh.wifi.rel_no):
                 for i, st in cred.update_repo():
                     print(i, st)
+                    repo_success = repo_success and st
                     if st:
                         repo_update_comment = i + " loaded"
                     else:
@@ -78,12 +85,16 @@ async def status(r):
 async def loop(r):
     global repo_update_comment
     global repo_update
+    global repo_success
     
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if repo_update:
         await r.write(gh.handleMessage("Update is running -> " + repo_update_comment, "/", "Back",("3","/loop")))
-    else:    
-        await r.write(gh.handleMessage("Update finalized, pls reboot device now", "/", "Back",("5","/")))
+    else:
+        if repo_success:        
+            await r.write(gh.handleMessage("Update finalized successful, pls reboot device now", "/", "Back",("5","/")))
+        else:    
+            await r.write(gh.handleMessage("Update finalized unsuccessful, pls repeat update", "/", "Back",("5","/")))
         
     
 #@naw.route('/ta')    
@@ -220,9 +231,7 @@ async def ur1(r):
     global gh
     global repo_update
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    print("Repo update initiated")
-#    gh.wifi.run_mode(2)
-#    await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/rb")))
+    print("Repo update starting ...")
     repo_update = True
     await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
 
