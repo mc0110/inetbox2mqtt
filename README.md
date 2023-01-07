@@ -3,7 +3,7 @@
 # inetbox2mqtt
 ## Control your TRUMA heater over a MQTT broker
 
-### microPython version for ESP32 and RP pico w
+### Version for ESP32 and RP pico w
 <br/>
 
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
@@ -14,11 +14,11 @@
 <br>
 
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **include optional Truma DuoControl over GPIO-connections**
-- **include optional MPU6050 Sensor for spiritlevel-feature**
 - **input credentials over web-frontend**
 - **OTA-updating support with releasing (1.5.7)**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
+- **include optional Truma DuoControl over GPIO-connections**
+- **include optional MPU6050 Sensor for spiritlevel-feature**
 
 ## Acknowledgement
 The software is a derivative of the github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett. 
@@ -64,6 +64,65 @@ On the **RPI pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05*
 </div>
 
 These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
+
+
+## Installation instructions
+
+### MicroPython
+The software is developed in micropython. After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. 
+
+However, the software did not run with the latest stable kernel from July (among other things, the bytearray.hex was not implemented there yet). The latest kernels for various ports can be found in the [download section](https://micropython.org/download/). It is quite possible that the software can also run on other ports. If you have had this experience, please let us know. We can then amend the readme accordingly.
+
+
+### Alternative 1: OTA-Installation with mip
+If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
+
+To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
+
+The way I am following at the moment is:
+
+- Install Micropython on the port
+- Wifi connection via terminal
+- Loading the web application via terminal
+
+You must enter the commands from the console line by line in the REPL interface. The last import command reloads the entire installation.
+
+    import network
+    st = network.WLAN(network.STA_IF)
+    st.active(True)
+    st.connect('<yourSSID>','<YourWifiPW>')
+    import mip
+    mip.install('github:mc0110/inetbox2mqtt/bootloader/main.py','/')
+    import main
+
+
+### Alternative 2: With esptool - only works with the ESP32
+The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
+
+    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15_4M.bin
+
+This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
+
+After flashing, please reboot the ESP32. It will open an AP (see Credentials). I recommend triggering the OTA update once to get the latest version.
+
+## Releasing
+There are two release numbers that must match, one in main.py and one in realese.py. 
+The update process looks at this and if the numbers are different, then the software is updated during the update.
+
+
+## Credentials
+After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
+
+After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
+
+After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
+
+For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus. You can also swap between 2 different credential-files, e.g. you are working on your computer at home for configuring and then swap to the RV-credentials in your motorhome.
+
+If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with a 2 confirmation messages.
+
+Then you can establish the connection between the port and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
+
 
 ## MQTT topics - almost the same, but not exactly the same
 
@@ -133,7 +192,7 @@ The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx,
 
 *Attention: The CPplus does not transmit continuously, therefore transmission pauses of 15-25s are normal.* 
 
-## Integration of Truma DuoControl
+## Addon: Integration of Truma DuoControl
 Another functionality has been added. This is an additional function, at the moment not implemented in [INETBOX](https://github.com/danielfett/inetbox.py). 
 
 <div align = center>
@@ -159,7 +218,7 @@ with the payloads ON/OFF. The outputs can be controlled with the SET commands
 
 Inputs and outputs are inverted, i.e. the inputs react with ON when connected to GND, the outputs switch to GND level when ON.
 
-## Integration of MPU6050 for spiritlevel-Feature
+## Addon: Integration of MPU6050 for spiritlevel-Feature
 A second optional feature has been added. For leveling of an RV-car a
 MPU6050 IMU (inertial measurement unit) can be connected to the I2C bus. 
 
@@ -189,65 +248,14 @@ After the port has connected to the MQTT broker, it sends the installation codes
 
 The Home Assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc), there is an example of a frontend solution in Home Assistant.
 
-## MicroPython
-After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. However, the software did not run with a kernel from July (among other things, the bytearray.hex was not implemented there yet).
 
 
-## Installation instructions
-
-### Alternative 1: OTA-Installation with mip
-If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
-
-To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
-
-The way I am following at the moment is as follows:
-
-- Install Micropython on the port
-- Wifi connection via terminal
-- loading the web application via terminal
-
-You must enter the commands from the console line by line in the REPL interface. The last import command reloads the entire installation.
-
-    import network
-    st = network.WLAN(network.STA_IF)
-    st.active(True)
-    st.connect('<yourSSID>','<YourWifiPW>')
-    import mip
-    mip.install('github:mc0110/inetbox2mqtt/bootloader/main.py','/')
-    import main
-
-
-### Alternative 2: With esptool - only works with the ESP32
-The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
-
-    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15_4M.bin
-
-This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
-
-After flashing, please reboot the ESP32. It will open an AP (see Credentials). After flashing, I recommend triggering the OTA update once to get the latest version.
-
-### Releasing
-There are two release numbers that must match, one in main.py and one in realese.py. 
-The update process looks at this and if the numbers are different, then the software is updated during the update.
-
-
-### Credentials
-After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
-
-After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
-
-After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
-
-For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus. You can also swap between 2 different credential-files, e.g. you are working on your computer at home for configuring and then swap to the RV-credentials in your motorhome.
-
-If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with a 2 confirmation messages.
-
-Then you can establish the connection between the port and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
-
-### Running on a RPi pico W
+## Running on a RPi pico W
 Micropython can be installed very easily on the RPI pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
 Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
 
-Experience currently shows that the micropython wifi connection with the PI2 pico w is not optimal. The ESP32 is much more stable. This makes the update process for the pico more of a lottery and should only be carried out under control. On the other hand, the RP2 pico has a larger memory and is otherwise very robust in operation. Everyone should decide for themselves what is more important to them, especially since the RP2 pico w boards are much smaller than the breakboards for the ESP32.
+Experience currently shows that the micropython wifi connection with the PI2 pico w is not optimal. The ESP32 is much more stable. This makes the update process for the pico more of a lottery and should only be carried out under control. On the other hand, the RP2 pico has a larger memory and is otherwise very robust in operation. 
+
+Everyone should decide for themselves what is more important to them, especially since the RP2 pico w boards are much smaller than the breakboards for the ESP32.
