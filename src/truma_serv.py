@@ -60,6 +60,7 @@ HA_CTOPIC = 'service/truma/set/'
 
 HA_CONFIG = {
     "alive":                ['homeassistant/binary_sensor/truma/alive/config', '{"name": "truma_alive", "model": "' + HA_MODEL + '", "sw_version": "' + HA_SWV + '", "device_class": "running", "state_topic": "' + HA_STOPIC + 'alive"}'],
+    "release":              ['homeassistant/sensor/release/config', '{"name": "truma_release", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "state_topic": "' + HA_STOPIC + 'release"}'],
     "current_temp_room":    ['homeassistant/sensor/current_temp_room/config', '{"name": "truma_current_temp_room", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "device_class": "temperature", "unit_of_measurement": "°C", "state_topic": "' + HA_STOPIC + 'current_temp_room"}'],
     "current_temp_water":   ['homeassistant/sensor/current_temp_water/config', '{"name": "truma_current_temp_water", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "device_class": "temperature", "unit_of_measurement": "°C", "state_topic": "' + HA_STOPIC + 'current_temp_water"}'],
     "target_temp_room":     ['homeassistant/sensor/target_temp_room/config', '{"name": "truma_target_temp_room", "model": "' + HA_MODEL + '", "sw_version":"' + HA_SWV + '", "device_class": "temperature", "unit_of_measurement": "°C", "state_topic": "' + HA_STOPIC + 'target_temp_room"}'],
@@ -165,6 +166,7 @@ async def del_ha_autoconfig(c):
         
 # HA auto discovery: define all auto config entities         
 async def set_ha_autoconfig(c):
+    global connect
     print("set ha_autoconfig")
     for i in HA_CONFIG.keys():
         try:
@@ -172,6 +174,8 @@ async def set_ha_autoconfig(c):
 #            print(i,": [" + HA_CONFIG[i][0] + "payload: " + HA_CONFIG[i][1] + "]")
         except:
             print("Publishing error in set_ha_autoconfig")
+    await c.publish(Pub_Prefix + "release", connect.rel_no, qos=1)
+            
         
 
 # main publisher-loop
