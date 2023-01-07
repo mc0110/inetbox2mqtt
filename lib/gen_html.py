@@ -247,30 +247,32 @@ class Gen_Html():
 
 
     def handleCredentials(self, json_form):
-        tmp = self.handleHeader("Credentials");
-        tmp += "<p>"+ self.handleGet("/scan","Scan Wifis") + "</p> \n"
+        f = open("cred.html","w")    
+        f.write(self.handleHeader("Credentials"))
+        f.write("<p>"+ self.handleGet("/scan","Scan Wifis") + "</p> \n")
         if self.wifi.creds():
-            tmp +="<p>" + self.handleGet("/dc","Delete Credentials") + "\n"
+            f.write("<p>" + self.handleGet("/dc","Delete Credentials") + "\n")
             if self.wifi.creds_bak():
-                tmp += self.handleGet("/sc","Swap Credentials")
+                f.write(self.handleGet("/sc","Swap Credentials"))
         else:
-            tmp += "<p> Credential-File doesn't exist </p><br> \n"
+            f.write("<p> Credential-File doesn't exist </p><br> \n")
             if self.wifi.creds_bak():
-                tmp += self.handleGet("/rc","Restore Credentials")
+                f.write(self.handleGet("/rc","Restore Credentials"))
                 
         
-        tmp += "<p><form action='/cp' method='POST'> \n"
+        f.write("<p><form action='/cp' method='POST'> \n")
 
         # json-format: key,[type, entryname, order]
         entries = sorted(json_form.items(), key=lambda x:x[1][2])
         for e in entries:
             if e[1][0] == "checkbox":
-                tmp += "<label for='" + e[0] + "'>" + e[1][1] + "</label> <input type='" + e[1][0] + "' name='" + e[0] +"' placeholder='" + e[0] + "' value='True'><br><br> \n"
+                f.write("<label for='" + e[0] + "'>" + e[1][1] + "</label> <input type='" + e[1][0] + "' name='" + e[0] +"' placeholder='" + e[0] + "' value='True'><br><br> \n")
             else:    
-                tmp += "<label for='" + e[0] + "'>" + e[1][1] + "</label> <input type='" + e[1][0] + "' name='" + e[0] +"' placeholder='" + e[0] + "' value=''> <br><br> \n"
-        tmp += "<input type='submit' class='button' name='SUBMIT' value='Store Creds'></form>"
-        tmp += "</p>"    
-        tmp += self.handleFooter()
-        return tmp
+                f.write("<label for='" + e[0] + "'>" + e[1][1] + "</label> <input type='" + e[1][0] + "' name='" + e[0] +"' placeholder='" + e[0] + "' value=''> <br><br> \n")
+        f.write("<input type='submit' class='button' name='SUBMIT' value='Store Creds'></form>")
+        f.write("</p>")    
+        f.write(self.handleFooter())
+        f.close()
+        return "cred.html"
 
 

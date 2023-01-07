@@ -62,6 +62,7 @@ async def command_loop():
 async def index(r):
     global gh
     global repo_update
+    gh.refresh_connect_state()
     repo_update = False
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleRoot())
@@ -136,7 +137,8 @@ async def toggle_run_mode(r):
 async def creds(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleCredentials(gh.JSON))
+    await send_file(r, gh.handleCredentials(gh.JSON))
+
 
 #@naw.route('/scan')
 async def scan_networks(r):
@@ -289,11 +291,9 @@ async def set_dir(r):
     global gh
     new_dir = r.url[5:]
     if new_dir.startswith("__"):
-        rp = gh.handleFiles("/")
         await r.write("HTTP/1.1 200 OK\r\n")
-        await send_file(r, rp)
+        await send_file(r, gh.handleFiles("/"))
     else:
-        rp = gh.handleFiles(new_dir)
         await r.write("HTTP/1.1 200 OK\r\n")
-        await send_file(r, rp)
+        await send_file(r, gh.handleFiles(new_dir))
 
