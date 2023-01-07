@@ -288,7 +288,7 @@ class Wifi():
                 self.sta_if = None
                 if self.run_mode() == 1:
                     if self.boot_count():
-                        reset()
+                        soft_reset()
                     else:    
                         self.run_mode(0)
                         
