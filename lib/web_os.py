@@ -18,11 +18,13 @@ def init(w):
     global soft_reboot
     global repo_update
     global repo_success
+    global repo_update_comment
     gc.enable()
     gh = Gen_Html(w)
     reboot = False
     soft_reboot = False
     repo_update = False
+    repo_update_comment = ""
     repo_success = False
 
 
@@ -55,7 +57,7 @@ async def command_loop():
                         repo_update_comment = i + " loaded"
                     else:
                         repo_update_comment = i + " not successful"    
-                await asyncio.sleep(2) # sleep for 500ms
+                    await asyncio.sleep(5) # sleep for 500ms
                 # gh.refresh_connect_state()
             else:    
                 repo_update_comment = "repo up to date"
