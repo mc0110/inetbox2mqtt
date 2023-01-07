@@ -135,6 +135,7 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/# ||subcribing all status-entries|
 | service/truma/control_status/alive|on/off|connection control|
 | service/truma/control_status/clock| hh:mm| CPplus time|
+| service/truma/control_status/release| x.y.z| release no|
 | service/truma/control_status/current_temp_room| temperature in °C (0, 5-30°C)| show current room temperature|
 | service/truma/control_status/target_temp_room| temperature in °C (0, 5-30°C)| show target room temperature|
 | service/truma/control_status/current_temp_water| temperature in °C (0-70°C)| show current water temperature|
