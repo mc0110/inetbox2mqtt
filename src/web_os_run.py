@@ -24,6 +24,7 @@ def run(w):
     naw.STATIC_DIR = "/"
     naw.routes = {
          '/': os.index,
+         '/s': os.status,
          '/loop': os.loop,
          '/ta': os.toggle_ap,
          '/ts1': os.set_sta,
