@@ -11,14 +11,17 @@ from nanoweb import HttpError, Nanoweb, send_file
 import uasyncio as asyncio
 import gc
 
+naw = Nanoweb(100)
 
-def init(w):
+def init(w, n):
     global gh
     global reboot
     global soft_reboot
     global repo_update
     global repo_success
     global repo_update_comment
+    global naw
+    naw = n
     gc.enable()
     gh = Gen_Html(w)
     reboot = False
@@ -26,6 +29,16 @@ def init(w):
     repo_update = False
     repo_update_comment = ""
     repo_success = False
+
+
+def unquote(s):
+    if '%' not in s:
+        return s
+    s = s.split("%")
+    a = s[0].encode("utf-8")
+    for i in s[1:]:
+        a = a + bytearray.fromhex(i[:2]) + i[2:].encode("utf-8")
+    return a.decode("utf-8")    
 
 
 async def command_loop():
@@ -70,7 +83,7 @@ async def command_loop():
         
 
 # Declare route directly with decorator
-#@naw.route('/')
+@naw.route('/')
 async def index(r):
     global gh
     global repo_update
@@ -78,7 +91,7 @@ async def index(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleRoot())
     
-#@naw.route('/s')
+@naw.route('/s')
 async def status(r):
     global gh
     global repo_update
@@ -86,7 +99,7 @@ async def status(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleStatus("Device status", "/", "Back",("30","/")))
 
-#@naw.route('/loop')    
+@naw.route('/loop')    
 async def loop(r):
     global repo_update_comment
     global repo_update
@@ -102,7 +115,7 @@ async def loop(r):
             await r.write(gh.handleMessage("Update finalized unsuccessful, pls repeat update", "/", "Back",("5","/")))
         
     
-#@naw.route('/ta')    
+@naw.route('/ta')    
 async def toggle_ap(r):
     global gh
     if not(gh.wifi.set_sta()):
@@ -110,22 +123,20 @@ async def toggle_ap(r):
         await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back",("2","/")))
     else:
         gh.wifi.set_ap(not(gh.wifi.set_ap()))
-        # gh.refresh_connect_state()
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleRoot())
 
-#@naw.route('/ts1')
+@naw.route('/ts1')
 async def set_sta(r):
     global gh
     a = gh.wifi.set_sta(1)
-    # gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     if a:
         await r.write(gh.handleMessage("STA-connection established successfull", "/", "Cancel",("5","/")))
     else:
         await r.write(gh.handleMessage("Couldn't establish a STA-connection", "/", "Cancel",("5","/")))
 
-#@naw.route('/ts')
+@naw.route('/ts')
 async def toggle_sta(r):
     global gh
     if not(gh.wifi.set_ap()):
@@ -137,11 +148,9 @@ async def toggle_sta(r):
             await r.write(gh.handleMessage("Try to establish a STA-connection", "/", "Cancel",("5","/ts1")))
         else:    
             gh.wifi.set_sta(0)
-            # gh.refresh_connect_state()
             await r.write(gh.handleMessage("STA connection deactivated", "/", "Back",("5","/")))
-#        await r.write(gh.handleRoot())
         
-#@naw.route('/rm')
+@naw.route('/rm')
 async def toggle_run_mode(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
@@ -152,10 +161,9 @@ async def toggle_run_mode(r):
         if a < 2: a += 1
         else: a=0    
         gh.wifi.run_mode(a)
-        # gh.refresh_connect_state()
         await r.write(gh.handleMessage("RUN mode changed", "/", "Back",("5","/")))
 
-#@naw.route('/wc')
+@naw.route('/wc')
 # Generate the credential form    
 async def creds(r):
     global gh
@@ -163,13 +171,16 @@ async def creds(r):
     await send_file(r, gh.handleCredentials(gh.JSON))
 
 
-#@naw.route('/scan')
+@naw.route('/scan')
 async def scan_networks(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleScan_Networks())
+    if gh.wifi.set_sta():
+        await r.write(gh.handleScan_Networks())
+    else:    
+        await r.write(gh.handleMessage("This needs STA-mode", "/wc", "Back",("5","/wc")))
 
-#@naw.route('/cp')
+@naw.route('/cp')
 async def cp(r):
     global gh
     json = {}
@@ -179,49 +190,39 @@ async def cp(r):
     for i in r.args.keys():
         if r.args[i]=="True":
             json[i] = "1"
-        else:    
-            json[i] = r.args[i]
-    # print("Converted result: ", json)
-    # store in credentials.dat in format <key:value>
+        else:
+            json[i] = unquote(r.args[i])
     gh.wifi.store_creds(json)
-    # gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/")))
-#    await r.write(gh.handleRoot())
 
 
-#@naw.route('/dc')
+@naw.route('/dc')
 async def del_cred(r):
     global gh
     gh.wifi.delete_creds()
     print("Credentials moved to bak")
-    # gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are deleted", "/", "Back",("5","/wc")))
-#    await r.write(gh.handleCredentials(gh.JSON))
 
 
-#@naw.route('/sc')
+@naw.route('/sc')
 async def swp_cred(r):
     global gh
     gh.wifi.swap_creds()
     print("Credentials swapped")
-    # gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are swapped", "/", "Back",("5","/wc")))
-#    await r.write(gh.handleCredentials(gh.JSON))
     
-#@naw.route('/rc')
+@naw.route('/rc')
 async def res_cred(r):
     global gh
     gh.wifi.restore_creds()
-    # gh.refresh_connect_state()
     print("Credentials restored")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are restored", "/", "Back",("5","/")))
-#    await r.write(gh.handleCredentials(gh.JSON))
     
-#@naw.route('/ur')
+@naw.route('/ur')
 async def ur(r):
     global gh
     if gh.wifi.set_sta():
@@ -231,7 +232,7 @@ async def ur(r):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("You need a STA-internet-connection", "/", "Back",("5","/")))
 
-#@naw.route('/ur1')
+@naw.route('/ur1')
 async def ur1(r):
     global gh
     global repo_update
@@ -240,21 +241,21 @@ async def ur1(r):
     repo_update = True
     await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
 
-#@naw.route('/rb')
+@naw.route('/rb')
 async def s_reboot(r):
     global soft_reboot
     soft_reboot = True
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device will be soft rebooted", "/", "Continue",("4","/")))
 
-#@naw.route('/rb1')
+@naw.route('/rb1')
 async def h_reboot(r):
     global reboot
     reboot = True
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device will be hard rebooted", "/", "Continue",("4","/")))
 
-#@naw.route('/upload')
+@naw.route('/upload')
 async def upload(r):
     global gh
     dir = r.url[7:]
@@ -281,7 +282,7 @@ async def upload(r):
         await r.write("HTTP/1.1 200 OK\r\n")
         await send_file(r, gh.handleFiles(dir))
 
-#@naw.route('/fm*')
+@naw.route('/fm*')
 async def fm(r):
     global gh
     filename = r.param["fn"]
@@ -304,7 +305,7 @@ async def fm(r):
         await send_file(r, direct+filename)
 
 
-#@naw.route('/dir*')
+@naw.route('/dir*')
 async def set_dir(r):
     global gh
     new_dir = r.url[5:]

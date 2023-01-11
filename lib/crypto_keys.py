@@ -13,15 +13,15 @@ import os
 from ucryptolib import aes
 import machine
 
-class crypto:
-    def encrypt(text):
+class crypto():
+    def encrypt(self, text):
         BLOCK_SIZE = 32
         IV_SIZE = 16
         MODE_CBC = 2
         # Padding plain text with space
-        
+        text = text.encode("utf-8")
         pad = BLOCK_SIZE - len(text) % BLOCK_SIZE
-        text = text + " "*pad
+        text = text + " ".encode("utf-8")*pad
         key1 = machine.unique_id()
         key = bytearray(b'I_am_32bytes=256bits_key_padding')
         for i in range(len(key1)-1):
@@ -34,7 +34,7 @@ class crypto:
         return ct_bytes
 
     # you need only one of this modules
-    def decrypt(enc_bytes):
+    def decrypt(self, enc_bytes):
         BLOCK_SIZE = 32
         IV_SIZE = 16
         MODE_CBC = 2
@@ -46,16 +46,16 @@ class crypto:
         # Generate iv with HW random generator 
         iv = enc_bytes[:IV_SIZE]
         cipher = aes(key, MODE_CBC, iv)
-        return cipher.decrypt(enc_bytes)[IV_SIZE:].strip()
+        return cipher.decrypt(enc_bytes)[IV_SIZE:].strip().decode("utf-8")
 
 
 
-class fn_crypto:
+class fn_crypto():
     def __init__(self):
         pass
     
     def fn_write_encrypt(self, f, x):
-        cip = crypto
+        cip = crypto()
         x = cip.encrypt(x)
         f.write(len(x).to_bytes(2, 'little'))
         f.write(x)
@@ -67,7 +67,7 @@ class fn_crypto:
         
         
     def fn_read_decrypt(self, f):
-        cip = crypto
+        cip = crypto()
         x = int.from_bytes(f.read(2), "little")
         if x > 0:
             return str(cip.decrypt(f.read(x)), 'utf-8')
