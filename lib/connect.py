@@ -45,9 +45,9 @@ class Wifi():
         else:    
             self.cred_fn = self.CRED_FN
 
-        if not(self.CRED_JSON in os.listdir("/")):
-            import cred
-            cred.set_cred_json()
+        #if not(self.CRED_JSON in os.listdir("/")):
+        import cred
+        cred.set_cred_json()
 
         self.platform = str(sys.platform)
         self.python = '{} {} {}'.format(sys.implementation.name,'.'.join(str(s) for s in sys.implementation.version), sys.implementation._mpy)
