@@ -16,7 +16,7 @@ def set_cred_json():
     j = {
      "SSID": ["text", "SSID:", "1"],
      "WIFIPW": ["password", "Wifi passcode:", "2"],
-     "MQTT": ["text", "Boker name/IP:", "3"],
+     "MQTT": ["text", "Broker name/IP:", "3"],
      "UN": ["text", "Broker User:", "4"],
      "UPW": ["text", "Broker password:", "5"],
      "HOSTNAME": ["text", "Hostname:", "6"],
