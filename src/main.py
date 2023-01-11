@@ -9,7 +9,7 @@ import connect
 import machine
 
 appname = "inetbox2mqtt"
-rel_no = "1.5.9"
+rel_no = "1.5.a"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
