@@ -11,11 +11,3 @@ This is not a partition but the full image for the ESP32 and only works with the
 After flashing, please reboot the ESP32. It will start with an access point on IP 192.168.4.1. After connecting with wifi you can start a browser to http://192.168.4.1. Now you should input the credentials. After you have done everything, press the button for "normal run" and restart the chip. It will than start without web frontend. 
 
 I will no longer update this version, because the OTA process is very stable. Therefore, I recommend initiating a one-time update after flashing in the web frontend (alternatively, you can also use the MQTT command). This will ensure that you have the latest version of the software.
-
-The micropython.bin is a micropython version for the ESP32 that already has the modules logging, mqtt_async and nanoweb integrated. This can be used to relieve the limited memory of the ESP32.
-
-To flash this version, you should use the esptool with
-
-      esptool.py --chip esp32 --baud 460800 write_flash -z 0x1000 micropython.bin
-
-However, the remaining py files are not yet loaded. These must then be reloaded via the boot loader.
