@@ -1,6 +1,6 @@
 # Image V15: including the Truma duo control and mpu6050 functionalities 
 
-The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
+The flash_esp32_xxxx.bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
 
       esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15a_4M.bin
@@ -12,3 +12,10 @@ After flashing, please reboot the ESP32. It will start with an access point on I
 
 I will no longer update this version, because the OTA process is very stable. Therefore, I recommend initiating a one-time update after flashing in the web frontend (alternatively, you can also use the MQTT command). This will ensure that you have the latest version of the software.
 
+The micropython.bin is a micropython version for the ESP32 that already has the modules logging, mqtt_async and nanoweb integrated. This can be used to relieve the limited memory of the ESP32.
+
+To flash this version, you should use the esptool with
+
+      esptool.py --chip esp32 --baud 460800 write_flash -z 0x1000 micropython.bin
+
+However, the remaining py files are not yet loaded. These must then be reloaded via the boot loader.
