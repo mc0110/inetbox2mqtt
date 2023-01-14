@@ -256,10 +256,12 @@ class Wifi():
         if not(sta):
             print("STA_WLAN switched off")
             self.sta_if = None
-            return None
+            return 0
         if not(self.creds()):
             print('No credentials found ...')    
-            return None
+            self.sta_if.active(False)
+            self.sta_if = None
+            return 0
         c = crypt()
         ssid     = c.get_decrypt_key(self.cred_fn, "SSID") 
         wifipw  = c.get_decrypt_key(self.cred_fn, "WIFIPW") 
