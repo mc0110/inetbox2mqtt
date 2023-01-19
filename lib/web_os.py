@@ -32,6 +32,7 @@ def init(w, n):
 
 
 def unquote(s):
+    s = s.replace("+"," ")
     if '%' not in s:
         return s
     s = s.split("%")
@@ -87,6 +88,7 @@ async def command_loop():
 async def index(r):
     global gh
     global repo_update
+    gc.collect()
     repo_update = False
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleRoot())
