@@ -44,7 +44,7 @@ if (w.run_mode() > 1):
     if (rel_new != rel_no):
         log.info("Update-Process starts ....")
         status = True    
-        cred.set_cred_json()
+#        cred.set_cred_json()
         for i, st in cred.update_repo():
             print(i, st)
             status = status and st
