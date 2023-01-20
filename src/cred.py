@@ -57,12 +57,12 @@ def update_repo():
 
     for i in range(len(env)):
         errno = 1
-        while errno and errno>1:
+        while errno and errno<3:
             try:
                 mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
                 errno = 0
             except:
-                errno = 2
+                errno += 1
             s = env[i][1]
             st = (errno == 0)
             yield (s, st)
