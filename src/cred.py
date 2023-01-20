@@ -37,7 +37,7 @@ def update_repo():
     env = [
         ["/src/", "vector.py", "/"],
         ["/src/", "spiritlevel.py", "/"],
-        ["/src/", "duo_control.py", "/"],
+        ["/src/", "duocontrol.py", "/"],
         ["/src/", "imu.py", "/"],
         ["/lib/", "gen_html.py", "/lib"],
         ["/lib/", "kalman.py", "/lib"],
