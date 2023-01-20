@@ -47,6 +47,7 @@ if (w.run_mode() > 1):
 #        cred.set_cred_json()
         for i, st in cred.update_repo():
             print(i, st)
+            time.sleep(2)    
             status = status and st
         # if status = False, then process wasn't successful    
         if not(status):
