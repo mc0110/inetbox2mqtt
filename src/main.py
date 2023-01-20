@@ -9,7 +9,7 @@ import time
 import connect
 import machine, os
 
-CRED = "/cred.py"
+CRED = "cred.py"
 log = logging.getLogger(__name__)
 appname = "inetbox2mqtt"
 rel_no = "2.0.0"

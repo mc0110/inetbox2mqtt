@@ -40,13 +40,8 @@ def update_repo():
         ["/lib/", "kalman.py", "/lib"],
         ["/lib/", "web_os.py", "/lib"],        
         ["/lib/", "web_os_main.py", "/lib"],
-        
-        ["/src/", "cred.py", "/"],
-        ["/src/", "boot.py", "/"],
-        ["/src/", "main.py", "/"],
-        
+           
         ["/src/", "tools.py", "/"],
-        ["/src/", "release.py", "/"],
         ["/src/", "conversions.py", "/"],
         ["/src/", "lin.py", "/"],
         ["/src/", "inetboxapp.py", "/"],
@@ -56,6 +51,7 @@ def update_repo():
         ["/src/", "spiritlevel.py", "/"],
         ["/src/", "imu.py", "/"],
         ["/src/", "vector3d.py", "/"],
+        ["/src/", "cred.py", "/"],
         ]
 
 
