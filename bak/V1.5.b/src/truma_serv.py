@@ -28,7 +28,7 @@ import uasyncio as asyncio
 # from crypto_keys import fn_crypto as crypt
 from tools import set_led
 from lin import Lin
-from duocontrol import duo_ctrl
+from duo_control import duo_ctrl
 from spiritlevel import spirit_level
 # import uos
 import time
