@@ -11,6 +11,7 @@ import machine, os
 
 CRED = "cred.py"
 log = logging.getLogger(__name__)
+
 appname = "inetbox2mqtt"
 rel_no = "2.0.0"
 
@@ -47,7 +48,7 @@ if (w.run_mode() > 1):
 #        cred.set_cred_json()
         for i, st in cred.update_repo():
             print(i, st)
-            time.sleep(2)    
+            time.sleep(3)
             status = status and st
         # if status = False, then process wasn't successful    
         if not(status):
