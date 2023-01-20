@@ -35,7 +35,7 @@ def update_repo():
     tree = "github:mc0110/inetbox2mqtt"
 
     env = [
-        ["/src/", "vector.py", "/"],
+        ["/src/", "vector3d.py", "/"],
         ["/src/", "spiritlevel.py", "/"],
         ["/src/", "duo_control.py", "/"],
         ["/src/", "imu.py", "/"],
@@ -59,11 +59,11 @@ def update_repo():
         errno = 1
         while errno and errno<3:
             try:
-                try:
-                    os.remove(env[i][2]+"/"+env[i][1])
-                    print(env[i][2]+"/"+env[i][1]+" deleted")
-                except:
-                    pass
+#                 try:
+#                     os.remove(env[i][2]+"/"+env[i][1])
+#                     print(env[i][2]+"/"+env[i][1]+" deleted")
+#                 except:
+#                     pass
                 mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
                 errno = 0
             except:
