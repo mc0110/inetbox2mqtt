@@ -326,11 +326,11 @@ class Connect():
         self.sta_if.active(sta)   # activate the interface
         time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
-            log.info("STA_WLAN switched off")
+            self.log.info("STA_WLAN switched off")
             self.sta_if = None
             return 0
         if not(self.creds()):
-            log.debug('No credentials found ...')    
+            self.log.debug('No credentials found ...')    
             self.sta_if.active(False)
             self.sta_if = None
             return 0
@@ -338,7 +338,7 @@ class Connect():
         ssid     = c.get_decrypt_key(self.cred_fn, "SSID") 
         wifipw  = c.get_decrypt_key(self.cred_fn, "WIFIPW") 
         self.hostname  = c.get_decrypt_key(self.cred_fn, "HOSTNAME")
-        log.debug('Connecting with credentials to network...')
+        self.log.debug('Connecting with credentials to network...')
         self.sta_if.active(False)
         time.sleep(2)
         err = 0
@@ -357,7 +357,7 @@ class Connect():
             time.sleep(1)
             self.set_led(2)
             if i>30:
-                log.debug("Connection couldn't be established - aborted")
+                self.log.debug("Connection couldn't be established - aborted")
                 self.sta_if.active(False)
                 self.sta_if = None
                 if self.run_mode() == 1:
@@ -375,7 +375,7 @@ class Connect():
         if err:
             self.set_ap(1)
             return 0    
-        log.info("STA connection connected successful")
+        self.log.info("STA connection connected successful")
         self.set_led(1)
         print(self.get_state())
         return 1
