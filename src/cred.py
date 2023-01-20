@@ -8,24 +8,24 @@
 # For the proper functioning of the connect-library, the keys "SSID", "WIFIPW", "HOSTNAME" should be included.
 # Any other keys can be added
 
-
-def set_cred_json():
-    import json
-    CRED_JSON = "cred.json"
-
-    j = {
-     "SSID": ["text", "SSID:", "1"],
-     "WIFIPW": ["password", "Wifi passcode:", "2"],
-     "MQTT": ["text", "Broker name/IP:", "3"],
-     "UN": ["text", "Broker User:", "4"],
-     "UPW": ["text", "Broker password:", "5"],
-     "HOSTNAME": ["text", "Hostname:", "6"],
-     "ADC": ["checkbox", "Addon DuoControl :", "7"],
-     "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
-#     "OSR": ["checkbox", "OS Web:", "9"],
-     }
-    with open(CRED_JSON, "w") as f: json.dump(j, f)
-
+# 
+# def set_cred_json():
+#     import json
+#     CRED_JSON = "cred.json"
+# 
+#     j = {
+#      "SSID": ["text", "SSID:", "1"],
+#      "WIFIPW": ["password", "Wifi passcode:", "2"],
+#      "MQTT": ["text", "Broker name/IP:", "3"],
+#      "UN": ["text", "Broker User:", "4"],
+#      "UPW": ["text", "Broker password:", "5"],
+#      "HOSTNAME": ["text", "Hostname:", "6"],
+#      "ADC": ["checkbox", "Addon DuoControl :", "7"],
+#      "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
+# #     "OSR": ["checkbox", "OS Web:", "9"],
+#      }
+#     with open(CRED_JSON, "w") as f: json.dump(j, f)
+# 
 
 def update_repo():
     import mip
@@ -35,16 +35,12 @@ def update_repo():
     tree = "github:mc0110/inetbox2mqtt"
 
     env = [
-        ["/lib/", "logging.py", "/lib"],
-        ["/lib/", "mqtt_async.py", "/lib"],       
-        ["/lib/", "nanoweb.py", "/lib"],
-        ["/lib/", "crypto_keys.py", "/lib"],
         ["/lib/", "connect.py", "/lib"],
         ["/lib/", "gen_html.py", "/lib"],
         ["/lib/", "kalman.py", "/lib"],
-        ["/lib/", "web_os.py", "/lib"],
+        ["/lib/", "web_os.py", "/lib"],        
+        ["/lib/", "web_os_main.py", "/lib"],
         
-        ["/src/", "web_os_run.py", "/"],
         ["/src/", "cred.py", "/"],
         ["/src/", "boot.py", "/"],
         ["/src/", "main.py", "/"],
@@ -54,7 +50,8 @@ def update_repo():
         ["/src/", "conversions.py", "/"],
         ["/src/", "lin.py", "/"],
         ["/src/", "inetboxapp.py", "/"],
-        ["/src/", "truma_serv.py", "/"],
+        ["/src/", "main.py", "/"],
+        ["/src/", "main1.py", "/"],
         ["/src/", "duo_control.py", "/"],
         ["/src/", "spiritlevel.py", "/"],
         ["/src/", "imu.py", "/"],

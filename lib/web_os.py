@@ -4,16 +4,30 @@
 #
 # This is part of the wifimanager package
 # 
-# 
+#
+import logging
+import os
 from machine import soft_reset, reset
 from gen_html import Gen_Html
 from nanoweb import HttpError, Nanoweb, send_file
 import uasyncio as asyncio
 import gc
 
-naw = Nanoweb(100)
 
-def init(w, n):
+log = logging.getLogger(__name__)
+naw = Nanoweb(100)
+# client = MQTTClient(config)
+test_mqtt = False
+
+
+
+
+def init(w, n, loglevel="info"):
+    if loglevel == "debug":
+        log.setLevel(logging.DEBUG)
+    else:    
+        log.setLevel(logging.INFO)
+    log.info("init")
     global gh
     global reboot
     global soft_reboot
@@ -26,18 +40,19 @@ def init(w, n):
     gh = Gen_Html(w)
     reboot = False
     soft_reboot = False
-    repo_update = False
-    repo_update_comment = ""
-    repo_success = False
-
+    global connect
+    connect = w
 
 def unquote(s):
     s = s.replace("+"," ")
     if '%' not in s:
         return s
     s = s.split("%")
+#    print(s)
     a = s[0].encode("utf-8")
     for i in s[1:]:
+#        print(bytearray.fromhex(i[:2]))
+#        print(i[2:],i[2:].encode("utf-8"))
         a = a + bytearray.fromhex(i[:2]) + i[2:].encode("utf-8")
     return a.decode("utf-8")    
 
@@ -48,39 +63,45 @@ async def command_loop():
     global repo_update
     global repo_update_comment
     global repo_success
+    global connect
+    global client
     while True:
+        await connect.loop_mqtt()
         await asyncio.sleep(3) # Update every 10sec
         if reboot:
-            await asyncio.sleep(10) # Update every 10sec
+            await asyncio.sleep(5) # Update every 10sec
+            log.info("Reset chip")
             reset()
         if soft_reboot:
-            await asyncio.sleep(10) # Update every 10sec
+            await asyncio.sleep(5) # Update every 10sec
+            log.info("Soft reset chip")
             soft_reset()
-        if repo_update:
-            await asyncio.sleep(10) # Update every 10sec
-            if not(repo_update): return
-            import cred
-            rel_new = cred.read_repo_rel()
-            repo_update_comment = " update to rel: " + rel_new
-            repo_success = True
-            if (rel_new != gh.wifi.rel_no):
-                repo_update_comment = " update to rel: " + rel_new
-                await asyncio.sleep(5) # sleep for 5s to send it to browser
-                # loop for update-process
-                for i, st in cred.update_repo():
-                    print(i, st)
-                    repo_success = repo_success and st
-                    if st:
-                        repo_update_comment = i + " loaded"
-                    else:
-                        repo_update_comment = i + " not successful"    
-                    await asyncio.sleep(5) # sleep for 500ms
-                # gh.refresh_connect_state()
-            else: # no update neccesary   
-                repo_update_comment = "repo up to date"
-                await asyncio.sleep(5) # sleep
-            repo_update = False
-        gh.wifi.set_led(2)
+            
+#         if repo_update:
+#             await asyncio.sleep(10) # Update every 10sec
+#             if not(repo_update): return
+#             import cred
+#             rel_new = cred.read_repo_rel()
+#             repo_update_comment = " update to rel: " + rel_new
+#             repo_success = True
+#             if (rel_new != gh.rel_no):
+#                 repo_update_comment = " update to rel: " + rel_new
+#                 await asyncio.sleep(5) # sleep for 5s to send it to browser
+#                 # loop for update-process
+#                 for i, st in cred.update_repo():
+#                     print(i, st)
+#                     repo_success = repo_success and st
+#                     if st:
+#                         repo_update_comment = i + " loaded"
+#                     else:
+#                         repo_update_comment = i + " not successful"    
+#                     await asyncio.sleep(5) # sleep for 500ms
+#                 # gh.refresh_connect_state()
+#             else: # no update neccesary   
+#                 repo_update_comment = "repo up to date"
+#                 await asyncio.sleep(5) # sleep
+#             repo_update = False
+        gh.connect.set_led(2)
         
 
 # Declare route directly with decorator
@@ -97,72 +118,61 @@ async def index(r):
 async def status(r):
     global gh
     global repo_update
-    # gh.refresh_connect_state()
+    gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleStatus("Device status", "/", "Back",("30","/")))
 
 @naw.route('/loop')    
 async def loop(r):
-    global repo_update_comment
-    global repo_update
-    global repo_success
-    
-    await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    if repo_update:
-        await r.write(gh.handleMessage("Update is running -> " + repo_update_comment, "/", "Back",("3","/loop")))
-    else:
-        if repo_success:        
-            await r.write(gh.handleMessage("Update finalized successful, pls reboot device now", "/", "Back",("5","/")))
-        else:    
-            await r.write(gh.handleMessage("Update finalized unsuccessful, pls repeat update", "/", "Back",("5","/")))
-        
-    
+    pass
+   
 @naw.route('/ta')    
 async def toggle_ap(r):
     global gh
-    if not(gh.wifi.set_sta()):
+    if not(gh.connect.set_mqtt()):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back",("2","/")))
     else:
-        gh.wifi.set_ap(not(gh.wifi.set_ap()))
+        gh.connect.set_ap(not(gh.connect.set_ap()))
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleRoot())
 
 @naw.route('/ts1')
-async def set_sta(r):
-    global gh
-    a = gh.wifi.set_sta(1)
+async def set_mqtt(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    if a:
-        await r.write(gh.handleMessage("STA-connection established successfull", "/", "Cancel",("5","/")))
+    global gh
+#     while test_mqtt:
+#    await asyncio.sleep(5)
+    if gh.connect.set_mqtt():
+        await r.write(gh.handleMessage("MQTT-connection established successfull", "/", "Cancel",("5","/")))
     else:
-        await r.write(gh.handleMessage("Couldn't establish a STA-connection", "/", "Cancel",("5","/")))
+        await r.write(gh.handleMessage("Try again to establish a MQTT-connection", "/", "Cancel",("5","/ts1")))
 
 @naw.route('/ts')
-async def toggle_sta(r):
+async def set_mqtt(r):
     global gh
-    if not(gh.wifi.set_ap()):
-        await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        await r.write(gh.handleMessage("You couldn't release both (AP, STA), then you loose the connection to the port", "/", "Back",("5","/")))
+    await r.write("HTTP/1.1 200 OK\r\n\r\n")
+    if not(gh.connect.creds()):
+        await r.write(gh.handleMessage("Sorry, you need credentials", "/", "Back",("5","/")))
     else:
-        await r.write("HTTP/1.1 200 OK\r\n\r\n")
-        if not(gh.wifi.set_sta()):
-            await r.write(gh.handleMessage("Try to establish a STA-connection", "/", "Cancel",("5","/ts1")))
+        if not(gh.connect.set_mqtt()):
+            gh.connect.set_mqtt(1)
+            await r.write(gh.handleMessage("Try to establish a MQTT-connection", "/", "Cancel",("5","/ts1")))
         else:    
-            gh.wifi.set_sta(0)
-            await r.write(gh.handleMessage("STA connection deactivated", "/", "Back",("5","/")))
+            gh.connect.set_mqtt(0)
+            await r.write(gh.handleMessage("Disconnect MQTT-connection", "/", "Cancel",("5","/")))
         
 @naw.route('/rm')
 async def toggle_run_mode(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    if not(gh.wifi.creds()):
+    if not(gh.connect.creds()):
         await r.write(gh.handleMessage("You couldn't switch run-mode without credentials", "/", "Back",("5","/")))
     else:
-        a = gh.wifi.run_mode()
-        if a < 2: a += 1
+        a = gh.connect.run_mode()
+        if a < 2: a = 1 - a
         else: a=0    
-        gh.wifi.run_mode(a)
+        gh.connect.run_mode(a)
         await r.write(gh.handleMessage("RUN mode changed", "/", "Back",("5","/")))
 
 @naw.route('/wc')
@@ -177,10 +187,10 @@ async def creds(r):
 async def scan_networks(r):
     global gh
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    if gh.wifi.set_sta():
+    if gh.connect.set_mqtt():
         await r.write(gh.handleScan_Networks())
     else:    
-        await r.write(gh.handleMessage("This needs STA-mode", "/wc", "Back",("5","/wc")))
+        await r.write(gh.handleMessage("This needs STA-mode", "/", "Back",("5","/")))
 
 @naw.route('/cp')
 async def cp(r):
@@ -194,7 +204,7 @@ async def cp(r):
             json[i] = "1"
         else:
             json[i] = unquote(r.args[i])
-    gh.wifi.store_creds(json)
+    gh.connect.store_creds(json)
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are written", "/", "Back",("5","/")))
 
@@ -202,8 +212,9 @@ async def cp(r):
 @naw.route('/dc')
 async def del_cred(r):
     global gh
-    gh.wifi.delete_creds()
-    print("Credentials moved to bak")
+    gh.connect.delete_creds()
+    gh.connect.run_mode(0)
+    log.debug("Credentials moved to bak")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are deleted", "/", "Back",("5","/wc")))
 
@@ -211,23 +222,23 @@ async def del_cred(r):
 @naw.route('/sc')
 async def swp_cred(r):
     global gh
-    gh.wifi.swap_creds()
-    print("Credentials swapped")
+    gh.connect.swap_creds()
+    log.debug("Credentials swapped")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are swapped", "/", "Back",("5","/wc")))
     
 @naw.route('/rc')
 async def res_cred(r):
     global gh
-    gh.wifi.restore_creds()
-    print("Credentials restored")
+    gh.connect.restore_creds()
+    log.debug("Credentials restored")
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Credentials are restored", "/", "Back",("5","/")))
     
 @naw.route('/ur')
 async def ur(r):
     global gh
-    if gh.wifi.set_sta():
+    if gh.connect.set_mqtt():
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleMessage("For repo-update press 'UPDATE'", "/ur1", "UPDATE",("5","/")))
     else:
@@ -237,11 +248,12 @@ async def ur(r):
 @naw.route('/ur1')
 async def ur1(r):
     global gh
-    global repo_update
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    print("Repo update starting ...")
-    repo_update = True
-    await r.write(gh.handleMessage("Repo update initiated", "/", "Back",("5","/loop")))
+    log.debug("Set update mode")
+    gh.connect.run_mode(2)
+    global reboot
+    reboot = True
+    await r.write(gh.handleMessage("Repo update initiated, port is rebooting ..", "/", "Back",("5","/")))
 
 @naw.route('/rb')
 async def s_reboot(r):
@@ -257,18 +269,21 @@ async def h_reboot(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device will be hard rebooted", "/", "Continue",("4","/")))
 
-@naw.route('/upload')
+@naw.route('/upload*')
 async def upload(r):
     global gh
     dir = r.url[7:]
-    if dir == "__":
-        dir = "/"
-    else:
-        dir = "/" + dir.strip("/") + "/"    
+    print("upload-section: "+dir)
+    if dir == "": dir = "/"
     if r.method == "POST":
+        if "__" in dir:
+            dir = "/"
+        else:
+            dir = "/" + dir.strip("/") + "/"    
         # obtain the filename and size from request headers
-        filename = r.headers['Content-Disposition'].split('filename=')[1].strip('"')
+        filename = unquote(r.headers['Content-Disposition'].split('filename=')[1].strip('"'))
         size = int(r.headers['Content-Length'])
+        print("dir: "+dir+"  fn: "+filename)
         # sanitize the filename
         # write the file to the files directory in 1K chunks
         with open(dir + filename, 'wb') as f:
@@ -277,9 +292,9 @@ async def upload(r):
                 f.write(chunk)
                 size -= len(chunk)
             f.close()        
-        print('Successfully saved file: ' + dir + filename)
+        log.info('Successfully saved file: ' + dir + filename)
         await r.write("HTTP/1.1 201 Upload \r\n" )
-        await send_file(r, gh.handleFiles(dir))
+#        await send_file(r, gh.handleFiles(dir))
     else:
         await r.write("HTTP/1.1 200 OK\r\n")
         await send_file(r, gh.handleFiles(dir))
@@ -287,11 +302,11 @@ async def upload(r):
 @naw.route('/fm*')
 async def fm(r):
     global gh
-    filename = r.param["fn"]
-    direct = r.param["dir"]
+    filename = unquote(r.param["fn"])
+    direct = unquote(r.param["dir"])
 
     if r.param["button"]=="Delete":
-        print("delete file: " + direct+filename)
+        log.info("delete file: " + direct+filename)
         try:
             os.remove(direct+filename)
         except OSError as e:
@@ -300,7 +315,7 @@ async def fm(r):
         await r.write("HTTP/1.1 200 OK\r\n")
         await send_file(r, rp)
     elif r.param["button"]=="Download":
-        print("download file: " + filename)
+        log.info("download file: " + filename)
         await r.write("HTTP/1.1 200 OK\r\n") 
         await r.write("Content-Type: application/octet-stream\r\n")
         await r.write("Content-Disposition: attachment; filename=%s\r\n\r\n" % filename)

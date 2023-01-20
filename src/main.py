@@ -3,34 +3,47 @@
 # Copyright (c) 2022  Dr. Magnus Christ (mc0110)
 #
 # This is part of the wifimanager package
-# 
+#
+import logging
 import time
 import connect
-import machine
+import machine, os
 
+CRED = "/cred.py"
+log = logging.getLogger(__name__)
 appname = "inetbox2mqtt"
-rel_no = "1.5.b"
+rel_no = "2.0.0"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
 time.sleep(3)
+log.setLevel(logging.DEBUG)
 
-w=connect.Wifi()
+w=connect.Connect()
 w.appname = appname
 w.rel_no = rel_no
-w.set_sta(1)
 
 # run-mode > 1 means OTA-repo-checks
 if (w.run_mode() > 1):
     # if run_mode > 1, then there should be credentials
     # rp2 needs sometimes more than 1 reboot for wifi-connection
-    if not(w.set_sta()): machine.reset()
+    if not(w.set_sta(1)):
+        machine.reset()
+    if not(CRED in os.listdir("/")):    
+        import mip
+        import time
+        try:
+            mip.install("github:mc0110/inetbox2mqtt/src/cred.py", target = "/")
+        except:
+            import machine
+            machine.reset()            
+    time.sleep(1)    
     import cred
     # download the release-no from repo
     rel_new = cred.read_repo_rel()
     if (rel_new != rel_no):
-        print("Update-Process starts ....")
-        status = True
+        log.info("Update-Process starts ....")
+        status = True    
         cred.set_cred_json()
         for i, st in cred.update_repo():
             print(i, st)
@@ -44,20 +57,22 @@ if (w.run_mode() > 1):
             w.run_mode(w.run_mode() - 2)
             machine.reset()
     else:
-        print("release is actual")
+        log.info("release is actual")
         w.run_mode(w.run_mode() - 2)
         machine.soft_reset()
 
 # normal mode (run mode == 1) or OS run mode (run_mode == 0) execution    
 else:
-    if w.creds() and w.set_sta() and (w.run_mode() == 1):
-        print("Normal mode activated - for chance to OS-mode type in terminal:")
+    if w.creds() and (w.run_mode() == 1):
+        log.info("Normal mode activated - for chance to OS-mode type in terminal:")
         print(">>>import os")
         print(">>>os.remove('run_mode.dat'")    
-        import truma_serv
-        truma_serv.run(w)
+        import main1
+        main1.run(w)
     else:
-        print("OS mode activated")
-        import web_os_run
-        web_os_run.run(w)
+        w.set_ap(1)
+        log.info("OS mode activated")
+        w.set_mqtt(1)
+        import web_os_main
+        web_os_main.run(w)
     
