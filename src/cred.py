@@ -28,14 +28,17 @@
 # 
 
 def update_repo():
-    import mip
+    import mip, os
     #sleep to give some boards time to initialize, for example Rpi Pico W
 
     # bootloader for the whole suite
     tree = "github:mc0110/inetbox2mqtt"
 
     env = [
-        ["/lib/", "connect.py", "/lib"],
+        ["/src/", "vector3d.py", "/"],
+        ["/src/", "spiritlevel.py", "/"],
+        ["/src/", "duo_control.py", "/"],
+        ["/src/", "imu.py", "/"],
         ["/lib/", "gen_html.py", "/lib"],
         ["/lib/", "kalman.py", "/lib"],
         ["/lib/", "web_os.py", "/lib"],        
@@ -47,10 +50,7 @@ def update_repo():
         ["/src/", "inetboxapp.py", "/"],
         ["/src/", "main.py", "/"],
         ["/src/", "main1.py", "/"],
-        ["/src/", "duo_control.py", "/"],
-        ["/src/", "spiritlevel.py", "/"],
-        ["/src/", "imu.py", "/"],
-        ["/src/", "vector3d.py", "/"],
+        ["/lib/", "connect.py", "/lib"],
         ["/src/", "cred.py", "/"],
         ]
 
@@ -59,6 +59,11 @@ def update_repo():
         errno = 1
         while errno and errno<3:
             try:
+                try:
+                    os.remove(env[i][2]+"/"+env[i][1])
+                    print(env[i][2]+"/"+env[i][1]+" deleted")
+                except:
+                    pass
                 mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
                 errno = 0
             except:
