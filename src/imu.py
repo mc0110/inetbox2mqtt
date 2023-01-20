@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 from utime import sleep_ms
 from machine import I2C
-from vector3d import Vector3d
+from vector import Vector3d
 
 
 class MPUException(OSError):
