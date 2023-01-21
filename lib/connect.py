@@ -417,6 +417,7 @@ class Connect():
                 err_no = 1
                 while err_no:
                     try:
+                        self.set_sta(1)
                         await self.client.connect()
                         err_no = 0
                     except:
