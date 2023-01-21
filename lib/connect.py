@@ -423,9 +423,10 @@ class Connect():
                         # connect throws an error
                         err_no += 1
                     if err_no > 5:
-                        mqtt_flg = False
-                        wifi_flg = False
-                        return 0
+                        if self.run_mode():
+                            if not(self.boot_count()):
+                                self.run_mode = 0
+                            reset()    
                 return (self.mqtt_flg and self.wifi_flg)                    
                     
 

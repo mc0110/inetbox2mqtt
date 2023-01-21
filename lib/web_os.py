@@ -60,11 +60,7 @@ def unquote(s):
 async def command_loop():
     global reboot
     global soft_reboot
-    global repo_update
-    global repo_update_comment
-    global repo_success
     global connect
-    global client
     while True:
         await connect.loop_mqtt()
         await asyncio.sleep(3) # Update every 10sec
