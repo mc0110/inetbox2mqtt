@@ -64,14 +64,14 @@ async def command_loop():
     while True:
         await connect.loop_mqtt()
         await asyncio.sleep(3) # Update every 10sec
-        if reboot:
-            await asyncio.sleep(5) # Update every 10sec
-            log.info("Reset chip")
-            reset()
         if soft_reboot:
             await asyncio.sleep(5) # Update every 10sec
             log.info("Soft reset chip")
             soft_reset()
+        if reboot:
+            await asyncio.sleep(5) # Update every 10sec
+            log.info("Reset chip")
+            reset()
             
 #         if repo_update:
 #             await asyncio.sleep(10) # Update every 10sec
@@ -258,12 +258,16 @@ async def s_reboot(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device will be soft rebooted", "/", "Continue",("4","/")))
 
+@naw.route('/rb2')
+async def h_reboot(r):
+    await r.write("HTTP/1.1 200 OK\r\n\r\n")
+    await r.write(gh.handleMessage("Device resetted", "/", "Continue",("4","/")))
+    reset()
+
 @naw.route('/rb1')
 async def h_reboot(r):
-    global reboot
-    reboot = True
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Device will be hard rebooted", "/", "Continue",("4","/")))
+    await r.write(gh.handleMessage("Device will be hard rebooted", "/rb2", "Continue",("4","/")))
 
 @naw.route('/upload*')
 async def upload(r):
