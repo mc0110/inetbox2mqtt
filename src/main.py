@@ -13,7 +13,7 @@ CRED = "cred.py"
 log = logging.getLogger(__name__)
 
 appname = "inetbox2mqtt"
-rel_no = "2.0.0"
+rel_no = "2.0.1"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
