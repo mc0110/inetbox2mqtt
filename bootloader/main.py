@@ -42,7 +42,7 @@ tree = "github:mc0110/inetbox2mqtt"
 env = [       
     ["/lib/", "crypto_keys.py", "/lib"],
     ["/lib/", "logging.py", "/lib"],
-    ["/lib/", "mqtt_async.py", "/ib"],
+    ["/lib/", "mqtt_async.py", "/lib"],
     ["/lib/", "nanoweb.py", "/lib"],
     ["/src/", "cred.py", "/"],
     ]
@@ -52,7 +52,7 @@ for i in range(len(env)):
 
 
 import cred
-cred.set_cred_json()
+#cred.set_cred_json()
 for i,j in cred.update_repo():
     print(i, j)
 
