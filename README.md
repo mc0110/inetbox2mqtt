@@ -113,7 +113,13 @@ The update process looks at this and if the numbers are different, then the soft
 ## Credentials
 After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
 
+![grafik](https://user-images.githubusercontent.com/10268240/213916467-3d2b8ada-f14a-4915-8666-d4bfb653aa87.png)
+
+
 After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
+
+![grafik](https://user-images.githubusercontent.com/10268240/213916483-5de8220b-5562-400e-91f1-5ffc76c1bb14.png)
+
 
 After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
 
