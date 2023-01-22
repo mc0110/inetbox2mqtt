@@ -15,10 +15,11 @@
 
 - **communicate over MQTT protocol to simulate a TRUMA INETBOX**
 - **input credentials over web-frontend**
-- **OTA-updating support with releasing (currently 1.5.9)**
+- **OTA-updating support with releasing (currently 2.0.x)**
 - **tested with both ports (ESP32 / RPi pico w 2040)**
 - **include optional Truma DuoControl over GPIO-connections**
 - **include optional MPU6050 Sensor for spiritlevel-feature**
+
 
 ## Acknowledgement
 The software is a derivative of the github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett. 
@@ -29,9 +30,12 @@ This project here was developed and tested for an ESP32 (first generation) with 
 ## Disclaimer
 I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box. 
 
-Please note that this simulation only works on a CPplus to which no Inetbox is connected. In particular, communication with a TRUMA INet X is not supported.
+Please ensure that your tests are carried out with a clean electrical setup, preferably already in the proof of concept phase in a stable housing, in order to prevent short circuits or bad connections. Since the LIN connection has a plug, it is advisable to also realise the power supply via a plug. Most problems during realisation can be traced back to defective components due to short circuits or missing ground connections
+
+Please note that this simulation only works on a CPplus to which **NO** Inetbox is connected. In particular, communication with a **TRUMA INet X** is not supported.
 
 The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
+
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
@@ -97,28 +101,33 @@ You must enter the commands from the console line by line in the REPL interface.
 
 
 ### Alternative 2: With esptool - only works with the ESP32
+The ESP32 with 4M memory does not have enough main storage in the standard micropython to have all the software in memory. For this reason, some of the modules have been precompiled and are already included in the firmware. Therefore, it is recommended to use the .bin file. Of course, all source files of the project are included, so that anyone can create the micropython firmware himself.
+
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
     esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15b_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
-After flashing, please reboot the ESP32. It will open an AP (see Credentials). I recommend triggering the OTA update once to get the latest version.
-
 ## Releasing
-There are two release numbers that must match, one in main.py and one in realese.py. 
-The update process looks at this and if the numbers are different, then the software is updated during the update.
+There are two release numbers that must match, one in main.py and one in realese.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
 
 
 ## Credentials
 After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
 
+<div align = center>
+
 ![grafik](https://user-images.githubusercontent.com/10268240/213916467-3d2b8ada-f14a-4915-8666-d4bfb653aa87.png)
+</div>
 
 
 After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
 
+<div align = center>
+
 ![grafik](https://user-images.githubusercontent.com/10268240/213916483-5de8220b-5562-400e-91f1-5ffc76c1bb14.png)
+</div>
 
 
 After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
@@ -151,7 +160,7 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/heating_mode| off, eco, high| fan state|
 | service/truma/control_status/operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
 | service/truma/control_status/error_code| 0-xx| TRUMA error codes|
-
+| service/truma/control_status/release| xx.xx.xx| Software-Release-No|
 
 
 If you want to set values, then you must use the corresponding set-topics. The list of set-topics and valid payloads can be found here.
