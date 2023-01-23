@@ -286,7 +286,7 @@ def run(w, loglevel="info"):
         if activate_spiritlevel:
             log.info("Activate spirit_level set to true, using I2C-1 on GPIO 3(scl), 2(sda)")
             # Initialize the i2c and spirit-level Object
-            i2c = I2C(0, sda=Pin(2), scl=Pin(3), freq=400000)
+            i2c = I2C(1, sda=Pin(2), scl=Pin(3), freq=400000)
             time.sleep(1.5)
             sl = spirit_level(i2c)
         else:
