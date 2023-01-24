@@ -136,13 +136,41 @@ For placing the files and creating the credentials on the port, it does not need
 
 If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with a 2 confirmation messages.
 
-Then you can establish the connection between the port and the LIN bus. This connection is not critical and can be disconnected at any time and then re-established. It should not be necessary to re-initialise the CPplus.
+## INIT - RESET process
+
+Now you can establish the connection between the port and the LIN bus. 
+
+The inetbox2mqtt must be registered once with the CPplus. This initialisation process is very important and without it the connection will not be established successfully. 
+
+Inetbox2mqtt must be in normal-run mode when you initialise the CPplus.
+
+*Let's have one further look at the INIT process:* 
+
+To do this you have to select and confirm the menu item RESET in the CPplus menu and then also confirm the PR SET that appears. The display then shows a flickering INIT...
+
+If the INIT process was successful, then in the INIT menu, next to the entries
+
+- TRUMA: Hx.00.nn
+- CPplus: Cy.0z.00
+
+another entry: T23.70.0
+
+This process has to be carried out once, after which the connection can be terminated at any time and then resumed as long as no further INIT (RESET at CPplus) takes place.
+
+***Very, very important:*** 
+
+If you have already connected an inetbox to the CPplus, it is essential to carry out the INIT once without the inetbox. After that, there should only be 2 entries:
+
+- TRUMA: Hx.00.nn
+- CPplus: Cy.0z.00
+
+be displayed. Then you can connect the inetbox2mqtt to perform another INIT.
 
 
-## MQTT topics - almost the same, but not exactly the same
+## MQTT topics
 
 The ***service/truma/control_status/#*** topics can be received. They include the current status of CPplus and TRUMA 
-If your heater is off and you start with a set-command or with an input at the CPplus there is a delay of 1-2min before you'll see the first values. This is a normal behavior.
+If your heater is off and you start with a set-command or with an input at the CPplus there is a delay of about 30sec before you'll see the first values. This is a normal behavior.
 
 
 | Status Topic | Payload | Function |
