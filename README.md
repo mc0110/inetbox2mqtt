@@ -146,25 +146,26 @@ Inetbox2mqtt must be in normal-run mode when you initialise the CPplus.
 
 *Let's have one further look at the INIT process:* 
 
-To do this you have to select and confirm the menu item RESET in the CPplus menu and then also confirm the PR SET that appears. The display then shows a flickering INIT...
-
-If the INIT process was successful, then in the INIT menu, next to the entries
+Without inetbox2mqtt you find 2 entries in the INIT menu:
 
 - TRUMA: Hx.00.nn
 - CPplus: Cy.0z.00
 
-another entry: T23.70.0
+### Start INIT process
+
+To do this you have to select and confirm the menu item RESET in the CPplus menu and then also confirm the PR SET that appears. The display then shows a flickering INIT...
+
+If the INIT process was successful, then a third entry appears in the INIT menu for the inetbox
+
+- TRUMA: Hx.00.nn
+- CPplus: Cy.0z.00
+- inetbox: T23.70.0
 
 This process has to be carried out once, after which the connection can be terminated at any time and then resumed as long as no further INIT (RESET at CPplus) takes place.
 
 ***Very, very important:*** 
 
-If you have already connected an inetbox to the CPplus, it is essential to carry out the INIT once without the inetbox. After that, there should only be 2 entries:
-
-- TRUMA: Hx.00.nn
-- CPplus: Cy.0z.00
-
-be displayed. Then you can connect the inetbox2mqtt to perform another INIT.
+If you have already connected an inetbox to the CPplus, it is essential to carry out the INIT once without the inetbox. After that, there should only 2 entries be displayed. Then you can connect the inetbox2mqtt to perform another INIT.
 
 
 ## MQTT topics
