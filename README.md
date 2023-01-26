@@ -13,16 +13,24 @@
 </div>
 <br>
 
-- **communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **input credentials over web-frontend**
-- **OTA-updating support with releasing (currently 2.0.x)**
-- **tested with both ports (ESP32 / RPi pico w 2040)**
-- **include optional Truma DuoControl over GPIO-connections**
-- **include optional MPU6050 Sensor for spiritlevel-feature**
+- **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
+- **Input credentials over web-frontend**
+- **Test mqtt-connectivity and lin-interface in web-frontend**
+- **OTA-updating support with releasing (currently 2.1.x)**
+- **Tested with both ports (ESP32 / RPi pico w 2040)**
+- **Include add-on: Optional Truma DuoControl over GPIO-connections**
+- **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
 
+## Motivation and background
+The possibilities opened up by controlling the RV heating via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
+It is very important to me to show here an ***out of the box*** solution that opens up these possibilities to everyone simply and easily - without special electrical and without programming knowledge. If you don't have the confidence to assemble the few components yourself, you can also ask me for ready-made modules.
+
+The current version opens up a very flexible debugging and also the possibility to write log-files to specify problems and solve them as quickly as possible.
+
+***If you like this software and even use it, then I deserve a beer. Thanks for that in advance ***
 
 ## Acknowledgement
-The software is a derivative of the github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett. 
+The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
 Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/muccc/WomoLIN), these cool projects have become possible.
 
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RPi pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RPI Pico W** for details. 
@@ -105,7 +113,7 @@ The ESP32 with 4M memory does not have enough main storage in the standard micro
 
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15b_4M.bin
+    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v210_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
@@ -113,8 +121,10 @@ This is not a partition but the full image for the ESP32 and only works with the
 There are two release numbers that must match, one in main.py and one in realese.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
 
 
-## Credentials
+## Web frontend
 After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
+
+We call this the **OS mode** -> i.e. an operating mode that is not the normal run mode but is necessary for tests and for entering the login data.
 
 <div align = center>
 
@@ -122,14 +132,24 @@ After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is o
 
 </div>
 
+You have access to the entire file system with up, download and delete functions via a simple file manager. 
 
-After entering the credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
+You can also test the connectivity to the MQTT broker.
+
+As of version 2.1.x, the LIN module - responsible for the TRUMA communication - is already fully executable in this mode. This is very helpful for debugging the electrical connection or for any adjustments.
+
+In this mode, the TRUMA status elements can be queried about the overall status (see button STATUS) and the set command for the water heater (ON / OFF) can be set via buttons.
+
+You can now also carry out the INIT process in this mode. Details are described below.
+
+### Credentials formular
 
 <div align = center>
 
 ![grafik](https://user-images.githubusercontent.com/10268240/213916483-5de8220b-5562-400e-91f1-5ffc76c1bb14.png)
 </div>
 
+After entering the login credentials, the boot mode can be switched from "OS-Run" to "normal-run". The button toggles between the two states.
 
 After rebooting in "normal-run" mode, inetbox2mqtt is ready for use.
 
