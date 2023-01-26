@@ -118,7 +118,8 @@ After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is o
 
 <div align = center>
 
-![grafik](https://user-images.githubusercontent.com/10268240/213916467-3d2b8ada-f14a-4915-8666-d4bfb653aa87.png)
+![grafik](https://user-images.githubusercontent.com/10268240/214956414-b75eac0a-83a4-40ee-a858-b499fe4f3b97.png)
+
 </div>
 
 
