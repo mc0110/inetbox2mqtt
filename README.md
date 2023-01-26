@@ -27,7 +27,7 @@ It is very important to me to show here an ***out of the box*** solution that op
 
 The current version opens up a very flexible debugging and also the possibility to write log-files to specify problems and solve them as quickly as possible.
 
-***If you like this software and even use it, then I deserve a beer. Thanks for that in advance***
+If you like this software and even use it, then I deserve a beer. Thanks for that in advance
 
 ## Acknowledgement
 The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
