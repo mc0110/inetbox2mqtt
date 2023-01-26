@@ -8,28 +8,17 @@ import logging
 import time
 import connect
 import machine, os
-from args import Args
 
-UPDATE = "update.py"
+CRED = "cred.py"
+log = logging.getLogger(__name__)
 
 appname = "inetbox2mqtt"
-rel_no = "2.0.1"
+rel_no = "2.0.2"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
 time.sleep(3)
-
-args = Args()
-
-file = args.get_key("file")
-if file != None:
-    f = open(file, "a")
-    logging.basicConfig(stream=f)
-    
-log = logging.getLogger(__name__)
-
-
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 w=connect.Connect()
 w.appname = appname
@@ -41,23 +30,23 @@ if (w.run_mode() > 1):
     # rp2 needs sometimes more than 1 reboot for wifi-connection
     if not(w.set_sta(1)):
         machine.reset()
-    if not(UPDATE in os.listdir("/")):    
+    if not(CRED in os.listdir("/")):    
         import mip
         import time
         try:
-            mip.install("github:mc0110/inetbox2mqtt/src/" + UPDATE, target = "/")
+            mip.install("github:mc0110/inetbox2mqtt/src/cred.py", target = "/")
         except:
             import machine
             machine.reset()            
     time.sleep(1)    
-    import update
+    import cred
     # download the release-no from repo
-    rel_new = update.read_repo_rel()
+    rel_new = cred.read_repo_rel()
     if (rel_new != rel_no):
         log.info("Update-Process starts ....")
         status = True    
 #        cred.set_cred_json()
-        for i, st in update.update_repo():
+        for i, st in cred.update_repo():
             print(i, st)
             status = status and st
         # if status = False, then process wasn't successful    
@@ -80,11 +69,11 @@ else:
         print(">>>import os")
         print(">>>os.remove('run_mode.dat'")    
         import main1
-        main1.run(w, args.check("lin=debug"), args.check("inet=debug"), args.check("mqtt=debug"), args.get_key("file")!=None)
+        main1.run(w)
     else:
         w.set_ap(1)
         log.info("OS mode activated")
         w.set_mqtt(1)
         import web_os_main
-        web_os_main.run(w, args.check("lin=debug"), args.check("inet=debug"), args.check("webos=debug"), args.check("naw=debug"), args.get_key("file")!=None)
+        web_os_main.run(w)
     

@@ -22,8 +22,8 @@ test_mqtt = False
 
 
 
-def init(w, l, n, debug=False, logfile=False):
-    if debug:
+def init(w, n, loglevel="info"):
+    if loglevel == "debug":
         log.setLevel(logging.DEBUG)
     else:    
         log.setLevel(logging.INFO)
@@ -35,13 +35,9 @@ def init(w, l, n, debug=False, logfile=False):
     global repo_success
     global repo_update_comment
     global naw
-    global file
-    global lin
-    file = logfile
-    lin = l
     naw = n
     gc.enable()
-    gh = Gen_Html(w, lin)
+    gh = Gen_Html(w)
     reboot = False
     soft_reboot = False
     global connect
@@ -65,10 +61,7 @@ async def command_loop():
     global reboot
     global soft_reboot
     global connect
-    global file
     while True:
-        if file: logging._stream.flush()
-#         logging._stream = open("test.log", "a")
         await connect.loop_mqtt()
         await asyncio.sleep(3) # Update every 10sec
         if soft_reboot:
@@ -115,8 +108,7 @@ async def index(r):
     gc.collect()
     repo_update = False
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await send_file(r, gh.handleRoot())
-#    await r.write(gh.handleRoot())
+    await r.write(gh.handleRoot())
     
 @naw.route('/s')
 async def status(r):
@@ -124,8 +116,7 @@ async def status(r):
     global repo_update
     gh.refresh_connect_state()
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await send_file(r, gh.handleStatus("Device status", "/", "Back",("30","/")))
-#    await r.write(gh.handleStatus("Device status", "/", "Back",("30","/")))
+    await r.write(gh.handleStatus("Device status", "/", "Back",("30","/")))
 
 @naw.route('/loop')    
 async def loop(r):
@@ -196,23 +187,6 @@ async def scan_networks(r):
         await r.write(gh.handleScan_Networks())
     else:    
         await r.write(gh.handleMessage("This needs STA-mode", "/", "Back",("5","/")))
-
-@naw.route('/heat_on')
-async def wheater_on(r):
-    global gh
-    global lin
-    lin.app.set_status("target_temp_water", "200")
-    await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Send Message: Water heater -> BOOST", "/", "Back",("5","/")))
-
-@naw.route('/heat_off')
-async def wheater_off(r):
-    global gh
-    global lin
-    lin.app.set_status("target_temp_water", "0")
-    await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Send Message: Water heater -> OFF", "/", "Back",("5","/")))
-
 
 @naw.route('/cp')
 async def cp(r):

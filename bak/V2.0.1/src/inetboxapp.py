@@ -1,12 +1,11 @@
 #
 #
-# version 2.1.0
+# version 0.8.2
 # slighty changes, hidden status display, typros
-# modify logging structure
+#
 
 from tools import calculate_checksum
 import conversions as cnv
-import logging
 
 
 class InetboxApp:
@@ -225,12 +224,10 @@ class InetboxApp:
     upload_buffer = False
 
     display_status = {}
-    log = logging.getLogger(__name__)
 
-    def __init__(self, debug):
+    def __init__(self, debug=False):
         # when requested, set logger to debug level
-        if debug:
-            self.log.setLevel(logging.DEBUG)
+        self.debug = debug
 
     def map_or_debug(self, mapping, value):
         if value in mapping:
@@ -246,7 +243,7 @@ class InetboxApp:
                 0x21: self.parse_status_1,
                 0x22: self.parse_status_2,
             }[pid](databytes)
-            self.log.debug(f"Found handled message {hex(pid)}> {format_bytes(databytes)}")            
+            self.debug: print(f"Found handled message {hex(pid)}> {format_bytes(databytes)}")            
             return True
         except KeyError:
             # ... or exit with false
@@ -317,10 +314,10 @@ class InetboxApp:
         self.display_status.update(data)
 
     def process_status_buffer_update(self, buf_id, status_buffer):
-        self.log.debug(f"Status ID[{buf_id}] data: {status_buffer}")
+        if self.debug: print(f"Status ID[{buf_id}] data: {status_buffer}")
 
         if not(buf_id in self.STATUS_BUFFER_TYPES.keys()):
-            self.log.debug("unkown buffer type - no processing")
+            if self.debug: print("unkown buffer type - no processing")
             return
         
         status_buffer_map = self.STATUS_BUFFER_TYPES[buf_id]
@@ -374,7 +371,7 @@ class InetboxApp:
 #         except KeyError:
 #             self.updates_to_send = False
 #             return None
-        self.log.debug(f"result of status-transfer: {binary_buffer_contents.hex(" ")}")
+        if self.debug: print(f"result of status-transfer: {binary_buffer_contents.hex(" ")}")
 
 # calculate checksum
         self.status["checksum"] = [calculate_checksum(
@@ -415,7 +412,7 @@ class InetboxApp:
         for q in s: 
          cs = calculate_checksum(q)
          q.append(cs)
-         self.log.debug(str(q.hex(" ")))
+         if self.debug: print(q.hex(" "))
         
         return s
     
@@ -448,7 +445,7 @@ class InetboxApp:
         if self.STATUS_CONVERSION_FUNCTIONS[key] is None:
             raise Exception(f"Conversion function not defined - this key {key} isn't writeable?")
 #        self.log.info(f"Setting {key} to {value}")
-        self.log.debug(f"set_status: {key}:{value}")
+        if self.debug: print(f"set_status: {key}:{value}")
         self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), True]
         self.upload_buffer = True
 

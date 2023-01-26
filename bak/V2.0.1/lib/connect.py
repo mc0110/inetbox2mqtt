@@ -43,11 +43,11 @@ class Connect():
     appname = "undefined"
 
         
-    def __init__(self, fn=None, debug_log=False):
+    def __init__(self, fn=None, loglevel="info"):
         self.log = logging.getLogger(__name__)
 #        self.c_coro = self.c_callback
 #        self.w_coro = self.w_state
-        if debug_log:
+        if loglevel == "debug":
             self.log.setLevel(logging.DEBUG)
         else:    
             self.log.setLevel(logging.INFO)
@@ -180,7 +180,7 @@ class Connect():
             else: 
                 return 0
         if set == 0:
-            self.log.info("Set RUN-Mode: 0 = OS-RUN")
+            self.log.info("Set RUN-Mode: OS-RUN")
             try:
                 os.remove(self.RUN_MODE)
             except:
@@ -309,11 +309,11 @@ class Connect():
         self.ap_if.active(sta)   # activate the interface
         time.sleep(1)
         if not(sta):
-            self.log.debug("AP_WLAN switched off")
+            self.log.info("AP_WLAN switched off")
             self.ap_if = None
             return 0
         else:
-            self.log.debug("AP enabled: " + str(self.ap_if.ifconfig()[0]))
+            self.log.info("AP enabled: " + str(self.ap_if.ifconfig()[0]))
         # print(self.get_state())
         return 1
 
@@ -326,7 +326,7 @@ class Connect():
         self.sta_if.active(sta)   # activate the interface
         time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
-            self.log.debug("STA_WLAN switched off")
+            self.log.info("STA_WLAN switched off")
             self.sta_if = None
             return 0
         if not(self.creds()):
@@ -375,9 +375,9 @@ class Connect():
         if err:
             self.set_ap(1)
             return 0    
-        self.log.debug("STA connection connected successful")
+        self.log.info("STA connection connected successful")
         self.set_led(1)
-        self.log.debug(self.get_state())
+        print(self.get_state())
         return 1
 
     def set_mqtt(self, sta=-1):
@@ -385,12 +385,12 @@ class Connect():
             return (self.mqtt_flg and self.wifi_flg)
         
         if sta == 1:
-            self.log.debug("Try to open wifi and mqtt connection")
+            self.log.info("Try to open wifi and mqtt connection")
             # Decrypt your encrypted credentials
             # c = crypt()
             if self.creds():
                 cred = self.read_json_creds()
-                self.log.info("Found Credentials")
+                self.log.info("Credentials found: " + str(cred))
                 self.config.server   = cred["MQTT"]
                 self.config.ssid     = cred["SSID"] 
                 self.config.wifi_pw  = cred["WIFIPW"] 

@@ -22,20 +22,22 @@
 # 0.8.6 added board-based autoconfig for I2C bus definition
 # 1.0.0 web-frontend implementation
 # 1.0.1 using mqtt-commands for reboot, ota, OS-run
-# 1.5.x chance browser behavior
-# 2.0.x chance connect and integrate mqtt-logic
 
-
+# from mqtt_async import MQTTClient, config
 import logging
 import uasyncio as asyncio
+# from crypto_keys import fn_crypto as crypt
 from tools import set_led
 from lin import Lin
 from duocontrol import duo_ctrl
 from spiritlevel import spirit_level
+# import uos
 import time
 from machine import UART, Pin, I2C, soft_reset
 
+
 log = logging.getLogger(__name__)
+debug_lin = False
 
 # define global objects - important for processing
 connect = None
@@ -172,7 +174,6 @@ async def set_ha_autoconfig(c):
 async def main():
     global repo_update
     global connect
-    global file
     log.info("main-loop is running")
     set_led("MQTT", False)
     connect.set_mqtt(1)
@@ -184,7 +185,6 @@ async def main():
     i = 0
     while True:
         await asyncio.sleep(10) # Update every 10sec
-        if file: logging._stream.flush()
         s =lin.app.get_all(True)
         for key in s.keys():
             log.debug(f'publish {key}:{s[key]}')
@@ -208,6 +208,8 @@ async def main():
                     await connect.client.publish(Pub_SL_Prefix+key, str(s[key]), qos=1)
                 except:
                     log.debug("Error in spirit_level status publishing")
+#Pub_SL_Prefix
+# loop-count / fired every min                
         i += 1
         if not(i % 6):
             i = 0
@@ -221,7 +223,7 @@ async def lin_loop():
     log.info("lin-loop is running")
     while True:
         lin.loop_serial()
-        if not(lin.stop_async): # full performance to send buffer
+        if not(lin.stop_async):
             await asyncio.sleep_ms(1)
 
 
@@ -242,28 +244,22 @@ async def sl_loop():
         await asyncio.sleep_ms(100)
 
 
-def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
+def run(w, loglevel="info"):
     global connect
     global lin
     global dc
     global sl
-    global file
     connect = w
     
-    file = logfile
-    cred = connect.read_json_creds()
-    activate_duoControl  = (cred["ADC"] == "1")
-    activate_spiritlevel = (cred["ASL"] == "1")
-        
-    if mqtt_debug:
+    if loglevel == "debug":
         log.setLevel(logging.DEBUG)
     else:    
         log.setLevel(logging.INFO)
-        
-    if lin_debug: log.info("LIN-LOG defined")
-    if inet_debug: log.info("INET-LOG defined")
-    if mqtt_debug: log.info("MQTT-LOG defined")
-    
+
+    cred = connect.read_json_creds()
+    activate_duoControl  = (cred["ADC"] == "1")
+    activate_spiritlevel = (cred["ASL"] == "1")
+
     # hw-specific configuration
     # if ("ESP32" in uos.uname().machine):
     if (connect.platform == "esp32"):
@@ -299,7 +295,7 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
         log.debug("No compatible Board found!")
         
     # Initialize the lin-object
-    lin = Lin(serial, lin_debug, inet_debug)
+    lin = Lin(serial, debug_lin)
     if activate_duoControl:
         # Initialize the duo-ctrl-object
         dc = duo_ctrl()

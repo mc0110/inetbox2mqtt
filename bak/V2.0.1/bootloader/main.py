@@ -44,16 +44,16 @@ env = [
     ["/lib/", "logging.py", "/lib"],
     ["/lib/", "mqtt_async.py", "/lib"],
     ["/lib/", "nanoweb.py", "/lib"],
-    ["/src/", "update.py", "/"],
+    ["/src/", "cred.py", "/"],
     ]
 
 for i in range(len(env)):
     mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
 
 
-import update
+import cred
 #cred.set_cred_json()
-for i,j in update.update_repo():
+for i,j in cred.update_repo():
     print(i, j)
 
 machine.reset()
