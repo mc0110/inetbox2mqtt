@@ -117,7 +117,7 @@ def callback(topic, msg, retained, qos):
             try:
                 lin.app.set_status(topic, msg)
             except Exception as e:
-                log.debug(exception(e))
+                log.debug(Exception(e))
                 # send via mqtt
         elif not(dc == None):
             if topic in dc.status.keys():
