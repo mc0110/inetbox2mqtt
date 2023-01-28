@@ -14,6 +14,7 @@
 <br>
 
 - **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
+- **The requirements are a CPplus with a version number > C3.xx.xx (see disclaimer-section)**
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing (currently 2.1.x)**
@@ -27,7 +28,7 @@ It is very important to me to show here an ***out of the box*** solution that op
 
 The current version opens up a very flexible debugging and also the possibility to write log-files to specify problems and solve them as quickly as possible.
 
-**If you like this software and even use it, then I deserve a beer. Thanks for that in advance**
+If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
 
 ## Acknowledgement
 The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
@@ -36,11 +37,14 @@ Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/m
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RPi pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RPI Pico W** for details. 
 
 ## Disclaimer
-I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight out of the box. 
+I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
-Please ensure that your tests are carried out with a clean electrical setup, preferably already in the proof of concept phase in a stable housing, in order to prevent short circuits or bad connections. Since the LIN connection has a plug, it is advisable to also realise the power supply via a plug. Most problems during realisation can be traced back to defective components due to short circuits or missing ground connections
+Please note that older versions of CPplus (< C4.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx).
+
+Please ensure that your tests are carried out with a clean electrical setup, preferably already in the *proof of concept* phase in a stable housing, in order to prevent short circuits or bad connections. Since the LIN connection has a plug, it is advisable to also realise the power supply via a plug. Most problems during realisation can be traced back to defective components due to short circuits or missing ground connections
 
 Please note that this simulation only works on a CPplus to which **NO** Inetbox is connected. In particular, communication with a **TRUMA INet X** is not supported.
+**TRUMA INet X** is the successor of CPplus and contains inetbox functionalities
 
 The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
 
