@@ -18,7 +18,7 @@
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing (currently 2.1.x)**
-- **Tested with both ports (ESP32 / RPi pico w 2040)**
+- **Tested with both ports (ESP32 / RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
 
@@ -34,10 +34,10 @@ If you like this software and even use it, then I deserve a beer. Thanks for tha
 The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
 Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/muccc/WomoLIN), these cool projects have become possible.
 
-This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RPi pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RPI Pico W** for details. 
+This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
 
 ## Disclaimer
-I have tested my solution for the ESP32 in about 10 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
+I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
 Please note that older versions of CPplus (< C4.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx).
 
@@ -46,7 +46,7 @@ Please ensure that your tests are carried out with a clean electrical setup, pre
 Please note that this simulation only works on a CPplus to which **NO** Inetbox is connected. In particular, communication with a **TRUMA INet X** is not supported.
 **TRUMA INet X** is the successor of CPplus and contains inetbox functionalities
 
-The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
+The LIN module for the ESP32/RP2 pico in the current version for the ESP32/RP2 pico w have proven to be very stable and CPplus-compatible. It's been going on for months now in various constellations.
 
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
@@ -54,7 +54,7 @@ The LIN module for the ESP32/RPi pico in the current version for the ESP32/RPI p
 ## Electrics
 There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
 
-The electrical connection via the TJA1020 to the UART of the ESP32/RPI pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
+The electrical connection via the TJA1020 to the UART of the ESP32/RP2 pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
 
 <div align = center>
 
@@ -72,7 +72,7 @@ On the **ESP32** we recommend the use of UART2 (**Tx - GPIO17, Rx - GPIO16**):
 
 </div>
 
-On the **RPI pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05**):
+On the **RP2 pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05**):
 
 <div align = center>
 
@@ -113,7 +113,7 @@ You must enter the commands from the console line by line in the REPL interface.
 
 
 ### Alternative 2: With esptool - only works with the ESP32
-The ESP32 with 4M memory does not have enough main storage in the standard micropython to have all the software in memory. For this reason, some of the modules have been precompiled and are already included in the firmware. Therefore, it is recommended to use the .bin file. Of course, all source files of the project are included, so that anyone can create the micropython firmware himself.
+The ESP32 with 4M memory does not have enough main storage in the standard micropython firmware to have all the software in memory. For this reason, some of the modules have been precompiled and are already included in the firmware. Therefore, it is recommended to use the .bin file. Of course, all source files of the project are included, so that anyone can create the micropython firmware himself.
 
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
@@ -126,7 +126,7 @@ There are two release numbers that must match, one in main.py and one in realese
 
 
 ## Web frontend
-After rebooting the port (ESP32, RPI pico w), an access point (ESP or PICO) is opened first. For the RPI pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
+After rebooting the port (ESP32, RP2 pico w), an access point (ESP or PICO) is opened first. For the RP2 pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
 
 We call this the **OS mode** -> i.e. an operating mode that is not the normal run mode but is necessary for tests and for entering the login data.
 
@@ -297,7 +297,7 @@ MPU6050 IMU (inertial measurement unit) can be connected to the I2C bus.
 Different pins are required here:
 
 For **ESP32** please use I2C bus with SDA (GPIO26) and SCL (GPIO25).
-For **RPI pico w** please use I2C bus 1 with SDA (GPIO02) and SCL (GPIO03).
+For **RP2 pico w** please use I2C bus 1 with SDA (GPIO02) and SCL (GPIO03).
 
 Every 500ms the acceleration and gyroscopic values are read and combined and filtered by a [Kalman-Filter](https://www.navlab.net/Publications/Introduction_to_Inertial_Navigation_and_Kalman_Filtering.pdf).
 For the moment the result (pitch and roll angle) is published via MQTT
@@ -320,8 +320,8 @@ The Home Assistant's own MQTT broker, which is available as an add-on, can also 
 
 
 
-## Running on a RPi pico W
-Micropython can be installed very easily on the RPI pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
+## Running on a RP2 pico W
+Micropython can be installed very easily on the RP2 pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
 Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
 nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
