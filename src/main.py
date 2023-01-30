@@ -41,14 +41,13 @@ if (w.run_mode() > 1):
     # rp2 needs sometimes more than 1 reboot for wifi-connection
     if not(w.set_sta(1)):
         machine.reset()
-    if not(UPDATE in os.listdir("/")):    
-        import mip
-        import time
-        try:
-            mip.install("github:mc0110/inetbox2mqtt/src/" + UPDATE, target = "/")
-        except:
-            import machine
-            machine.reset()            
+    import mip
+    import time
+    try:
+        mip.install("github:mc0110/inetbox2mqtt/src/" + UPDATE, target = "/")
+    except:
+        import machine
+        machine.reset()            
     time.sleep(1)    
     import update
     # download the release-no from repo
