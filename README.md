@@ -91,7 +91,13 @@ However, the software did not run with the latest stable kernel from July (among
 
 
 ### Alternative 1: OTA-Installation with mip
-If you just want to get the inetbox2mqtt running, this is the way to go, and it works for both ports. This is also the fastest way, because the entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
+If you just want to get the inetbox2mqtt running on the RP2 pico w, this is the way to go. 
+
+If you have ESP32 with larger memory, you can try this way as well. Since I haven't tested this myself, feel free to give me feedback. 
+
+For the simple 4M types of the ESP32-S this way does not work anymore. Here I ask you to use alternative 2.
+
+The entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
 
@@ -113,7 +119,7 @@ You must enter the commands from the console line by line in the REPL interface.
 
 
 ### Alternative 2: With esptool - only works with the ESP32
-The ESP32 with 4M memory does not have enough main storage in the standard micropython firmware to have all the software in memory. For this reason, some of the modules have been precompiled and are already included in the firmware. Therefore, it is recommended to use the .bin file. Of course, all source files of the project are included, so that anyone can create the micropython firmware himself.
+The ESP32 with 4M memory does not have enough main storage in the standard micropython firmware to have all the software in memory. For this reason, some of the python modules have been precompiled and are already included in the firmware. Therefore, it is recommended to use the .bin file. Of course, all source files of the project are included, so that anyone can create the micropython firmware himself.
 
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
