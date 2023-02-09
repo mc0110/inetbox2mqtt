@@ -24,6 +24,8 @@ The control / adjustments of hot water and room temperature can also be made via
 Furthermore, the operating modes of the TRUMA (gas, mixed, electric) can be preselected. In addition to the PRESETS, the heating can also be controlled very easily via automations using the climate.set_temperature service.
 In the lower part you can observe the status of the CPplus. 
 
+## Celsius vs. Fahrenheit
+This example works only if CPplus and Home Assistant are set to Celsius. Initial tests with systems set to Fahrenheit show problems. If someone could send their approaches to solving this, that would be great.
 
 
 ## Here is an example of a simple GAUGE implementation of the MPU6050 Leveling Wizard - also in Home Assistant
