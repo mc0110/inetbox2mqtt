@@ -36,6 +36,8 @@ Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/m
 
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
 
+For all those who are looking for an ESPHome version, I would like to refer to the great work of Fabian [esphome-truma_inetbox](https://github.com/Fabian-Schmidt/esphome-truma_inetbox), who has managed the realisation in this framework. Here, the MQTT protocol is no longer necessary, but it works via the HA-internal protocol.
+
 ## Disclaimer
 I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
