@@ -64,7 +64,7 @@ The electrical connection via the TJA1020 to the UART of the ESP32/RP2 pico is m
 
 </div>
 
-For examples of connection errors, please refer to [Connection Errors](https://github.com/mc0110/inetbox2mqtt/issues/20). Please refer also for more details of the project [INETBOX](https://github.com/danielfett/inetbox.py) mentioned above. 
+Examples for the implementation of the concrete connection can be found under [Connection](https://github.com/mc0110/inetbox2mqtt/issues/20).
 
 On the **ESP32** we recommend the use of UART2 (**Tx - GPIO17, Rx - GPIO16**):
 

@@ -1,7 +1,13 @@
 # Example of a front-end realisation
 
+First of all, I would like to ask you to send me **examples of your smarthome systems** so that we can publish them. It would be great if we could also show examples of e.g. openhab or node-red implementations here also. But alternatives to realisation in Home Assistant are of course also welcome.
+
+
 ## TRUMA heater - example for a frontend in Home Assistant
-An example of fully control from a smart home solution as example of bidirectional operation from Home Assistant. 
+
+Since I use a Home Assistant system myself, you can currently only find the implementation of the mqtt-protocol-transfer in HA. 
+
+The given truma.yaml is a package in the HA logic, so please note the explanations about [packages](https://www.home-assistant.io/docs/configuration/packages/) in the HA documentation.An example of fully control from a smart home solution as example of bidirectional operation from Home Assistant. 
 
 Bidirectional means that the values can be set both in the CPplus display and in the home assistant frontend and are passed through in each case. 
 
@@ -9,9 +15,7 @@ Bidirectional means that the values can be set both in the CPplus display and in
 
 ![grafik](https://user-images.githubusercontent.com/10268240/206495832-0511af4f-29f3-4eaf-b196-728ea1779255.png)
 
-
 You find the lovelance-card also as file in this directory. 
-You need the corresponding truma.yaml file in the configuration.yaml or in a separate file for full functionality. 
 
 About the function of the card: 
 
