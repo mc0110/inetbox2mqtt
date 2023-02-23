@@ -31,8 +31,11 @@ In the lower part you can observe the status of the CPplus.
 ## Celsius vs. Fahrenheit
 This example works only if CPplus and Home Assistant are set to Celsius. Initial tests with systems set to Fahrenheit show problems. If someone could send their approaches to solving this, that would be great.
 
+## ESPHOME version
+For all those who are looking for an ESPHome version, I would like to refer to the great work of Fabian [esphome-truma_inetbox](https://github.com/Fabian-Schmidt/esphome-truma_inetbox), who has managed the realisation in this framework. Here, the MQTT protocol is no longer necessary, but it works via the HA-internal protocol.
 
-## Here is an example of a simple GAUGE implementation of the MPU6050 Leveling Wizard - also in Home Assistant
+
+## Example of a simple GAUGE implementation of the MPU6050 Leveling Wizard - also in Home Assistant
 
 ![grafik](https://user-images.githubusercontent.com/10268240/202903478-bbf7741f-cc21-48a2-918b-e94c15f7c373.png)
 

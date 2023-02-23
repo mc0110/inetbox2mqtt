@@ -36,8 +36,6 @@ Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/m
 
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
 
-For all those who are looking for an ESPHome version, I would like to refer to the great work of Fabian [esphome-truma_inetbox](https://github.com/Fabian-Schmidt/esphome-truma_inetbox), who has managed the realisation in this framework. Here, the MQTT protocol is no longer necessary, but it works via the HA-internal protocol.
-
 ## Disclaimer
 I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
@@ -177,7 +175,7 @@ If everything is correctly set up and the port is rebooted, it should connect to
 
 ## INIT - RESET process
 
-Now you can establish the connection between the port and the LIN bus -> [example given](https://videopress.com/v/xsPXCWr3). 
+Now you can establish the connection between the port and the LIN bus. 
 
 The inetbox2mqtt must be registered once with the CPplus. This initialisation process is very important and without it the connection will not be established successfully. 
 
@@ -192,7 +190,7 @@ Without inetbox2mqtt you find 2 entries in the INIT menu:
 
 ### Start INIT process
 
-To do this you have to select and confirm the menu item RESET in the CPplus menu and then also confirm the PR SET that appears. The display then shows a flickering INIT...
+To do this you have to select and confirm the menu item RESET in the CPplus menu and then also confirm the PR SET that appears. The display then shows a flickering INIT... -> [example given](https://videopress.com/v/xsPXCWr3).
 
 If the INIT process was successful, then a third entry appears in the INIT menu for the inetbox
 
