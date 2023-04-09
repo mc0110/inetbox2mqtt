@@ -128,7 +128,7 @@ The .bin file contains both the python and the .py files. This allows the whole 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
 ## Releasing and updating
-There are two release numbers that must match, one in main.py and one in realese.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
+There are two release numbers that must match, one in main.py and one in release.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
 
 We are very keen to support the application in the best possible way. Most of the changes were necessary to enable the realisation of a web frontend and the initial installation, the entry of the login data for Wifi connection and mqtt-broker and to test this connection and, from version 2.1.x, also to be able to test the LIN connection to CPplus. It is recommended as best practice to reinstall the application in the process if updating is also possible.
 
