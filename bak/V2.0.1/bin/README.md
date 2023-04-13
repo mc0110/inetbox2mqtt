@@ -2,12 +2,13 @@
 
 The flash_esp32_xxxx.bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-There are currently two versions here. Version 2.0.1 has been completely revised and also allows the user to test the MQTT connection in the browser. Since there is currently no feedback from users, the stable version 1.5.b, which has proven itself in practice, can also be found here.
+There are currently two versions here. 
+The newest version is v2.1.0 but version 2.0.1 has been completely revised and is stable.
 
 
       esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v201_4M.bin
 
-      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v15b_4M.bin
+      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v210_4M.bin
 
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
