@@ -8,8 +8,7 @@ The newest version is v2.1.0 but version 2.0.1 has been completely revised and i
 
       esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v201_4M.bin
 
-      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v210_4M.bin
-
+ 
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
