@@ -104,6 +104,64 @@ def string_to_heating_mode(string):
     else:
         raise ValueError(f"Invalid heating mode: {string}")
 
+def aircon_vent_mode_to_string(aircon_vent_mode):
+    if aircon_vent_mode == 113:
+        return "low"
+    elif aircon_vent_mode == 114:
+        return "mid"
+    elif aircon_vent_mode == 115:
+        return "high"
+    elif aircon_vent_mode == 116:
+        return "night"
+    elif aircon_vent_mode == 119:
+        return "auto"
+    else:
+        return f"UNKNOWN ({aircon_vent_mode})"
+    
+# inverse of the above
+def string_to_aircon_vent_mode(string):
+    if string == "low":
+        return 113
+    elif string == "mid":
+        return 114
+    elif string == "high":
+        return 115
+    elif string == "night":
+        return 116
+    elif string == "auto":
+        return 119
+    else:
+        raise ValueError(f"Invalid heating mode: {string}")
+
+def aircon_operating_mode_to_string(aircon_operating_mode):
+    if aircon_operating_mode == 0:
+        return "off"
+    elif aircon_operating_mode == 4:
+        return "vent"
+    elif aircon_operating_mode == 5:
+        return "cool"
+    elif aircon_operating_mode == 6:
+        return "hot"
+    elif aircon_operating_mode == 7:
+        return "auto"
+    else:
+        return f"UNKNOWN ({aircon_operating_mode})"
+    
+# inverse of the above
+def string_to_aircon_operating_mode(string):
+    if string == "off":
+        return 0
+    elif string == "vent":
+        return 4
+    elif string == "cool":
+        return 5
+    elif string == "hot":
+        return 6
+    elif string == "auto":
+        return 7
+    else:
+        raise ValueError(f"Invalid aircon operating mode: {string}")
+
 def clock_to_string(clock):
     m = int(clock / 256)
     h = int(clock - (m * 256))
