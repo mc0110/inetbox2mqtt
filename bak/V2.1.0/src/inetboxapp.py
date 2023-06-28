@@ -1,11 +1,12 @@
 #
 #
-# version 0.8.2
+# version 2.1.0
 # slighty changes, hidden status display, typros
-#
+# modify logging structure
 
 from tools import calculate_checksum
 import conversions as cnv
+import logging
 
 
 class InetboxApp:
@@ -38,6 +39,20 @@ class InetboxApp:
         0x8: "fan 8",
         0x9: "fan 9",
         0xA: "fan 10",
+    }
+    AIRCON_VENT_MODE_MAPPING = {
+        0x71: "low",
+        0x72: "mid",
+        0x73: "high",
+        0x74: "night",
+        0x77: "auto"
+    }
+    AIRCON_OPERATING_STATUS = {
+        0x0: "off",
+        0x4: "vent",
+        0x5: "cool",
+        0x6: "hot",
+        0x7: "auto"
     }
     VENT_OR_OPERATING_STATUS = {
         0x01: "off",
@@ -79,6 +94,7 @@ class InetboxApp:
     STATUS_BUFFER_HEADER_TIMER = bytes([0x18, 0x3D])
     STATUS_BUFFER_HEADER_02 = bytes([0x02, 0x0D])
     STATUS_BUFFER_HEADER_03 = bytes([0x0A, 0x15])
+    STATUS_BUFFER_HEADER_04 = bytes([0x12, 0x35]) #Aventa Aircon Status
     
     STATUS_BUFFER_HEADER_WRITE_STATUS = bytes([0x0C, 0x32])
 
@@ -163,6 +179,21 @@ class InetboxApp:
                     3: ["clock", 2, True],
                     4: ["display", 22, False]
         },
+        STATUS_BUFFER_HEADER_04: {
+            # mapping-table: key, subject, byte-len, storage
+                    1: ["dummy", 1, False],
+                    2: ["checksum", 1, False],
+                    3: ["aircon_operating_mode", 1, True],
+                    4: ["dummy", 1, False],
+                    5: ["aircon_vent_mode", 1, True],
+                    6: ["dummy", 1, False],
+                    7: ["target_temp_aircon", 2, True],
+                    8: ["unknown2", 2, False],
+                    9: ["unknown3", 2, False],
+                    10: ["unknown4", 2, False],
+                    11: ["unknown5", 2, False],
+                    12: ["unknown6", 2, False]
+        },
     }
 
     STATUS_CONVERSION_FUNCTIONS = {  # pair for reading from buffer and writing to buffer, None if writing not allowed
@@ -172,6 +203,18 @@ class InetboxApp:
         "target_temp_room": (
             cnv.temp_code_to_string,
             cnv.string_to_temp_code,
+        ),
+        "target_temp_aircon": (
+            cnv.temp_code_to_string,
+            cnv.string_to_temp_code,
+        ),
+        "aircon_operating_mode": (
+            cnv.aircon_operating_mode_to_string,
+            cnv.string_to_aircon_operating_mode,
+        ),
+        "aircon_vent_mode": (
+            cnv.aircon_vent_mode_to_string,
+            cnv.string_to_aircon_vent_mode,
         ),
         "heating_mode": (
             cnv.heating_mode_to_string,
@@ -224,10 +267,12 @@ class InetboxApp:
     upload_buffer = False
 
     display_status = {}
+    log = logging.getLogger(__name__)
 
-    def __init__(self, debug=False):
+    def __init__(self, debug):
         # when requested, set logger to debug level
-        self.debug = debug
+        if debug:
+            self.log.setLevel(logging.DEBUG)
 
     def map_or_debug(self, mapping, value):
         if value in mapping:
@@ -243,7 +288,7 @@ class InetboxApp:
                 0x21: self.parse_status_1,
                 0x22: self.parse_status_2,
             }[pid](databytes)
-            self.debug: print(f"Found handled message {hex(pid)}> {format_bytes(databytes)}")            
+            self.log.debug(f"Found handled message {hex(pid)}> {format_bytes(databytes)}")            
             return True
         except KeyError:
             # ... or exit with false
@@ -314,10 +359,10 @@ class InetboxApp:
         self.display_status.update(data)
 
     def process_status_buffer_update(self, buf_id, status_buffer):
-        if self.debug: print(f"Status ID[{buf_id}] data: {status_buffer}")
+        self.log.debug(f"Status ID[{buf_id}] data: {status_buffer}")
 
         if not(buf_id in self.STATUS_BUFFER_TYPES.keys()):
-            if self.debug: print("unkown buffer type - no processing")
+            self.log.debug("unkown buffer type - no processing")
             return
         
         status_buffer_map = self.STATUS_BUFFER_TYPES[buf_id]
@@ -371,7 +416,7 @@ class InetboxApp:
 #         except KeyError:
 #             self.updates_to_send = False
 #             return None
-        if self.debug: print(f"result of status-transfer: {binary_buffer_contents.hex(" ")}")
+        self.log.debug(f"result of status-transfer: {binary_buffer_contents.hex(" ")}")
 
 # calculate checksum
         self.status["checksum"] = [calculate_checksum(
@@ -412,7 +457,7 @@ class InetboxApp:
         for q in s: 
          cs = calculate_checksum(q)
          q.append(cs)
-         if self.debug: print(q.hex(" "))
+         self.log.debug(str(q.hex(" ")))
         
         return s
     
@@ -445,7 +490,7 @@ class InetboxApp:
         if self.STATUS_CONVERSION_FUNCTIONS[key] is None:
             raise Exception(f"Conversion function not defined - this key {key} isn't writeable?")
 #        self.log.info(f"Setting {key} to {value}")
-        if self.debug: print(f"set_status: {key}:{value}")
+        self.log.debug(f"set_status: {key}:{value}")
         self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), True]
         self.upload_buffer = True
 

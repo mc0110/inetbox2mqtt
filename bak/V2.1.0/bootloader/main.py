@@ -42,18 +42,18 @@ tree = "github:mc0110/inetbox2mqtt"
 env = [       
     ["/lib/", "crypto_keys.py", "/lib"],
     ["/lib/", "logging.py", "/lib"],
-    ["/lib/", "mqtt_async.py", "/ib"],
+    ["/lib/", "mqtt_async.py", "/lib"],
     ["/lib/", "nanoweb.py", "/lib"],
-    ["/src/", "cred.py", "/"],
+    ["/src/", "update.py", "/"],
     ]
 
 for i in range(len(env)):
     mip.install(tree+env[i][0]+env[i][1], target= env[i][2])
 
 
-import cred
-cred.set_cred_json()
-for i,j in cred.update_repo():
+import update
+#cred.set_cred_json()
+for i,j in update.update_repo():
     print(i, j)
 
 machine.reset()

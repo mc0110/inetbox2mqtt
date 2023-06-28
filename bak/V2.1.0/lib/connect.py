@@ -16,21 +16,26 @@
 #     Reading / writing encrypted credentials from / to file
 
 
-
-import network, os, sys, time, json, tools
+import logging
+import network, os, sys, time, json
 from crypto_keys import fn_crypto as crypt
-from machine import reset, soft_reset
+from machine import reset, soft_reset, Pin
+from mqtt_async import MQTTClient, config
+import uasyncio as asyncio
 
 
-class Wifi():
-    
+class Connect():
+  
     CRED_FN = "credentials.dat"
     CRED_JSON = "cred.json"
     BOOT_CNT = "boot.dat"
     RUN_MODE = "run_mode.dat"
+    client = None
+    
     ap_if = None
     sta_if = None
     cred_fn = None
+    config = None
     hostname = ""
     scanliste = []
     platform = ""
@@ -38,67 +43,144 @@ class Wifi():
     appname = "undefined"
 
         
-    def __init__(self, fn=None):
+    def __init__(self, fn=None, debug_log=False):
+        self.log = logging.getLogger(__name__)
+#        self.c_coro = self.c_callback
+#        self.w_coro = self.w_state
+        if debug_log:
+            self.log.setLevel(logging.DEBUG)
+        else:    
+            self.log.setLevel(logging.INFO)
+        self.client = None
+        self.wifi_flg = False
+        self.mqtt_flg = False
         self.connect_log = ""
         if fn != None:
             self.cred_fn = fn
         else:    
             self.cred_fn = self.CRED_FN
-
-        #if not(self.CRED_JSON in os.listdir("/")):
-        import cred
-        cred.set_cred_json()
+            
+        if not(self.CRED_JSON in os.listdir("/")):
+            self.gen_cred_json()
 
         self.platform = str(sys.platform)
         self.python = '{} {} {}'.format(sys.implementation.name,'.'.join(str(s) for s in sys.implementation.version), sys.implementation._mpy)
         
-        print("Detected " + self.python + " on port: " + self.platform)
-        tools.set_led("D8",0)
-        tools.set_led("MQTT",0)        
+        self.log.info("Detected " + self.python + " on port: " + self.platform)
+        
+        self.config = config
+        self.set_proc()
+        
+        self.config.subs_cb = self.c_subscripted
+        self.config.connect_coro = self.c_connected
+        self.config.wifi_coro = self.w_state
+          
+        self.t_set_led("D8",0)
+        self.t_set_led("MQTT",0)        
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')
-            
+
+    async def c_subscripted(self, topic, msg, retained, qos):
+        self.log.debug("Received topic:" + str(topic) + " > payload: " + str(msg) + "qos: " + str(qos))
+        if self.subscripted != None: await self.subscripted(topic, msg, retained, qos)
+
+    # Initialze the connect-funct
+    # define subscriptions
+    async def c_connected(self, client):
+        self.log.info("MQTT connected")
+        self.mqtt_flg = True
+        if self.connected != None:
+            await self.connected(client)        
+
+    # Wifi and MQTT status
+    async def w_state(self, stat):
+        if stat:
+            self.sta_if = network.WLAN(network.STA_IF)
+            self.log.info("Wifi connected: " + str(self.sta_if.ifconfig()[0]))
+            self.wifi_flg = True
+            if self.wifi_state != None: await self.wifi_state(stat) 
+        else:
+            self.log.info("Wifi connection lost")
+            self.sta_if = None
+            self.t_set_led("MQTT", False)
+            self.wifi_flg = False
+            self.mqtt_flg = False
+            if self.wifi_state != None: await self.wifi_state(stat) 
+
+    def set_proc(self, wifi = None, connect = None, subscript = None):
+        self.wifi_state = wifi
+        self.connected = connect
+        self.subscripted = subscript
+        
+    def gen_cred_json(self):
+
+        j = {
+         "SSID": ["text", "SSID:", "1"],
+         "WIFIPW": ["password", "Wifi passcode:", "2"],
+         "MQTT": ["text", "Broker name/IP:", "3"],
+         "UN": ["text", "Broker User:", "4"],
+         "UPW": ["text", "Broker password:", "5"],
+         "HOSTNAME": ["text", "Hostname:", "6"],
+         "ADC": ["checkbox", "Addon DuoControl :", "7"],
+         "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
+    #     "OSR": ["checkbox", "OS Web:", "9"],
+         }
+        with open(self.CRED_JSON, "w") as f: json.dump(j, f)
+
+    PIN_MAP = {
+       "MQTT": 14,
+       "D8"  : 12
+        }
+
+
+    # D8 is misleading, because the raw-PID is 0xD8, but the correct PID is "0x18"
+    def t_set_led(self, s, b):
+        p = Pin(self.PIN_MAP[s], Pin.OUT)
+        if b: p.value(0)
+        else: p.value(1)
+        
+    def t_toggle_led(self, s):
+        p = Pin(self.PIN_MAP[s], Pin.OUT)
+        p.value(not(p.value()))
+
+
     def set_led(self, s=0):
         if s == 1:
-            tools.set_led("MQTT", 1)
+            self.t_set_led("MQTT", 1)
             return
         if s == 2:
-            tools.toggle_led("MQTT")
+            self.t_toggle_led("MQTT")
         else:
-            tools.set_led("MQTT", 0)
+            self.t_set_led("MQTT", 0)
         
     def read_cred_json(self):
         with open(self.CRED_JSON, "r") as f: j=json.load(f)
         return j
     
-    def write_cred_json(self, j):
-        with open(self.CRED_JSON, "w") as f: json.dump(j, f)
-        return
 
     def set_appname(self, an):
         self.appname = an
 
-    def connect(self):
-        if (self.ap_if == None): self.set_ap(1)
-        if (self.creds()) and (self.sta_if == None): self.set_sta(1)
 
     # run-modes (0: OS-run, 1: normal-run 2,3: ota-upload)
     def run_mode(self, set=-1):
         if set == -1:
             if (self.RUN_MODE in os.listdir("/")):
                 with open(self.RUN_MODE, "r") as f: a = f.read()
-                print("RUN-Mode ", a)
+                self.log.debug("RUN-Mode ", a)
                 return int(str(a))
             else: return 0
         if set > 0:
             if self.creds():
                 with open(self.RUN_MODE, "w") as f: f.write(str(set))
                 self.boot_count(10)
+                self.log.info("Set RUN-Mode: " + str(set))
                 return set
             else: 
                 return 0
         if set == 0:
+            self.log.info("Set RUN-Mode: 0 = OS-RUN")
             try:
                 os.remove(self.RUN_MODE)
             except:
@@ -110,7 +192,7 @@ class Wifi():
         if set == -1:
             if (self.BOOT_CNT in os.listdir("/")):
                 with open(self.BOOT_CNT, "r") as f: a = f.read()
-                print("Boot tries left: ", a)
+                self.log.debug("Boot tries left: " + str(a))
                 a = int(str(a))
                 self.boot_count(a - 1)
                 return a
@@ -147,19 +229,20 @@ class Wifi():
             return q    
         
         r = {"port": self.platform, "python": self.python}
-        if self.set_ap():
+        if self.ap_if != None:
             r["ap_state"] = "on"
             r.update(get_ap(self.ap_if,"ap_"))
         else:
             r["ap_state"] = "off"
-        if self.set_sta():
+        if self.sta_if != None:
             r["sta_state"] = "on"
             r.update(get_ap(self.sta_if,"sta_"))
         else:
-            r["sta_state"] = "off"
+            r["sta_state"] = "off"    
         r["cred_fn"] = self.creds()    
         r["cred_bak"] = self.creds_bak()
         r["run_mode"] = self.run_mode()
+        r["run_mqtt"] = self.set_mqtt()
         return r
 
 
@@ -187,21 +270,11 @@ class Wifi():
 
 
     def scan(self):
-        a = None
-        x = False
-        if self.sta_if != None: a = self.sta_if
-        if self.ap_if != None: a = self.ap_if
-        if a == None:
-            x = True
-            a = self.set_ap(1)
-            time.sleep(2)
+        a = network.WLAN(network.STA_IF)
+        time.sleep(2)
         q = a.scan()
-        if len(q):
-            self.scanlist = a.scan()            
-        self.scanlist = a.scan()
-#        print(self.scanlist)
-        if x: self.set_ap(0)
-        return self.scanlist
+        self.log.debug(str(q))
+        return q
     
     
     def scan_html(self): # use the bootstrap-css-definitions
@@ -236,14 +309,13 @@ class Wifi():
         self.ap_if.active(sta)   # activate the interface
         time.sleep(1)
         if not(sta):
-            print("AP_WLAN switched off")
+            self.log.debug("AP_WLAN switched off")
             self.ap_if = None
             return 0
         else:
-            print("Access-Point enabled")
-        print(self.get_state())
+            self.log.debug("AP enabled: " + str(self.ap_if.ifconfig()[0]))
+        # print(self.get_state())
         return 1
-
 
     def set_sta(self, sta=-1):
         self.set_led(2)
@@ -254,11 +326,11 @@ class Wifi():
         self.sta_if.active(sta)   # activate the interface
         time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
-            print("STA_WLAN switched off")
+            self.log.debug("STA_WLAN switched off")
             self.sta_if = None
             return 0
         if not(self.creds()):
-            print('No credentials found ...')    
+            self.log.debug('No credentials found ...')    
             self.sta_if.active(False)
             self.sta_if = None
             return 0
@@ -266,7 +338,7 @@ class Wifi():
         ssid     = c.get_decrypt_key(self.cred_fn, "SSID") 
         wifipw  = c.get_decrypt_key(self.cred_fn, "WIFIPW") 
         self.hostname  = c.get_decrypt_key(self.cred_fn, "HOSTNAME")
-        print('Connecting with credentials to network...')
+        self.log.debug('Connecting with credentials to network...')
         self.sta_if.active(False)
         time.sleep(2)
         err = 0
@@ -285,7 +357,7 @@ class Wifi():
             time.sleep(1)
             self.set_led(2)
             if i>30:
-                print("Connection couldn't be established - aborted")
+                self.log.debug("Connection couldn't be established - aborted")
                 self.sta_if.active(False)
                 self.sta_if = None
                 if self.run_mode() == 1:
@@ -303,10 +375,61 @@ class Wifi():
         if err:
             self.set_ap(1)
             return 0    
-        print("STA connection connected successful")
+        self.log.debug("STA connection connected successful")
         self.set_led(1)
-        print(self.get_state())
+        self.log.debug(self.get_state())
         return 1
+
+    def set_mqtt(self, sta=-1):
+        if sta == -1:
+            return (self.mqtt_flg and self.wifi_flg)
+        
+        if sta == 1:
+            self.log.debug("Try to open wifi and mqtt connection")
+            # Decrypt your encrypted credentials
+            # c = crypt()
+            if self.creds():
+                cred = self.read_json_creds()
+                self.log.info("Found Credentials")
+                self.config.server   = cred["MQTT"]
+                self.config.ssid     = cred["SSID"] 
+                self.config.wifi_pw  = cred["WIFIPW"] 
+                self.config.user     = cred["UN"] 
+                self.config.password = cred["UPW"]
+
+                self.config.clean     = True
+                self.config.keepalive = 60  # last will after 60sek off
+                self.client = MQTTClient(self.config)
+                err_no = 1
+            else:
+                self.log.debug("no Credentials found")
+        else:
+            self.log.debug("Reset Wifi and MQTT-client")
+            s = network.WLAN(network.STA_IF)
+            s.disconnect()
+            self.mqtt_flg = False
+            self.wifi_flg = False
+            self.client = None
+               
+    async def loop_mqtt(self):
+        if not(self.mqtt_flg and self.wifi_flg):
+            if not(self.client == None):
+                err_no = 1
+                while err_no:
+                    try:
+                        self.set_sta(1)
+                        await self.client.connect()
+                        err_no = 0
+                    except:
+                        # connect throws an error
+                        err_no += 1
+                    if err_no > 5:
+                        if self.run_mode():
+                            if not(self.boot_count()):
+                                self.run_mode = 0
+                            reset()    
+                return (self.mqtt_flg and self.wifi_flg)                    
+                    
 
     # write values from the given dict (l) to crypt-file (needs crypto_keys_lib)
     def store_creds(self, l):

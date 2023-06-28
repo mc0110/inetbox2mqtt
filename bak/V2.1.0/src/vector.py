@@ -146,3 +146,4 @@ class Vector3d(object):
     @property
     def scale(self):
         return tuple(self._scale)
+    

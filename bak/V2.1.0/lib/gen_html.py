@@ -1,9 +1,10 @@
 import os, machine
-import lib.connect as connect
+#import connect
 import gc
+#from lin import Lin
 
 class Gen_Html():
-    CR_M    = "MIT (c) Dr. Magnus Christ (2022) "
+    CR_M    = "(c) MIT licence &nbsp<a href='https://github.com/mc0110/inetbox2mqtt' target='_blank'>­inetbox2mqtt</a>&nbsp(2023) "
 
     CONNECT_STATE = ""
 
@@ -15,29 +16,33 @@ class Gen_Html():
         }
     
     # w-parameter is the connect-object    
-    def __init__(self, w):
-        self.wifi = w
+    def __init__(self, w, lin):
+        self.connect = w
+        self.lin = lin
         # generate the json-definition for credentials
-        self.JSON = self.wifi.read_cred_json()
+        self.JSON = self.connect.read_cred_json()
         # connection will be established
-        self.wifi.connect()
+        #self.connect.connect()
         self.refresh_connect_state()
         
     def refresh_connect_state(self):
         # collect state information
         # Wifi-class information
-        self.CONNECT_STATE = self.wifi.get_state()
+        self.CONNECT_STATE = self.connect.get_state()
         gc.collect()
         # add mem state
         self.CONNECT_STATE["mem_free"] = str(gc.mem_free())
         # add cred-file, with existing
-        if self.wifi.creds():
+        s =self.lin.app.get_all(False)
+        for key, val in s.items():
+            self.CONNECT_STATE["lin_" + key] = val
+        if self.connect.creds():
             json = {}
             # convert JSON to json_result = {key: value}
             for i in self.JSON.keys():        
                 json[i] = "0"
             # take results from cred-file {key: value}    
-            a = self.wifi.read_creds(json)
+            a = self.connect.read_creds(json)
             for key, val in a.items():
                 self.CONNECT_STATE["cred_" + key] = val
         
@@ -86,10 +91,11 @@ class Gen_Html():
         
         tmp = self.head(refresh)
         tmp += "<body class='body_style'><div class='center'>"
-        tmp += "<h2>" + self.wifi.appname + " " + title + "</h2>"
+        tmp += "<h2>" + self.connect.appname + " " + title + "</h2>"
         tmp += "</div>"
         if hlpkey != None:
             tmp += "<div class='help'>" + self.HLP_TXT.get(hlpkey) + "</div>"
+        gc.collect()    
         if status:    
             tmp += "<div class='status'><div class='status_title'>State-info:<br></div>"
             tmp += str_keys("ap_") + "<br>"
@@ -97,7 +103,9 @@ class Gen_Html():
             tmp += str_keys("cred_") + "<br>"
             tmp += str_keys("run_") + "<br>"
             tmp += str_keys("mem_") + "<br>"
+            tmp += str_keys("lin_") + "<br>"
             tmp += "</div>"
+        gc.collect()    
         return tmp;
 
 
@@ -105,8 +113,8 @@ class Gen_Html():
         tmp = ""
         if link != "":
             tmp += "<div>"+self.handleGet(link,name)+"</div>"
-        tmp += '<br><div class="center">This&nbsp; <span>' + self.CONNECT_STATE["port"] + '</span>&nbsp;  is running on&nbsp; <span>' + self.CONNECT_STATE["python"] + '</span></div>'
-        tmp += '<br><div class="center">' + self.CR_M + 'RelNo:' + self.wifi.rel_no + '</div>'
+        tmp += '<br><div class="center">This&nbsp; <span>' + self.connect.platform + '</span>&nbsp;  is running on&nbsp; <span>' + self.connect.python + '</span></div>'
+        tmp += '<br><div class="center">' + self.CR_M + 'RelNo:' + self.connect.rel_no + '</div>'
         tmp += " </body></html>"
         return tmp
 
@@ -132,36 +140,43 @@ class Gen_Html():
     
     def handleStatus(self, message, blnk, bttn_name, refresh = None):
         self.refresh_connect_state()
-        tmp = self.handleHeader("Status", None, refresh, status = True)
+        f = open("status.html","w")    
+        f.write(self.handleHeader("Status", None, refresh, status = True))
         # tmp += "<div class='message'>" + message + "</div>"
-        tmp += self.handleFooter(blnk,bttn_name)
-        return tmp
+        f.write(self.handleFooter(blnk,bttn_name))
+        f.close()
+        return "/status.html"
 
     # Main Page
     def handleRoot(self):
-        tmp = self.handleHeader("")
-        if self.wifi.set_ap():
-            tmp += self.handleGet("/ta","Reset AccessPoint")
+        f = open("index.html","w")    
+        f.write(self.handleHeader("", refresh = ("30","/")))
+        f.write(self.handleGet("/s","Status"))
+        f.write(self.handleGet("/wc","Credentials"))
+        f.write(self.handleGet("/scan","Scan WIFI") + "\n")
+        f.write(self.handleGet("/heat_on","Water Heater on") + "\n")
+        f.write(self.handleGet("/heat_off","Water Heater off") + "\n")
+        if self.connect.mqtt_flg:
+            f.write(self.handleGet("/","MQTT broker is connected"))
         else:    
-            tmp += self.handleGet("/ta","Start AccessPoint")
-        if self.wifi.set_sta():
-            tmp += self.handleGet("/ts","Reset STA Connect")
+            f.write(self.handleGet("/ts","Test MQTT Connect"))
+        f.write(self.handleGet("/dir/__","Filemanager") + "<p>")
+        if self.connect.run_mode() == 1:
+            f.write(self.handleGet("/rm", "Normal RUN after reboot"))
+        elif self.connect.run_mode() == 2:
+            f.write(self.handleGet("/rm", "UPDATE after Reboot"))
         else:    
-            tmp += self.handleGet("/ts","Start STA Connect")
-        tmp += self.handleGet("/wc","Credentials")
-        tmp += self.handleGet("/dir/__","Filemanager")
-        tmp += self.handleGet("/ur","Update Repo") + "<p>"
-        if self.wifi.run_mode() == 1:
-            tmp += self.handleGet("/rm", "Normal Run")+"<p>"
-        elif self.wifi.run_mode() == 2:
-            tmp += self.handleGet("/rm", "Update-Mode")+"<p>"
-        else:    
-            tmp += self.handleGet("/rm", "OS-Run")+"<p>"
-        tmp += self.handleGet("/rb","Soft Reboot") + "<p> \n"
-        tmp += self.handleGet("/rb1","Hard Reboot") + "<p> \n"
-        tmp += self.handleGet("/s","Status")
-        tmp += self.handleFooter()
-        return tmp
+            f.write(self.handleGet("/rm", "OS mode after Reboot"))
+        f.write(self.handleGet("/rb","Soft Reboot") + "\n")
+        f.write(self.handleGet("/rb1","Hard Reboot") + "<p> \n")
+        f.write(self.handleGet("/ur","Update Repo") + "<p>")
+#         if self.connect.set_ap():
+#             tmp += self.handleGet("/ta","Reset AccessPoint")
+#         else:    
+#             tmp += self.handleGet("/ta","Start AccessPoint")
+        f.write(self.handleFooter())
+        f.close()
+        return "/index.html"
 
     def handleFileAction(self, link, dir, fn):
         tmp = "<form action='" + link + dir + " 'method='GET'>"
@@ -178,11 +193,11 @@ class Gen_Html():
         if dir == "/":
             dir1 = "/__/"
         
-        tmp = "File-Upload<br><div><form  id='form' action='/upload' method = 'POST'><input type='file' id='file' name='file'> <input type='submit' class='button_s' value='Upload'> </form>"
+        tmp = "File-Upload<br><div><form  id='form' action='/upload' method = 'GET'><input type='file' id='file' name='file'> <input type='submit' class='button_s' value='Upload'> </form>"
         tmp += " <script>async function upload(ev) { const file = document.getElementById('file').files[0]; if (!file) {return;}"
         tmp += "await fetch('/upload" + dir1 + "',"
         tmp += "{method: 'POST', credentials: 'include', body: file, headers: {'Content-Type': 'application/octet-stream', 'Content-Disposition': `attachment; filename=${file.name}`,},}).then(res => {console.log('Upload accepted');"
-        tmp += "//alert('upload completed'); \n window.location.href = '/dir" + dir + "';}); ev.preventDefault();}"
+        tmp += "//alert('upload completed'); \n window.location.href = '/dir" + dir1 + "';}); ev.preventDefault();}"
         tmp += "document.getElementById('form').addEventListener('submit', upload); \n </script> </div> \n"
         return tmp
 
@@ -246,8 +261,8 @@ class Gen_Html():
 
     def handleScan_Networks(self):
         tmp = self.handleHeader("Wifi-Networks", refresh = ("20", "/scan"));
-        tmp += self.wifi.scan_html()  
-        tmp += "<br>" + self.handleGet("/scan", "Rescan") + self.handleGet("/wc", "Back to Input")
+        tmp += self.connect.scan_html()  
+        tmp += "<br>" + self.handleGet("/scan", "Rescan")
         tmp += self.handleFooter()
         return tmp
 
@@ -255,14 +270,13 @@ class Gen_Html():
     def handleCredentials(self, json_form):
         f = open("cred.html","w")    
         f.write(self.handleHeader("Credentials"))
-        f.write("<p>"+ self.handleGet("/scan","Scan Wifis") + "</p> \n")
-        if self.wifi.creds():
+        if self.connect.creds():
             f.write("<p>" + self.handleGet("/dc","Delete Credentials") + "\n")
-            if self.wifi.creds_bak():
+            if self.connect.creds_bak():
                 f.write(self.handleGet("/sc","Swap Credentials"))
         else:
             f.write("<p> Credential-File doesn't exist </p><br> \n")
-            if self.wifi.creds_bak():
+            if self.connect.creds_bak():
                 f.write(self.handleGet("/rc","Restore Credentials"))
                 
         
