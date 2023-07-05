@@ -224,6 +224,9 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/energy_mix| gas, mix, electricity| mode of operation|
 | service/truma/control_status/el_power_level| 0, 900, 1800| electrical max. consumption|
 | service/truma/control_status/heating_mode| off, eco, high| fan state|
+| service/truma/control_status/aircon_operating_mode| off, vent, cool, hot, auto| aircon mode of operating|
+| service/truma/control_status/aircon_vent_mode| low, mid, high, night, auto | ventilator mode|
+| service/truma/control_status/target_temp_aircon| temperature in °C (20 - 32°C)| show target aircon temp|
 | service/truma/control_status/operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
 | service/truma/control_status/error_code| 0-xx| TRUMA error codes|
 | service/truma/control_status/release| xx.xx.xx| Software-Release-No|
@@ -239,6 +242,7 @@ If you want to set values, then you must use the corresponding set-topics. The l
 | service/truma/set/energy_mix| gas, mix, electricity| set mode of operation|
 | service/truma/set/el_power_level| 0, 900, 1800| set electrical max. consumption|
 | service/truma/set/heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
+| service/truma/set/target_temp_aircon| temperature in °C (20-30°C)| set target aircon temperature|
 | **System commands** | |
 | service/truma/set/reboot| 1| reboot the port|
 | service/truma/set/os_run| 1| set mode OS-RUN|
