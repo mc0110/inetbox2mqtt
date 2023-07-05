@@ -1,7 +1,7 @@
 <div align = center>
 
 # inetbox2mqtt
-## Control your TRUMA heater over a MQTT broker
+## Control your TRUMA heater and Aventa aircon over a MQTT broker
 
 ### Version for ESP32 and RP pico w
 <br/>
@@ -9,7 +9,6 @@
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
  &nbsp;
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
-
 
 </div>
 <br>
