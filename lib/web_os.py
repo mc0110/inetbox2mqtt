@@ -28,6 +28,7 @@ def init(w, l, n, debug=False, logfile=False):
     else:    
         log.setLevel(logging.INFO)
     log.info("init")
+    log.debug(f"init debug:{debug} logf:{logfile} l:{l} n:{n}")
     global gh
     global reboot
     global soft_reboot
@@ -66,16 +67,25 @@ async def command_loop():
     global soft_reboot
     global connect
     global file
+#     log.debug(f"command_loop:")
+#     connect.set_mqtt(1)
+#     log.debug(f"await loop_mqtt")
+#     await connect.loop_mqtt()
+    log.debug(f"finished loop_mqtt")
     while True:
-        if file: logging._stream.flush()
+        if file:
+            logging._stream.flush()
+            log.debug("stream_flush")
+
 #         logging._stream = open("test.log", "a")
-        await connect.loop_mqtt()
         await asyncio.sleep(3) # Update every 10sec
         if soft_reboot:
+            log.debug("soft_reboot")
             await asyncio.sleep(5) # Update every 10sec
             log.info("Soft reset chip")
             soft_reset()
         if reboot:
+            log.debug("reboot")
             await asyncio.sleep(5) # Update every 10sec
             log.info("Reset chip")
             reset()
@@ -104,7 +114,7 @@ async def command_loop():
 #                 repo_update_comment = "repo up to date"
 #                 await asyncio.sleep(5) # sleep
 #             repo_update = False
-        gh.connect.set_led(2)
+        gh.connect.p.toggle_led("mqtt_led")
         
 
 # Declare route directly with decorator

@@ -1,4 +1,3 @@
-from tools import get_gpio, set_gpio
 
 # Auto-discovery-function of home-assistant (HA)
 HA_MODEL  = 'inetbox'
@@ -20,34 +19,36 @@ class duo_ctrl:
     
     # dict for duo control: in, pin, inverted
     DC_CONFIG = {
-        "duo_ctrl_gas_green": [True, 18, True],
-        "duo_ctrl_gas_red": [True, 19, True],
-        "duo_ctrl_i": [False, 22, True],
-        "duo_ctrl_ii": [False, 23, True],
+        "duo_ctrl_gas_green": "dc_green_pin",
+        "duo_ctrl_gas_red": "dc_red_pin",
+        "duo_ctrl_i": "dc_i_pin",
+        "duo_ctrl_ii": "dc_ii_pin",
         }
     
     status = {}
 
     # build up status and initialize GPIO
-    def __init__(self):
+    def __init__(self, pin_map):
+        self.pin_map = pin_map
         for i in self.DC_CONFIG.keys():
-            if self.DC_CONFIG[i][0]: # input-pins
-                v = get_gpio(self.DC_CONFIG[i][1], self.DC_CONFIG[i][2])
+            if self.pin_map(self.DC_CONFIG[i])[0]: # input-pins
+                log.debug(f"Pin_Map: in:{self.pin_map(DC_CONFIG[i])[0]}")
+                v = pin_map.get_gpio(self.DC_CONFIG[i])
                 if v:
                     self.status.update({i: ["ON", True]})
                 else:
                     self.status.update({i: ["OFF", True]})
             else:
                 self.status.update({i:["OFF", True]})
-                set_gpio(self.DC_CONFIG[i][1], self.DC_CONFIG[i][2], False)
+                self.pin_map(self.DC_CONFIG[i])
 
 
 
     def loop(self):
         for i in self.DC_CONFIG.keys():
             # only for inputs
-            if self.DC_CONFIG[i][0]:
-                v = get_gpio(self.DC_CONFIG[i][1], self.DC_CONFIG[i][2])
+            if self.pin_map(DC_CONFIG[i])[0]:
+                v = self.pin_map.get_gpio(self.DC_CONFIG[i])
                 v_o = (self.status[i][0] == "ON")
                 if v != v_o:
                     self.status[i][1] = True
@@ -64,7 +65,7 @@ class duo_ctrl:
             # check for output
             if not(self.DC_CONFIG[key][0]):
                 self.status[key] = [value, True]
-                set_gpio(self.DC_CONFIG[key][1], self.DC_CONFIG[key][2], (value == "ON"))
+                self.pin_map.set_gpio(self.DC_CONFIG[key], (value == "ON"))
         
 
 

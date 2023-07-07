@@ -13,7 +13,7 @@ from args import Args
 UPDATE = "update.py"
 
 appname = "inetbox2mqtt"
-rel_no = "2.1.0"
+rel_no = "2.5.0"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
@@ -29,9 +29,9 @@ if file != None:
 log = logging.getLogger(__name__)
 
 
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
-w=connect.Connect()
+w=connect.Connect(args.get_key("hw"), debug_log=True)
 w.appname = appname
 w.rel_no = rel_no
 
@@ -83,7 +83,7 @@ else:
     else:
         w.set_ap(1)
         log.info("OS mode activated")
-        w.set_mqtt(1)
+        
         import web_os_main
         web_os_main.run(w, args.check("lin=debug"), args.check("inet=debug"), args.check("webos=debug"), args.check("naw=debug"), args.get_key("file")!=None)
     

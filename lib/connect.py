@@ -22,6 +22,7 @@ from crypto_keys import fn_crypto as crypt
 from machine import reset, soft_reset, Pin
 from mqtt_async import MQTTClient, config
 import uasyncio as asyncio
+from tools import PIN_MAPS, PIN_MAP
 
 
 class Connect():
@@ -43,7 +44,9 @@ class Connect():
     appname = "undefined"
 
         
-    def __init__(self, fn=None, debug_log=False):
+    def __init__(self, hw, fn=None, debug_log=False):
+        print("HW: ", hw)
+        if hw == None: hw = "ESP32"
         self.log = logging.getLogger(__name__)
 #        self.c_coro = self.c_callback
 #        self.w_coro = self.w_state
@@ -51,7 +54,9 @@ class Connect():
             self.log.setLevel(logging.DEBUG)
         else:    
             self.log.setLevel(logging.INFO)
+        self.pin_map = hw    
         self.client = None
+        self.p = PIN_MAP(PIN_MAPS[hw])
         self.wifi_flg = False
         self.mqtt_flg = False
         self.connect_log = ""
@@ -64,6 +69,7 @@ class Connect():
             self.gen_cred_json()
 
         self.platform = str(sys.platform)
+        self.platform_name = str(self.pin_map) + " " + str(sys.platform)
         self.python = '{} {} {}'.format(sys.implementation.name,'.'.join(str(s) for s in sys.implementation.version), sys.implementation._mpy)
         
         self.log.info("Detected " + self.python + " on port: " + self.platform)
@@ -75,8 +81,8 @@ class Connect():
         self.config.connect_coro = self.c_connected
         self.config.wifi_coro = self.w_state
           
-        self.t_set_led("D8",0)
-        self.t_set_led("MQTT",0)        
+        self.p.set_led("lin_led",0)
+        self.p.set_led("mqtt_led",0)        
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')
@@ -103,7 +109,7 @@ class Connect():
         else:
             self.log.info("Wifi connection lost")
             self.sta_if = None
-            self.t_set_led("MQTT", False)
+            self.p.set_led("mqtt_led", False)
             self.wifi_flg = False
             self.mqtt_flg = False
             if self.wifi_state != None: await self.wifi_state(stat) 
@@ -128,32 +134,6 @@ class Connect():
          }
         with open(self.CRED_JSON, "w") as f: json.dump(j, f)
 
-    PIN_MAP = {
-       "MQTT": 14,
-       "D8"  : 12
-        }
-
-
-    # D8 is misleading, because the raw-PID is 0xD8, but the correct PID is "0x18"
-    def t_set_led(self, s, b):
-        p = Pin(self.PIN_MAP[s], Pin.OUT)
-        if b: p.value(0)
-        else: p.value(1)
-        
-    def t_toggle_led(self, s):
-        p = Pin(self.PIN_MAP[s], Pin.OUT)
-        p.value(not(p.value()))
-
-
-    def set_led(self, s=0):
-        if s == 1:
-            self.t_set_led("MQTT", 1)
-            return
-        if s == 2:
-            self.t_toggle_led("MQTT")
-        else:
-            self.t_set_led("MQTT", 0)
-        
     def read_cred_json(self):
         with open(self.CRED_JSON, "r") as f: j=json.load(f)
         return j
@@ -168,7 +148,7 @@ class Connect():
         if set == -1:
             if (self.RUN_MODE in os.listdir("/")):
                 with open(self.RUN_MODE, "r") as f: a = f.read()
-                self.log.debug("RUN-Mode ", a)
+                self.log.debug(f"RUN-Mode: {a}")
                 return int(str(a))
             else: return 0
         if set > 0:
@@ -318,7 +298,7 @@ class Connect():
         return 1
 
     def set_sta(self, sta=-1):
-        self.set_led(2)
+        self.p.toggle_led("mqtt_led")
         if sta == -1:  # default value returns current state
             return int((self.sta_if != None))
         self.sta_if = network.WLAN(network.STA_IF)
@@ -355,7 +335,7 @@ class Connect():
             print(".",end='')
             i += 1
             time.sleep(1)
-            self.set_led(2)
+            self.p.toggle_led("mqtt_led")
             if i>30:
                 self.log.debug("Connection couldn't be established - aborted")
                 self.sta_if.active(False)
@@ -369,14 +349,14 @@ class Connect():
                 elif self.run_mode() > 1:  
                     soft_reset()
 
-                self.set_led(0)
+                self.p.set_led("mqtt_led", 0)
                 self.set_ap(1)  # sta-cred wrong, established ap-connection
                 return 0  # sta-cred wrong, established ap-connection
         if err:
             self.set_ap(1)
             return 0    
         self.log.debug("STA connection connected successful")
-        self.set_led(1)
+        self.p.set_led("mqtt_led", 1)
         self.log.debug(self.get_state())
         return 1
 
@@ -399,6 +379,7 @@ class Connect():
 
                 self.config.clean     = True
                 self.config.keepalive = 60  # last will after 60sek off
+                self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important
                 self.client = MQTTClient(self.config)
                 err_no = 1
             else:

@@ -8,6 +8,7 @@
 # Usable as generator
 
 import os
+import logging
 
 
 class Args():
@@ -15,12 +16,16 @@ class Args():
     __ARGS = "args.dat"
     
     def __init__(self, fn = None):
+        self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.INFO)
+        
         self.__arg = ""
         if fn != None:
             self.fn = fn
         else:
             self.fn = self.__ARGS
         if self.fn in os.listdir("/"):
+            self.log.info("args_file found -> loaded")
             self.load()
                        
     def reset(self):
@@ -31,6 +36,7 @@ class Args():
         if self.fn in os.listdir("/"):
             with open(self.fn, "r") as f:
                 self.__arg = f.read()
+                self.log.info(f"file: {self.fn} content: {self.__arg}")
             
     def store(self, s):
         with open(self.fn, "w") as f:
