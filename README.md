@@ -3,7 +3,7 @@
 # inetbox2mqtt
 ## Control your TRUMA heater and Aventa aircon over a MQTT broker
 
-### Version for ESP32 and RP pico w
+### Version for different ESP32-HW and RP pico w (latest release: 2.5.0)
 <br/>
 
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
@@ -17,7 +17,7 @@
 - **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
-- **OTA-updating support with releasing (currently 2.1.x)**
+- **OTA-updating support with releasing**
 - **Tested with both ports (ESP32 / RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
