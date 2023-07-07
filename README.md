@@ -18,16 +18,18 @@
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing**
-- **Support of different hw constellations via pin configuration tables**
-- **Tested with both ports (ESP32 / RP2 pico w 2040)**
+- **new: Support of different hw constellations via pin configuration tables**
+- **Tested in different hw constellations (with ESP32 or RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
 
 ## Motivation and background
-The possibilities opened up by controlling the RV heating via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
+The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
 It is very important to me to show here an ***out of the box*** solution that opens up these possibilities to everyone simply and easily - without special electrical and without programming knowledge. If you don't have the confidence to assemble the few components yourself, you can also ask me for ready-made modules.
 
-The current version opens up a very flexible debugging and also the possibility to write log-files to specify problems and solve them as quickly as possible.
+Flexible debugging and the possibility to write log-files to solve problems is implemented.
+
+The current version opens flexibility to use different hardware cofigurations.  
 
 If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
 
