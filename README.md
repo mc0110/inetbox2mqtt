@@ -18,6 +18,7 @@
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing**
+- **Support of different hw constellations via pin configuration tables**
 - **Tested with both ports (ESP32 / RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
