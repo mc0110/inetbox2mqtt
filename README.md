@@ -1,7 +1,7 @@
 <div align = center>
 
 # inetbox2mqtt
-## Control your TRUMA heater and Aventa aircon over a MQTT broker
+## Control your TRUMA heater and/or Aventa aircon over a MQTT broker
 
 ### Version for different ESP32-HW and RP pico w (latest release: 2.5.0)
 <br/>
@@ -14,7 +14,7 @@
 <br>
 
 - **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
+- **Full control of all TRUMA Heater and TRUMA Aventa air conditioning modes**.
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing**
@@ -22,6 +22,7 @@
 - **Tested in different hw constellations (with ESP32 or RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
+- **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
 
 ## Motivation and background
 The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
@@ -32,10 +33,6 @@ Flexible debugging and the possibility to write log-files to solve problems is i
 The current version opens flexibility to use different hardware cofigurations.  
 
 If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
-
-## Acknowledgement
-The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
-Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/muccc/WomoLIN), these cool projects have become possible.
 
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
 
@@ -54,61 +51,23 @@ The LIN module for the ESP32/RP2 pico in the current version for the ESP32/RP2 p
 
 **Nevertheless, it should be mentioned here that I do not assume any liability or guarantee for its use.**
 
-## Electrics
-There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
-
-The electrical connection via the TJA1020 to the UART of the ESP32/RP2 pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
-
-<div align = center>
-
-![grafik](https://user-images.githubusercontent.com/10268240/206511684-806cda73-a47d-4070-86ac-6de7d999c5d6.png)
-
-</div>
-
-Examples for the implementation of the concrete connection can be found under [Connection](https://github.com/mc0110/inetbox2mqtt/issues/20).
-
-On the **ESP32** we recommend the use of UART2 (**Tx - GPIO17, Rx - GPIO16**):
-
-<div align = center>
-
-![1](https://user-images.githubusercontent.com/65889763/200187420-7c787a62-4b06-4b8d-a50c-1ccb71626118.png)
-
-</div>
-
-On the **RP2 pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05**):
-
-<div align = center>
-
-![grafik](https://user-images.githubusercontent.com/10268240/201338579-29c815ca-e5ef-4f25-b015-1749a59b3e99.png)
-</div>
-
-These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
-
 
 ## Installation instructions
 
 ### MicroPython
-The software is developed in micropython. After the first tests, I was amazed af how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. 
+The software is developed in micropython. After the first tests, I was amazed of how good and powerful the [microPython.org](https://docs.micropython.org/en/latest/) platform is. 
 
-However, the software did not run with the latest stable kernel from July (among other things, the bytearray.hex was not implemented there yet). The latest kernels for various ports can be found in the [download section](https://micropython.org/download/). It is quite possible that the software can also run on other ports. If you have had this experience, please let us know. We can then amend the readme accordingly.
+However, the software did not run with the latest stable kernel from July 2022 (among other things, the bytearray.hex was not implemented there yet). The latest kernels for various ports can be found in the [download section](https://micropython.org/download/). It is quite possible that the software can also run on other ports. If you have had this experience, please let us know. We can then amend the readme accordingly.
 
 
 ### Alternative 1: OTA-Installation with mip
 If you just want to get the inetbox2mqtt running on the RP2 pico w, this is the way to go. 
-
-If you have ESP32 with larger memory, you can try this way as well. Since I haven't tested this myself, feel free to give me feedback. 
 
 For the simple 4M types of the ESP32-S this way does not work anymore. Here I ask you to use alternative 2.
 
 The entire installation process should not take longer than 10 minutes. The installation does not have to take place in the final WLAN in which the inetbox2mqtt is to run later.
 
 To do this, you first have to install an up to date microPython version, to be found at [micropython/download](https://micropython.org/download/). My tests were done with upython-version > 19.1-608.
-
-The way I am following at the moment is:
-
-- Install Micropython on the port
-- Wifi connection via terminal
-- Loading the web application via terminal
 
 You must enter the commands from the console line by line in the REPL interface. The last import command reloads the entire installation.
 
@@ -126,7 +85,7 @@ The ESP32 with 4M memory does not have enough main storage in the standard micro
 
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v210_4M.bin
+    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v250_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
@@ -134,11 +93,6 @@ This is not a partition but the full image for the ESP32 and only works with the
 There are two release numbers that must match, one in main.py and one in release.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
 
 We are very keen to support the application in the best possible way. Most of the changes were necessary to enable the realisation of a web frontend and the initial installation, the entry of the login data for Wifi connection and mqtt-broker and to test this connection and, from version 2.1.x, also to be able to test the LIN connection to CPplus. It is recommended as best practice to reinstall the application in the process if updating is also possible.
-
-**ATTENTION:** 
-- RP2 pico: The change to version 2.1.0 requires an interaction via the web frontend. Please delete the file cred.py in the file manager of the web frontend first, then start the update process. 
-- ESP32-4M: Version 2.1.0 only works with the precompiled firmware. With the firmware, however, later updates are also possible.
-
 
 ## Web frontend
 After rebooting the port (ESP32, RP2 pico w), an access point (ESP or PICO) is opened first. For the RP2 pico w, the password "password" is required. Please first establish a Wifi connection with the access point. Then you can access the chip in the browser at http://192.168.4.1 and enter the credentials. For details of the Wifimanager, please refer to [mc0110/wifimanager](https://github.com/mc0110/wifimanager).
@@ -338,13 +292,12 @@ After the port has connected to the MQTT broker, it sends the installation codes
 The Home Assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc), there is an example of a frontend solution in Home Assistant.
 
 
-
-## Running on a RP2 pico W
-Micropython can be installed very easily on the RP2 pico W. Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
+## Running on different devices
+Micropython can be installed very easily on different ports (e.g. the RP2 pico W). Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. Since the GPIO pins for the support leds are present on the RPi-board, just like the GPIO pins for the connection to the Truma DuoControl, no changes are necessary here. The hardware is recognized by the software, therefore 
-nothing is to do. If you want to use the **spiritlevel-addon**, then please note the corresponding pins for SDA (GPIO2) for SCL (GPIO3).
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat.
 
-Experience currently shows that the micropython wifi connection with the PI2 pico w is not optimal. The ESP32 is much more stable. This makes the update process for the pico more of a lottery and should only be carried out under control. On the other hand, the RP2 pico has a larger memory and is otherwise very robust in operation. 
+## Acknowledgement
+The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
+Thanks to him, as well as the preliminary work of [WoMoLIN](https://github.com/muccc/WomoLIN), these cool projects have become possible.
 
-Everyone should decide for themselves what is more important to them, especially since the RP2 pico w boards are much smaller than the breakboards for the ESP32.
