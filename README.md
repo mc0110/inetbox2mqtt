@@ -199,6 +199,8 @@ If you want to set values, then you must use the corresponding set-topics. The l
 | service/truma/set/energy_mix| gas, mix, electricity| set mode of operation|
 | service/truma/set/el_power_level| 0, 900, 1800| set electrical max. consumption|
 | service/truma/set/heating_mode| off, eco, high| set fan state (off only accepted, if room heater off)|
+| service/truma/set/aircon_operating_mode| off, vent, cool, hot, auto| set aircon operating mode|
+| service/truma/set/aircon_vent_mode| low, mid, high, night, auto| set aircon ventilation|
 | service/truma/set/target_temp_aircon| temperature in °C (20-30°C)| set target aircon temperature|
 | **System commands** | |
 | service/truma/set/reboot| 1| reboot the port|
