@@ -178,13 +178,13 @@ If your heater is off and you start with a set-command or with an input at the C
 | service/truma/control_status/target_temp_room| temperature in °C (0, 5-30°C)| show target room temperature|
 | service/truma/control_status/current_temp_water| temperature in °C (0-70°C)| show current water temperature|
 | service/truma/control_status/target_temp_water| temperature in °C (0-70°C)| show target water temperature|
-| service/truma/control_status/energy_mix| gas, mix, electricity| mode of operation|
-| service/truma/control_status/el_power_level| 0, 900, 1800| electrical max. consumption|
+| service/truma/control_status/energy_mix| gas, mix, electricity| heater mode of operation|
+| service/truma/control_status/el_power_level| 0, 900, 1800| heater electrical max. consumption|
 | service/truma/control_status/heating_mode| off, eco, high| fan state|
 | service/truma/control_status/aircon_operating_mode| off, vent, cool, hot, auto| aircon mode of operating|
-| service/truma/control_status/aircon_vent_mode| low, mid, high, night, auto | ventilator mode|
+| service/truma/control_status/aircon_vent_mode| low, mid, high, night, auto | aircon ventilator mode|
 | service/truma/control_status/target_temp_aircon| temperature in °C (20 - 32°C)| show target aircon temp|
-| service/truma/control_status/operating_status| 0 - 7| internal operation-mode (0,1 = off / 7 = running)|
+| service/truma/control_status/operating_status| 0 - 7| TRUMA heater operation-mode (0,1 = off / 7 = running)|
 | service/truma/control_status/error_code| 0-xx| TRUMA error codes|
 | service/truma/control_status/release| xx.xx.xx| Software-Release-No|
 
