@@ -25,7 +25,10 @@
 - **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
 
 ## Motivation and background
-The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
+The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.
+
+To establish communication between CPplus and the chip (e.g. ESP32 or RP2 pico), a LIN-UART converter is required. If you want to realise this, please refer to [Electrics](https://github.com/mc0110/inetbox2mqtt/blob/main/doc/ELECTRIC.md). However, there are now several suppliers who already have the converter on the board e.g. [WoMoLin lin-interface](https://womolin.de/products/lin-interface/), [WoMoLin lin-controller](https://womolin.de/products/womolin-lin-controller/).
+
 It is very important to me to show here an ***out of the box*** solution that opens up these possibilities to everyone simply and easily - without special electrical and without programming knowledge. If you don't have the confidence to assemble the few components yourself, you can also ask me for ready-made modules.
 
 Flexible debugging and the possibility to write log-files to solve problems is implemented.
@@ -34,10 +37,10 @@ The current version opens flexibility to use different hardware cofigurations.
 
 If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
 
-This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
+This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on different devices** for details. 
 
 ## Disclaimer
-I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
+I have tested my solution for the ESP32/RP2 pico in different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
 Please note that older versions of CPplus (e.g. C3.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu <[example given](https://videopress.com/embed/oXHpx1Ge)> on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx). Several users have successfully taken this step, so the procedure can be recommended.
 
@@ -297,7 +300,9 @@ The Home Assistant's own MQTT broker, which is available as an add-on, can also 
 ## Running on different devices
 Micropython can be installed very easily on different ports (e.g. the RP2 pico W). Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat.
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat. For the RP2 pico W you need the entry:
+
+        hw=RP2
 
 ## Acknowledgement
 The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.

@@ -1,11 +1,9 @@
 ## Electrics
+A LIN-UART converter is necessary for communication with the TRUMA CPplus. Since there are now several boards available for purchase that already have the converter integrated, I have moved the level converter topic to the documentation for all those who want to build the level converter themselves.
+
 There is no 12V potential at the RJ12 (LIN connector). Therefore, the supply voltage must be obtained separately from the car electrical system. 
 
-The electrical connection via the TJA1020 to the UART of the ESP32/RP2 pico is made according to the circuit diagram shown. It is important to connect not only the signal level but also the ground connection. 
-
-![Alt text](image.png)
-
-Here you see a missing ground connection.
+The electrical connection via the TJA1020 to the UART of the ESP32/RP2 pico is made according to the circuit diagram shown. 
 
 <div align = center>
 
@@ -32,3 +30,8 @@ On the **RP2 pico w** we recommend the use of UART1 (**Tx - GPIO04, Rx - GPIO05*
 
 These are to be connected to the TJA1020. No level shift is needed (thanks to the internal construction of the TJA1020). It also works on 3.3V levels, even if the TJA1020 is operated at 12V. 
 
+**It is important to connect not only the signal level but also the ground connection.**
+
+![Alt text](image.png)
+
+Here you see an example with a missing ground connection. It cannot work like that.
