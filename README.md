@@ -27,7 +27,7 @@
 ## Motivation and background
 The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.
 
-To establish communication between CPplus and the chip (e.g. ESP32 or RP2 pico), a LIN-UART converter is required. If you want to realise this, please refer to [Electrics](https://github.com/mc0110/inetbox2mqtt/blob/main/doc/ELECTRIC.md). However, there are now several suppliers who already have the converter on the board [WoMoLin lin-interface](https://womolin.de/products/lin-interface/), [WoMoLin lin-controller](https://womolin.de/products/womolin-lin-controller/).
+To establish communication between CPplus and the chip (e.g. ESP32 or RP2 pico), a LIN-UART converter is required. If you want to realise this, please refer to [Electrics](https://github.com/mc0110/inetbox2mqtt/blob/main/doc/ELECTRIC.md). However, there are now several suppliers who already have the converter on the board e.g. [WoMoLin lin-interface](https://womolin.de/products/lin-interface/), [WoMoLin lin-controller](https://womolin.de/products/womolin-lin-controller/).
 
 It is very important to me to show here an ***out of the box*** solution that opens up these possibilities to everyone simply and easily - without special electrical and without programming knowledge. If you don't have the confidence to assemble the few components yourself, you can also ask me for ready-made modules.
 
