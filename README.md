@@ -34,7 +34,7 @@ The current version opens flexibility to use different hardware cofigurations.
 
 If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
 
-This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on RP2 Pico W** for details. 
+This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on different devices** for details. 
 
 ## Disclaimer
 I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
@@ -297,7 +297,9 @@ The Home Assistant's own MQTT broker, which is available as an add-on, can also 
 ## Running on different devices
 Micropython can be installed very easily on different ports (e.g. the RP2 pico W). Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat.
+Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat. For the RP2 pico W you need the entry:
+
+        hw=RP2
 
 ## Acknowledgement
 The software is based on the Github project [INETBOX](https://github.com/danielfett/inetbox.py) by Daniel Fett.
