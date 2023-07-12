@@ -25,7 +25,10 @@
 - **The requirements are a CPplus with a version number > C4.00.00 (see disclaimer-section)**
 
 ## Motivation and background
-The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.  
+The possibilities opened up by controlling the RV heating or the air condition via an mqtt-broker are manifold. The limits set by a simple SMS technology from the manufacturer are falling.
+
+To establish communication between CPplus and the chip (e.g. ESP32 or RP2 pico), a LIN-UART converter is required. If you want to realise this, please refer to [Electrics](https://github.com/mc0110/inetbox2mqtt/blob/main/doc/ELECTRIC.md). However, there are now several suppliers who already have the converter on the board.
+
 It is very important to me to show here an ***out of the box*** solution that opens up these possibilities to everyone simply and easily - without special electrical and without programming knowledge. If you don't have the confidence to assemble the few components yourself, you can also ask me for ready-made modules.
 
 Flexible debugging and the possibility to write log-files to solve problems is implemented.
@@ -37,7 +40,7 @@ If you like this software and even use it, then I deserve a beer. Thanks for tha
 This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on different devices** for details. 
 
 ## Disclaimer
-I have tested my solution for the ESP32/RP2 pico in more than 15 different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
+I have tested my solution for the ESP32/RP2 pico in different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
 Please note that older versions of CPplus (e.g. C3.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu <[example given](https://videopress.com/embed/oXHpx1Ge)> on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx). Several users have successfully taken this step, so the procedure can be recommended.
 
