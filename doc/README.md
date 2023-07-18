@@ -12,8 +12,11 @@ The given truma.yaml is a package in the HA logic, so please note the explanatio
 Bidirectional means that the values can be set both in the CPplus display and in the home assistant frontend and are passed through in each case. 
 
 ## Lovelance frontend cards in home assistant
+### TRUMA heater
 
 ![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/dff5907b-1c10-46fe-bbdf-28d9e63b0690)
+
+### TRUMA aircon
 
 ![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/a70454ac-5690-4fed-965a-a8ca04f57a06)
 
