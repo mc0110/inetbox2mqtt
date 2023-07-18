@@ -56,8 +56,10 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, log_file):
     # hw-specific configuration
     log.info(f"run uart:{w.p.get_data('lin_uart')} tx:{w.p.get_data('lin_tx')} rx:{w.p.get_data('lin_rx')}")
     log.info(f"HW-Check {w.platform_name}")
-    serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=Pin(w.p.get_data("lin_rx")), tx=Pin(w.p.get_data("lin_tx"))) # this is the HW-UART-no 2
-    
+    if (w.platform=="rp2"):
+        serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=Pin(w.p.get_data("lin_rx")), tx=Pin(w.p.get_data("lin_tx"))) # this is the HW-UART-no 2
+    if (w.platform=="esp32"):
+        serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=w.p.get_data("lin_rx"), tx=w.p.get_data("lin_tx")) # this is the HW-UART-no 2    
     
 #     if (w.platform == "esp32"):
 #         
@@ -76,8 +78,8 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, log_file):
     os.init(w, lin, naw, webos_debug, log_file)
 
     naw.STATIC_DIR = "/"
+    
 #    connect.config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
-
 #    connect.set_proc(subscript = callback, connect = conn_callback)
 
 
