@@ -35,7 +35,6 @@ def update_repo():
     tree = "github:mc0110/inetbox2mqtt"
 
     env = [
-        ["/src/", "args.dat", "/"],
         ["/src/", "boot.py", "/"],
         ["/src/", "args.py", "/"],
         ["/src/", "vector.py", "/"],
