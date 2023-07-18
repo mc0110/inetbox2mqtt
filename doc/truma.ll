@@ -1,62 +1,98 @@
 type: vertical-stack
 cards:
+  - show_name: true
+    show_icon: true
+    type: button
+    tap_action:
+      action: toggle
+    entity: input_boolean.truma_ctrl
+    icon: mdi:radiator
+    icon_height: 40px
   - type: horizontal-stack
     cards:
       - type: entity
         entity: sensor.truma_clock
-        icon: mdi:clock-digital
+        icon: m
         name: TRUMA
-      - show_name: false
+      - show_name: true
         show_icon: true
         show_state: true
         type: glance
         entities:
           - entity: binary_sensor.truma_alive
+            name: Status
         columns: 1
+      - type: entity
+        entity: sensor.truma_release
+        icon: m
+        name: Release
+  - type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          - show_name: true
+            show_icon: false
+            type: button
+            name: Hotwater
+            tap_action:
+              action: toggle
+            entity: input_boolean.truma_water_switch
+            show_state: true
+          - type: button
+            name: eco
+            tap_action:
+              action: call-service
+              service: climate.set_temperature
+              target:
+                entity_id: climate.truma_water
+              data:
+                temperature: 40
+            show_name: true
+            show_icon: true
+          - type: button
+            name: hot
+            tap_action:
+              action: call-service
+              service: climate.set_temperature
+              target:
+                entity_id: climate.truma_water
+              data:
+                temperature: 60
+            show_name: true
+            show_icon: true
+          - type: button
+            name: boost
+            tap_action:
+              action: call-service
+              service: climate.set_temperature
+              target:
+                entity_id: climate.truma_water
+              data:
+                temperature: 200
+            show_name: true
+            show_icon: true
+        title: Wasser
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: sensor.truma_current_temp_water
+            name: Momentan
+          - type: entity
+            entity: sensor.truma_target_temp_water
+            name: Ziel
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: toggle
+            entity: input_boolean.truma_water_autooff
+            icon: mdi:thermometer-auto
+            name: AutoOff
   - type: horizontal-stack
     cards:
-      - show_name: true
-        show_icon: false
-        type: button
-        name: Hotwater
-        tap_action:
-          action: toggle
-        entity: input_boolean.truma_water_switch
-        show_state: true
-      - type: button
-        name: eco
-        tap_action:
-          action: call-service
-          service: climate.set_temperature
-          target:
-            entity_id: climate.truma_water
-          data:
-            temperature: 40
-        show_name: true
-        show_icon: true
-      - type: button
-        name: hot
-        tap_action:
-          action: call-service
-          service: climate.set_temperature
-          target:
-            entity_id: climate.truma_water
-          data:
-            temperature: 60
-        show_name: true
-        show_icon: true
-      - type: button
-        name: boost
-        tap_action:
-          action: call-service
-          service: climate.set_temperature
-          target:
-            entity_id: climate.truma_water
-          data:
-            temperature: 200
-        show_name: true
-        show_icon: true
-    title: Wasser
+      - type: thermostat
+        entity: climate.truma
+    title: Raumklima
   - type: horizontal-stack
     cards:
       - show_name: false
@@ -69,9 +105,6 @@ cards:
         show_state: true
         icon: mdi:fan
         icon_height: 60px
-    title: Raumklima
-  - type: thermostat
-    entity: climate.truma
   - type: horizontal-stack
     cards:
       - show_name: true

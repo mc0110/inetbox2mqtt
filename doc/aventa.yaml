@@ -1,0 +1,111 @@
+#  MIT License 
+#
+# AVENTA Control
+#
+# Copyright (c) 2023  Dr. Magnus Christ (mc0110)
+#
+# This YAML is part of the inetbox2mqtt project and is based on the automatically generated entities. 
+#
+# The library enables bidirectional interaction with the CPplus. 
+# Thus, inputs can be made on the CPplus as well as on the HA. 
+# This applies both to temperature changes and to switching on/off.
+#
+# Observe the associated frontend-card, which is optimally matched to it
+#
+input_boolean:
+  aventa_ctrl:
+    name: "AVENTA Central Switch"
+  aventa_button:
+    name: "AVENTA Cooler State"
+
+climate:
+  - platform: generic_thermostat
+    name: Aventa
+    heater: input_boolean.aventa_button
+    target_sensor: sensor.innentemperatur
+    min_temp: 18
+    max_temp: 30
+    ac_mode: true
+    cold_tolerance: 0.3
+    hot_tolerance: 0.3
+    min_cycle_duration:
+      seconds: 120
+    away_temp: 26
+    sleep_temp: 24
+    comfort_temp: 23
+    home_temp: 23
+    precision: 0.1
+
+automation:
+  - alias: "Aventa climate change"
+    id: "d02"
+    trigger:
+      - platform: state
+        entity_id: climate.aventa
+        attribute: temperature
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.aventa_switch
+      - service: mqtt.publish
+        data:
+          topic: "service/truma/set/target_temp_aircon"
+          payload_template: >
+            {{ (state_attr('climate.aventa', 'temperature'))|round() }}
+      - service: mqtt.publish
+        data:
+          topic: "service/truma/set/aircon_operating_mode"
+          payload: "auto"
+
+  - alias: "Aventa set off"
+    id: "d04"
+    trigger:
+      - platform: state
+        entity_id: climate.aventa
+        attribute: hvac_action
+        to: "off"
+      - platform: state
+        entity_id: input_boolean.aventa_ctrl
+        to: "off"
+    action:
+      - service: climate.turn_off
+        entity_id: climate.aventa
+      - service: mqtt.publish
+        data:
+          topic: "service/truma/set/aircon_operating_mode"
+          payload: "off"
+
+  - alias: "Aventa switch on"
+    id: "d06"
+    trigger:
+      - platform: state
+        entity_id: climate.aventa
+        attribute: hvac_action
+        from: "off"
+    action:
+      - choose:
+          - conditions:
+              condition: state
+              entity_id: input_boolean.aventa_ctrl
+              state: "on"
+            sequence:
+              - service: climate.turn_on
+                entity_id: climate.aventa
+              - service: mqtt.publish
+                data:
+                  topic: "service/truma/set/target_temp_aircon"
+                  payload_template: >
+                    {{ (state_attr('climate.aventa', 'temperature'))|round() }}
+              - service: mqtt.publish
+                data:
+                  topic: "service/truma/set/aircon_operating_mode"
+                  payload: "auto"
+      - choose:
+          - conditions:
+              condition: state
+              entity_id: input_boolean.aventa_ctrl
+              state: "off"
+            sequence:
+              - service: climate.set_hvac_mode
+                entity_id: climate.aventa
+                data:
+                  hvac_mode: "off"

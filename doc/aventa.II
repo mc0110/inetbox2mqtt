@@ -1,0 +1,12 @@
+type: vertical-stack
+cards:
+  - show_name: false
+    show_icon: true
+    type: button
+    tap_action:
+      action: toggle
+    entity: input_boolean.aventa_ctrl
+    icon: mdi:air-conditioner
+    icon_height: 40px
+  - type: thermostat
+    entity: climate.aventa
