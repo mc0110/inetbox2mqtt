@@ -45,8 +45,8 @@ class Connect():
 
         
     def __init__(self, hw, fn=None, debug_log=False):
+        if hw == None: hw = "RP2"
         print("HW: ", hw)
-        if hw == None: hw = "ESP32"
         self.log = logging.getLogger(__name__)
 #        self.c_coro = self.c_callback
 #        self.w_coro = self.w_state
