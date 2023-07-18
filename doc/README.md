@@ -21,9 +21,11 @@ Bidirectional means that the values can be set both in the CPplus display and in
 ![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/a70454ac-5690-4fed-965a-a8ca04f57a06)
 
 
-You find the lovelance-card also as file in this directory. 
+You find both lovelance-cards also as file in this directory. 
 
-About the function of the card: 
+About the function of the card:
+
+New!: There is a central switch function integrated. So you can switch off and block all functions with one switch.
 
 The upper part shows the hot water (a climate entity is also generated for this) can be selected via the buttons. In the function, the hot water production is automatically switched off when the target temperature is reached.
 
