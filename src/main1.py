@@ -273,8 +273,10 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     # if ("ESP32" in uos.uname().machine):
     
     log.info(f"HW-Check {w.platform_name}")
-#    serial = UART(w.p.get_pin("lin_uart"), rx= w.p.get_pin("lin_rx"), tx=w.p.get_pin("lin_tx"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no 2
-    serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=Pin(w.p.get_data("lin_rx")), tx=Pin(w.p.get_data("lin_tx"))) # this is the HW-UART-no 2
+    if (w.platform=="rp2"):
+        serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=Pin(w.p.get_data("lin_rx")), tx=Pin(w.p.get_data("lin_tx"))) # this is the HW-UART-no 2
+    if (w.platform=="esp32"):
+        serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=w.p.get_data("lin_rx"), tx=w.p.get_data("lin_tx")) # this is the HW-UART-no 2    
     if activate_duoControl:
         log.info("Activate duoControl set to true, using GPIO 18,19 as input, 22,23 as output")
         dc = duo_ctrl()
