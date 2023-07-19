@@ -12,6 +12,7 @@ from gen_html import Gen_Html
 from nanoweb import HttpError, Nanoweb, send_file
 import uasyncio as asyncio
 import gc
+import random
 
 
 log = logging.getLogger(__name__)
@@ -152,16 +153,16 @@ async def toggle_ap(r):
         await r.write("HTTP/1.1 200 OK\r\n\r\n")
         await r.write(gh.handleRoot())
 
-@naw.route('/ts1')
-async def set_mqtt(r):
-    await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    global gh
-#     while test_mqtt:
-#    await asyncio.sleep(5)
-    if gh.connect.set_mqtt():
-        await r.write(gh.handleMessage("MQTT-connection established successfull", "/", "Cancel",("5","/")))
-    else:
-        await r.write(gh.handleMessage("Try again to establish a MQTT-connection", "/", "Cancel",("5","/ts1")))
+# @naw.route('/ts1')
+# async def set_mqtt(r):
+#     await r.write("HTTP/1.1 200 OK\r\n\r\n")
+#     global gh
+# #     while test_mqtt:
+# #    await asyncio.sleep(5)
+#     if gh.connect.set_mqtt():
+#         await r.write(gh.handleMessage("MQTT-connection established successfull", "/", "Cancel",("5","/")))
+#     else:
+#         await r.write(gh.handleMessage("Try again to establish a MQTT-connection", "/", "Cancel",("5","/ts1")))
 
 @naw.route('/ts')
 async def set_mqtt(r):
@@ -170,12 +171,11 @@ async def set_mqtt(r):
     if not(gh.connect.creds()):
         await r.write(gh.handleMessage("Sorry, you need credentials", "/", "Back",("5","/")))
     else:
-        if not(gh.connect.set_mqtt()):
-            gh.connect.set_mqtt(1)
-            await r.write(gh.handleMessage("Try to establish a MQTT-connection", "/", "Cancel",("5","/ts1")))
-        else:    
-            gh.connect.set_mqtt(0)
-            await r.write(gh.handleMessage("Disconnect MQTT-connection", "/", "Cancel",("5","/")))
+        s = str(random.randint(0,255))
+        await connect.client.publish("service/truma/set/test", s, qos=1)
+        log.info(f"mqtt: message sent to <service/truma/set/test> {s}")
+        await r.write(gh.handleMessage(f"send 'service/truma/set/test'> {s}", "/", "Back",("5","/")))
+        
         
 @naw.route('/rm')
 async def toggle_run_mode(r):
@@ -296,14 +296,15 @@ async def s_reboot(r):
 
 @naw.route('/rb2')
 async def h_reboot(r):
+    global reboot
+    reboot = True
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
     await r.write(gh.handleMessage("Device resetted", "/", "Continue",("4","/")))
-    reset()
 
 @naw.route('/rb1')
 async def h_reboot(r):
     await r.write("HTTP/1.1 200 OK\r\n\r\n")
-    await r.write(gh.handleMessage("Device will be hard rebooted", "/rb2", "Continue",("4","/")))
+    await r.write(gh.handleMessage("Device will be hard rebooted", "/rb2", "Continue to reboot",("4","/")))
 
 @naw.route('/upload*')
 async def upload(r):

@@ -113,7 +113,7 @@ class Gen_Html():
         tmp = ""
         if link != "":
             tmp += "<div>"+self.handleGet(link,name)+"</div>"
-        tmp += '<br><div class="center">This&nbsp; <span>' + self.connect.platform + '</span>&nbsp;  is running on&nbsp; <span>' + self.connect.python + '</span></div>'
+        tmp += '<br><div class="center">This&nbsp; <span>' + self.connect.platform_name + '</span>&nbsp;  is running on&nbsp; <span>' + self.connect.python + '</span></div>'
         tmp += '<br><div class="center">' + self.CR_M + 'RelNo:' + self.connect.rel_no + '</div>'
         tmp += " </body></html>"
         return tmp
@@ -157,9 +157,9 @@ class Gen_Html():
         f.write(self.handleGet("/heat_on","Water Heater on") + "\n")
         f.write(self.handleGet("/heat_off","Water Heater off") + "\n")
         if self.connect.mqtt_flg:
-            f.write(self.handleGet("/","MQTT broker is connected"))
+            f.write(self.handleGet("/ts","Send MQTT message"))
         else:    
-            f.write(self.handleGet("/ts","Test MQTT Connect"))
+            f.write(self.handleGet("/ts","No MQTT"))
         f.write(self.handleGet("/dir/__","Filemanager") + "<p>")
         if self.connect.run_mode() == 1:
             f.write(self.handleGet("/rm", "Normal RUN after reboot"))

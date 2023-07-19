@@ -22,6 +22,7 @@ PIN_MAPS = {
     
     "ESP32":
     {
+    "logic": "esp32",
     "mqtt_led": 14,
     "lin_led": 12,
     "lan": 0,
@@ -40,30 +41,33 @@ PIN_MAPS = {
     "sl_scl": 25,
     },
     
-    "LAN_WOMOLIN":
+    
+    "PEKAWAY":
     {
-    "mqtt_led": 14,
-    "lin_led": 12,
-    "lan": 1,
-    "mdc" : 23,
-    "mdio": 18,
-    "ref_clk": 16,
+    "logic": "esp32",
+    "mqtt_led": 0,
+    "lin_led": 0,
+    "lan": 0,
+    "mdc" : 0,
+    "mdio": 0,
+    "ref_clk": 0,
     "lin_uart": 1,
-    "lin_rx": 16,
-    "lin_tx": 14,
-    "dc_green_pin": [1, 18, 1], 
-    "dc_red_pin": [1, 19, 1],
-    "dc_i_pin": [0, 22, 1], 
-    "dc_ii_pin": [0, 23, 1], 
+    "lin_rx": 20,
+    "lin_tx": 21,
+    "dc_green_pin": [1, 0, 1], 
+    "dc_red_pin": [1, 0, 1],
+    "dc_i_pin": [0, 0, 1], 
+    "dc_ii_pin": [0, 0, 1], 
     "sl_i2c": 1,
-    "sl_sda": 26,
-    "sl_scl": 25,
+    "sl_sda": 0,
+    "sl_scl": 0,
     },
     
     "WLAN_WOMOLIN_V1":
     {
-    "mqtt_led": 14,
-    "lin_led": 12,
+    "logic": "esp32",
+    "mqtt_led": 17,
+    "lin_led": 4,
     "lan": 0,
     "mdc" : 0,
     "mdio": 0,
@@ -82,8 +86,9 @@ PIN_MAPS = {
 
     "WLAN_WOMOLIN_V2":
     {
-    "mqtt_led": 13,
-    "lin_led": 12,
+    "logic": "esp32",
+    "mqtt_led": 17,
+    "lin_led": 4,
     "lan": 0,
     "mdc" : 0,
     "mdio": 0,
@@ -102,6 +107,7 @@ PIN_MAPS = {
     
     "RP2":
     {
+    "logic": "rp2",
     "mqtt_led": 14,
     "lin_led": 12,
     "lan": 0,
