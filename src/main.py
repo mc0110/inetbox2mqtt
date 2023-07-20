@@ -29,9 +29,10 @@ if file != None:
 log = logging.getLogger(__name__)
 
 
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
-w=connect.Connect(args.get_key("hw"), debug_log=True)
+log.info(f"release no: {rel_no}")
+w=connect.Connect(args.get_key("hw"))
 w.appname = appname
 w.rel_no = rel_no
 
