@@ -104,7 +104,6 @@ We call this the **OS mode** -> i.e. an operating mode that is not the normal ru
 
 <div align = center>
  
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9324e33e-7682-4c3a-80c5-f2de4a4802a9)
 
 !
 </div>
@@ -123,7 +122,7 @@ You can now also carry out the INIT process in this mode. Details are described 
 
 <div align = center>
 
-![grafik](https://user-images.githubusercontent.com/10268240/213916483-5de8220b-5562-400e-91f1-5ffc76c1bb14.png)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9324e33e-7682-4c3a-80c5-f2de4a4802a9)
 </div>
 
 ### Switching to Normal-Run mode
