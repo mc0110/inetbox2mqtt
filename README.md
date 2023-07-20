@@ -90,7 +90,7 @@ The .bin file contains both the python and the .py files. This allows the whole 
 
     esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v250_4M.bin
 
-Alternatively, you can also use the Adafruit online tool: 
+Alternatively, you can also use the Adafruit online tool (of course only running with Chrome or Edge): 
     
     https://adafruit.github.io/Adafruit_WebSerial_ESPTool/
 
