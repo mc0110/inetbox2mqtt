@@ -63,8 +63,6 @@ PIN_MAPS = {
     "sl_scl": 0,
     },
 
-lan = network.LAN(mdc=machine.Pin(23), mdio=machine.Pin(18), ref_clk=machine.Pin(16), ref_clk_mode=False, power=None, id=None, phy_addr=0, phy_type=network.PHY_KSZ8081)
-
     "WOMOLIN":
     {
     "logic": "esp32",
