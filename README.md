@@ -103,9 +103,10 @@ After rebooting the port (ESP32, RP2 pico w), an access point (ESP or PICO) is o
 We call this the **OS mode** -> i.e. an operating mode that is not the normal run mode but is necessary for tests and for entering the login data.
 
 <div align = center>
+ 
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9324e33e-7682-4c3a-80c5-f2de4a4802a9)
 
-![grafik](https://user-images.githubusercontent.com/10268240/214956414-b75eac0a-83a4-40ee-a858-b499fe4f3b97.png)
-
+!
 </div>
 
 You have access to the entire file system with up, download and delete functions via a simple file manager. 
