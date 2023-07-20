@@ -2,10 +2,11 @@
 
 The flash_esp32_xxxx.bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v250_4M.bin
+      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v251_4M.bin
 
-      esptool.py write_flash 0 flash_womolin_inetbox2mqtt_v250_4M.bin
+There is also a version for both WOMOLIN variants, version 1 and version 2. The yellow network led informs about mqtt-activities. In version 2 the normal setup supports LIN1
 
+      esptool.py write_flash 0 flash_womolin_inetbox2mqtt_v251_4M.bin
 
 This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
 
