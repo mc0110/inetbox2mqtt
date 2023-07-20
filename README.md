@@ -90,7 +90,13 @@ The .bin file contains both the python and the .py files. This allows the whole 
 
     esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v250_4M.bin
 
-This is not a partition but the full image for the ESP32 and only works with the 4MB chips. The address 0 is not a typo.
+Alternatively, you can also use the Adafruit online tool: 
+    
+    https://adafruit.github.io/Adafruit_WebSerial_ESPTool/
+
+The offset 0x0 must then be entered here.
+    
+This is not a partition but the full image for the ESP32. The address 0x0 is not a typo.
 
 ## Releasing and updating
 There are two release numbers that must match, one in main.py and one in release.py. The update process looks at this and if the numbers are different, then the software is updated during the update.
