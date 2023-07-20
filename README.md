@@ -35,9 +35,9 @@ Flexible debugging and the possibility to write log-files to solve problems is i
 
 The current version opens flexibility to use different hardware cofigurations.  
 
-If you like this software and even use it, then I deserve a beer. Thanks for that in advance. You will find the Sponsorship button on the right-hand side for this purpose.
+***The development of this software and also just the maintenance in the different variants has already cost many hours of time. This is only possible with your support. So if you use this software, I deserve more than a beer. Many thanks for this in advance. For this purpose, you will find the Sponsorship button on the right side of the page.***
 
-This project here was developed and tested for an ESP32 (first generation) with 4 MB memory. The software also works on other ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. The tests on a Raspberry Pi Pico W were successful, too. I will not always explicitly mention the RP2 pico w in the following. The respective points apply to this chip as well. The minor deviations can be found at the end in the section **Running on different devices** for details. 
+The software works on all ESP32 models and probably, with small adjustments (UART address, pins), also on other hardware. It also runs on a Raspberry Pi Pico W. I will not always mention the RP2 pico w explicitly in the following. The variations are bundled in tools.py and you can find the explanation under **Run on different devices** for details. 
 
 ## Disclaimer
 I have tested my solution for the ESP32/RP2 pico in different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
@@ -297,10 +297,10 @@ After the port has connected to the MQTT broker, it sends the installation codes
 The Home Assistant's own MQTT broker, which is available as an add-on, can also be used. If you use other smart home systems, you can simply ignore the messages. In the [docs](https://github.com/mc0110/inetbox2mqtt/tree/main/doc), there is an example of a frontend solution in Home Assistant.
 
 
-## Running on different devices
+## Run on different devices
 Micropython can be installed very easily on different ports (e.g. the RP2 pico W). Please use a current release (younger than 19.1 Oct.22) of Python here - analogous to the note for the ESP32. The installation is explained very well on the [Foundation pages](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html).
  
-Fortunately, the entire **inetbox2mqtt** software also runs on this port. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat. For the RP2 pico W you need the entry:
+Fortunately, the entire **inetbox2mqtt** software also runs on the pico w chip. Please note, as mentioned above, that the UART uses different pins. There are now various boards with LIN-BUS controllers already integrated, but they require different pin assignments for UART and LEDs. In tools.py you will find the configuration for known and tested boards summarised in a static dict. It is only necessary to enter the name of the hw-config in arg.dat. For the RP2 pico W you need the entry:
 
         hw=RP2
 
