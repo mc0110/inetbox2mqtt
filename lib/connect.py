@@ -125,11 +125,12 @@ class Connect():
          "SSID": ["text", "SSID:", "1"],
          "WIFIPW": ["password", "Wifi passcode:", "2"],
          "MQTT": ["text", "Broker name/IP:", "3"],
-         "UN": ["text", "Broker User:", "4"],
-         "UPW": ["text", "Broker password:", "5"],
-         "HOSTNAME": ["text", "Hostname:", "6"],
-         "ADC": ["checkbox", "Addon DuoControl :", "7"],
-         "ASL": ["checkbox", "Addon SpiritLevel:", "8"],
+         "PORT": ["text", "Broker port (1883):", "4"],
+         "UN": ["text", "Broker User:", "5"],
+         "UPW": ["text", "Broker password:", "6"],
+         "HOSTNAME": ["text", "Hostname:", "7"],
+         "ADC": ["checkbox", "Addon DuoControl :", "8"],
+         "ASL": ["checkbox", "Addon SpiritLevel:", "9"],
     #     "OSR": ["checkbox", "OS Web:", "9"],
          }
         with open(self.CRED_JSON, "w") as f: json.dump(j, f)
@@ -376,7 +377,11 @@ class Connect():
                 self.config.wifi_pw  = cred["WIFIPW"] 
                 self.config.user     = cred["UN"] 
                 self.config.password = cred["UPW"]
-
+                port = "1883"
+                if cred["PORT"] != "":
+                    port = cred["PORT"]
+                    self.log.info(f"MQTT Port is switched to port: {port}")
+                    #çççççself.config.port = port
                 self.config.clean     = True
                 self.config.keepalive = 60  # last will after 60sek off
                 self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important
