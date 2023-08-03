@@ -3,7 +3,7 @@
 # inetbox2mqtt
 ## Control your TRUMA heater and/or Aventa aircon over a MQTT broker
 
-### Version for different ESP32-HW and RP pico w (latest release: 2.5.0)
+### Version for different ESP32-HW and RP pico w (latest release: 2.6.1)
 <br/>
 
 [![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
