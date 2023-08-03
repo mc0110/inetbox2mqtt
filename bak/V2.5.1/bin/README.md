@@ -10,12 +10,6 @@ There is also a version for both WOMOLIN variants, version 1 and version 2. The 
 
 The address 0 is not a typo.
 
-# Image V2.6.1 for WOMOLIN ESP32 Interface V1 and V2
-
-This image contains a first version that supports both the LAN port and WLAN use. Furthermore, static IP addresses or DHCP can now be set. The version is a pre-release version and the source files have not yet been released because the tests for all platforms have not yet been completed.
-
-      esptool.py write_flash 0 flash_womolin_inetbox2mqtt_v261_4M.bin
-
 
 ***The development of this software and also just the maintenance in the different variants has already cost many hours of time. This is only possible with your support. So if you use this software, I deserve more than a beer. Many thanks for this in advance. For this purpose, you will find the Sponsorship button on the right side of the page.***
 
