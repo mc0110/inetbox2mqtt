@@ -14,11 +14,13 @@
 <br>
 
 - **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **Full control of all TRUMA Heater and TRUMA Aventa air conditioning modes**.
+- **new: Full control of all TRUMA Heater and TRUMA Aventa air conditioning modes**.
+- **new: Support of different hw constellations via pin configuration tables**
+- **new: Support of different mqtt ports and static IP-configuration**
+- **new: Support of LAN-connections**
 - **Input credentials over web-frontend**
 - **Test mqtt-connectivity and lin-interface in web-frontend**
 - **OTA-updating support with releasing**
-- **new: Support of different hw constellations via pin configuration tables**
 - **Tested in different hw constellations (with ESP32 or RP2 pico w 2040)**
 - **Include add-on: Optional Truma DuoControl over GPIO-connections**
 - **Include add-on: Optional MPU6050 Sensor for spiritlevel-feature**
