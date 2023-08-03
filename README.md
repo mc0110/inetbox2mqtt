@@ -216,7 +216,7 @@ If you want to set values, then you must use the corresponding set-topics. The l
 | **System commands** | |
 | service/truma/set/reboot| 1| reboot the port|
 | service/truma/set/os_run| 1| set mode OS-RUN|
-| service/truma/set/ota_update| 1| download current version from GITHUB|
+| service/truma/set/ota_update| 1| download current version from GITHUB, only recommended for RPI|
 
 
 To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
@@ -231,7 +231,7 @@ An [example](https://github.com/mc0110/inetbox2mqtt/tree/main/doc) for a complet
 
 ## Status LEDs are showing the operating mode
 
-The operating mode is indicated by 2 GPIO outputs. This gives the option of displaying the current mode with 2 LEDs. The LEDs are to be connected in negative logic:
+The operating mode is indicated by 2 GPIO outputs. This gives the option of displaying the current mode with 2 LEDs.
 
 <div align = center>
 
@@ -240,11 +240,12 @@ The operating mode is indicated by 2 GPIO outputs. This gives the option of disp
 </div>
 
 
-GPIO12 indicates when the MQTT connection is up. 
+The LEDs are hardware-dependent and can be configured in ***tools.py***.
 
-GPIO14 indicates when the connection to the CPplus is established.
+'mqtt_led' indicates when the MQTT connection is up. 
+'lin_led' indicates when the connection to the CPplus is established.
 
-The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx, defective TJA 1020) can be very time-consuming and annoying. Therefore GPIO14 has been supplemented to the extent that the LED already flickers slightly when signals are registered on the port rx line (equivalent is tx-output on the TJA 1020). This also happens before an ***CPplus INIT***, in other words a registration of the inetbox2mqtt at the CPplus has taken place. In this way, it can be detected very quickly whether there are connection problems on the rx line. If the INIT process has taken place, the LED lights up brightly. 
+The search for ***connection errors*** (e.g. missing LIN signal, swapping rx/tx, defective TJA 1020) can be very time-consuming and annoying. Therefore 'lin_led' has been supplemented to the extent that the LED already flickers slightly when signals are registered on the port rx line (equivalent is tx-output on the TJA 1020). This also happens before an ***CPplus INIT***, in other words a registration of the inetbox2mqtt at the CPplus has taken place. In this way, it can be detected very quickly whether there are connection problems on the rx line. If the INIT process has taken place, the LED lights up brightly. 
 
 *Attention: The CPplus does not transmit continuously, therefore transmission pauses of 15-25s are normal.* 
 
