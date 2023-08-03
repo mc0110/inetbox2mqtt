@@ -42,7 +42,7 @@ tree = "github:mc0110/inetbox2mqtt"
 env = [       
     ["/lib/", "crypto_keys.py", "/lib"],
     ["/lib/", "logging.py", "/lib"],
-    ["/lib/", "mqtt_async.py", "/lib"],
+    ["/lib/", "mqtt_async2.py", "/lib"],
     ["/lib/", "nanoweb.py", "/lib"],
     ["/src/", "update.py", "/"],
     ]
