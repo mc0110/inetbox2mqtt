@@ -20,7 +20,7 @@ import logging
 import network, os, sys, time, json
 from crypto_keys import fn_crypto as crypt
 from machine import reset, soft_reset, Pin
-from mqtt_async import MQTTClient, config
+from mqtt_async2 import MQTTClient, config
 import uasyncio as asyncio
 from tools import PIN_MAPS, PIN_MAP
 
@@ -34,9 +34,13 @@ class Connect():
     client = None
     
     ap_if = None
+    con_if = None
     sta_if = None
+    lan_if = None
     cred_fn = None
     config = None
+    fixIP = None
+    dhcp = True
     hostname = ""
     scanliste = []
     platform = ""
@@ -102,8 +106,7 @@ class Connect():
     # Wifi and MQTT status
     async def w_state(self, stat):
         if stat:
-            self.sta_if = network.WLAN(network.STA_IF)
-            self.log.info("Wifi connected: " + str(self.sta_if.ifconfig()[0]))
+            self.log.info("Interface connected: " + str(self.con_if.ifconfig()[0]))
             self.wifi_flg = True
             if self.wifi_state != None: await self.wifi_state(stat) 
         else:
@@ -129,8 +132,11 @@ class Connect():
          "UN": ["text", "Broker User:", "5"],
          "UPW": ["text", "Broker password:", "6"],
          "HOSTNAME": ["text", "Hostname:", "7"],
-         "ADC": ["checkbox", "Addon DuoControl :", "8"],
-         "ASL": ["checkbox", "Addon SpiritLevel:", "9"],
+         "LAN": ["checkbox", "LAN Support :", "8"],
+         "STATIC": ["checkbox", "Static IP :", "9"],
+         "IP": ["text", "IP (static):", "A"],
+         "ADC": ["checkbox", "Addon DuoControl :", "B"],
+         "ASL": ["checkbox", "Addon SpiritLevel:", "C"],
     #     "OSR": ["checkbox", "OS Web:", "9"],
          }
         with open(self.CRED_JSON, "w") as f: json.dump(j, f)
@@ -277,6 +283,7 @@ class Connect():
     def set_ap(self, sta=-1):
         if sta == -1:  # default value returns current state
             return int((self.ap_if != None))
+        self.log.info(f"set ap to: {sta}")
         self.ap_if = network.WLAN(network.AP_IF)
         # Access point definitions
         if self.platform == 'rp2':
@@ -294,34 +301,101 @@ class Connect():
             self.ap_if = None
             return 0
         else:
-            self.log.debug("AP enabled: " + str(self.ap_if.ifconfig()[0]))
+            self.log.info("AP enabled: " + str(self.ap_if.ifconfig()[0]))
         # print(self.get_state())
         return 1
 
+    def connect(self):
+        self.dhcp = True
+        if self.creds():
+            cred = self.read_json_creds()
+            self.dhcp = (cred["STATIC"] != "1")
+            if cred["IP"] == "":
+                self.dhcp = True
+            else:
+                self.fixIP = cred["IP"]
+        self.log.info(f"DHCP: {self.dhcp}")        
+        self.log.info(f"fixedIP: {self.fixIP}")        
+        # set LAN connection    
+        if self.set_lan(1) == 1:
+            self.log.info(f"LAN Interface started")        
+            return 1
+        # set wifi connection
+        elif self.set_sta(1) == 1:
+            self.log.info(f"WLAN Interface started")        
+            return 1
+        else:
+            return 0
+        
+    def set_lan(self, sta=-1):
+        if sta == -1:
+            return int((self.lan_if != None))
+   
+        if sta==1:
+            if not(self.p.get_data("lan")):
+                return 0
+            else:
+                self.log.info("LAN-Connection")
+                self.lan_if = network.LAN(mdc=Pin(self.p.get_pin("mdc")), mdio=Pin(self.p.get_pin("mdio")), ref_clk=Pin(self.p.get_pin("ref_clk")),
+                                  ref_clk_mode=False, power=None, id=None, phy_addr=0, phy_type=network.PHY_KSZ8081)
+                try:
+                    time.sleep(0.1)
+                    lan.active(False)
+                except:
+                    i=1 
+                time.sleep(0.1)
+                self.lan_if.active(True)
+                self.log.info(f"isconnected: {self.lan_if.isconnected()}")      # check if the station is connected to an AP
+
+                self.log.info(f"Mac: {self.lan_if.config('mac')}")      # get the interface's MAC address
+                time.sleep(0.1)
+                ipconfig = self.lan_if.ifconfig()
+                self.log.info("Waiting for DHCP...")
+
+                while (ipconfig[0]=="0.0.0.0"):
+                    time.sleep(0.1)
+                #    lan.active(True)
+                    self.log.info(f"lan.status: {self.lan_if.status()}")
+                    ipconfig = self.lan_if.ifconfig()
+
+                if not(self.dhcp):
+                    ipconfig = self.lan_if.ifconfig()
+                    self.lan_if.ifconfig(self.fixIP, ipconfig[1], ipconfig[2],ipconfig[3])
+                self.con_if = self.lan_if
+                return 1
+
+
     def set_sta(self, sta=-1):
-        self.p.toggle_led("mqtt_led")
         if sta == -1:  # default value returns current state
             return int((self.sta_if != None))
         self.sta_if = network.WLAN(network.STA_IF)
-        time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
+        time.sleep(0.2)     # without delay we see on an ESP32 a system fault and reboot
         self.sta_if.active(sta)   # activate the interface
-        time.sleep(2)     # without delay we see on an ESP32 a system fault and reboot
+        time.sleep(0.2)     # without delay we see on an ESP32 a system fault and reboot
         if not(sta):
             self.log.debug("STA_WLAN switched off")
             self.sta_if = None
             return 0
+        # sta==True / check for Creds
+        cred = self.read_json_creds()
+        
         if not(self.creds()):
             self.log.debug('No credentials found ...')    
             self.sta_if.active(False)
             self.sta_if = None
             return 0
+        if not(cred["SSID"] != ""):
+            self.log.debug('No credentials found ...')    
+            self.sta_if.active(False)
+            self.sta_if = None
+            return 0
         c = crypt()
-        ssid     = c.get_decrypt_key(self.cred_fn, "SSID") 
-        wifipw  = c.get_decrypt_key(self.cred_fn, "WIFIPW") 
-        self.hostname  = c.get_decrypt_key(self.cred_fn, "HOSTNAME")
+        ssid     = cred["SSID"] 
+        wifipw  = cred["WIFIPW"] 
+        self.hostname  = cred["HOSTNAME"]
         self.log.debug('Connecting with credentials to network...')
         self.sta_if.active(False)
-        time.sleep(2)
+        time.sleep(0.2)
         err = 0
         try:
             self.sta_if.active(True)
@@ -355,10 +429,17 @@ class Connect():
                 return 0  # sta-cred wrong, established ap-connection
         if err:
             self.set_ap(1)
-            return 0    
+            self.log.debug("STA connection error - couldn't be established")
+            return 0
+        if not(self.dhcp):
+            ipconfig = self.sta_if.ifconfig()
+            self.sta_if.ifconfig((self.fixIP, ipconfig[1], ipconfig[2], ipconfig[3]))
+        
         self.log.debug("STA connection connected successful")
+        self.log.info("Wifi connected: " + str(self.sta_if.ifconfig()[0]))
         self.p.set_led("mqtt_led", 1)
         self.log.debug(self.get_state())
+        self.con_if = self.sta_if
         return 1
 
     def set_mqtt(self, sta=-1):
@@ -373,18 +454,19 @@ class Connect():
                 cred = self.read_json_creds()
                 self.log.info("Found Credentials")
                 self.config.server   = cred["MQTT"]
-                self.config.ssid     = cred["SSID"] 
-                self.config.wifi_pw  = cred["WIFIPW"] 
+#                self.config.ssid     = cred["SSID"] 
+#                self.config.wifi_pw  = cred["WIFIPW"] 
                 self.config.user     = cred["UN"] 
                 self.config.password = cred["UPW"]
-                port = "1883"
+                port = 1883
                 if cred["PORT"] != "":
-                    port = cred["PORT"]
+                    port = int(cred["PORT"])
                     self.log.info(f"MQTT Port is switched to port: {port}")
-                    #çççççself.config.port = port
+                    #self.config.port = port
+                self.config.interface = self.con_if    
                 self.config.clean     = True
                 self.config.keepalive = 60  # last will after 60sek off
-                self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important
+                self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important for clean connect
                 self.client = MQTTClient(self.config)
                 err_no = 1
             else:
@@ -403,7 +485,7 @@ class Connect():
                 err_no = 1
                 while err_no:
                     try:
-                        self.set_sta(1)
+#                        self.set_sta(1)
                         await self.client.connect()
                         err_no = 0
                     except:

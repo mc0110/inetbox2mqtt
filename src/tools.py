@@ -23,8 +23,8 @@ PIN_MAPS = {
     "ESP32":
     {
     "logic": "esp32",
-    "mqtt_led": 14,
-    "lin_led": 12,
+    "mqtt_led": 4,
+    "lin_led": 15,
     "lan": 0,
     "mdc" : 0,
     "mdio": 0,

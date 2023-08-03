@@ -159,7 +159,7 @@ class Gen_Html():
         if self.connect.mqtt_flg:
             f.write(self.handleGet("/ts","Send MQTT message"))
         else:    
-            f.write(self.handleGet("/ts","No MQTT..."))
+            f.write(self.handleGet("/ts","No MQTT"))
         f.write(self.handleGet("/dir/__","Filemanager") + "<p>")
         if self.connect.run_mode() == 1:
             f.write(self.handleGet("/rm", "Normal RUN after reboot"))

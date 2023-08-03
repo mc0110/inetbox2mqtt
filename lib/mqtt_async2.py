@@ -18,33 +18,22 @@ from binascii import hexlify
 from errno import EINPROGRESS
 from sys import platform
 
-try:
-    # imports used with Micropython
-    from micropython import const
-    from time import ticks_ms, ticks_diff
-    import uasyncio as asyncio
-    async def open_connection(addr):
-        return ( await asyncio.open_connection(addr[0], addr[1]) )[0]
-    gc.collect()
-    from machine import unique_id
-    gc.collect()
-    import network
-    STA_IF = network.WLAN(network.STA_IF)
-    gc.collect()
-    def is_awaitable(f): return f.__class__.__name__ == 'generator'
-except:
-    # Imports used with CPython (moved to another file so they don't appear on MP HW)
-    from cpy_fix import *
+from micropython import const
+from time import ticks_ms, ticks_diff
+import uasyncio as asyncio
+async def open_connection(addr):
+    return ( await asyncio.open_connection(addr[0], addr[1]) )[0]
+gc.collect()
+from machine import unique_id
+gc.collect()
+import network
+STA_IF = network.WLAN(network.STA_IF)
+gc.collect()
+def is_awaitable(f): return f.__class__.__name__ == 'generator'
 
-try:
-    import logging
-    log = logging.getLogger(__name__)
-except:
-    class Logger: # please upip.install('logging')
-        def debug(self, msg, *args): pass
-        def info(self, msg, *args): print(msg % (args or ()))
-        def warning(self, msg, *args): print(msg % (args or ()))
-    log = Logger()
+import logging
+log = logging.getLogger(__name__)
+
 
 # Timing parameters and constants
 
@@ -84,7 +73,8 @@ class MQTTConfig:
         self.response_time   = 10  # in seconds
         self.keepalive       = 600 # in seconds, only sent if self.will != None
         self.ssl_params      = None
-        self.interface       = STA_IF
+#        self.interface       = STA_IF
+        self.interface       = None
         self.clean           = True
         self.will            = None             # last will message, must be MQTTMessage
         self.subs_cb          = lambda *_: None  # callback when message arrives for a subscription
@@ -438,10 +428,10 @@ PING_PID = const(100000) # fake pid used in handling of ping acks
 # MQTTClient class.
 class MQTTClient():
 
-    def __init__(self, config):
+    def __init__(self, config, debug=False):
         # handle config
         self._c = config
-        # config last will and keepalive
+        if debug: log.setLevel(logging.DEBUG)        # config last will and keepalive
         if self._c.will is None:
             self._c.keepalive = 0 # no point setting MQTT keepalive if there's no lw
         elif not isinstance(self._c.will, MQTTMessage):
@@ -473,39 +463,10 @@ class MQTTClient():
     async def wifi_connect(self):
         log.info("connecting wifi")
         s = self._c.interface
-        if platform == 'esp8266':
-            if s.isconnected():  # 1st attempt, already connected.
-                return
-            s.active(True)
-            s.connect()  # ESP8266 remembers connection.
-            for _ in range(60):
-                if s.status() != network.STAT_CONNECTING:  # Break out on fail or success. Check once per sec.
-                    break
-                await asyncio.sleep(_CONN_DELAY)
-            if s.status() == network.STAT_CONNECTING:  # might hang forever awaiting dhcp lease renewal or something else
-                s.disconnect()
-                await asyncio.sleep(_CONN_DELAY)
-            if not s.isconnected() and self._c.ssid is not None and self._c.wifi_pw is not None:
-                s.connect(self._c.ssid, self._c.wifi_pw)
-                while s.status() == network.STAT_CONNECTING:  # Break out on fail or success. Check once per sec.
-                    await asyncio.sleep(_CONN_DELAY)
-        elif self._c.ssid:
-            s.active(True)
-            #log.debug("Connecting, li=%d", self._c.listen_interval)
-            s.connect(self._c.ssid, self._c.wifi_pw)
-            #s.connect(self._c.ssid, self._c.wifi_pw, listen_interval=self._c.listen_interval)
-#            if PYBOARD:  # Doesn't yet have STAT_CONNECTING constant
-#                while s.status() in (1, 2):
-#                    await asyncio.sleep(_CONN_DELAY)
-#            else:
-            while s.status() == network.STAT_CONNECTING:  # Break out on fail or success.
-                await asyncio.sleep_ms(200)
-        else:
-            raise OSError(-1, "no SSID to connect to Wifi")
-
-        if not s.isconnected():
-            log.warning("Wifi failed to connect")
-            raise OSError(-1, "Wifi failed to connect")
+        s.active(True)
+        while s.status() != network.STAT_GOT_IP:  # Break out on fail or success.
+            await asyncio.sleep_ms(500)
+            log.info(f"interface status: {s.status()}")
 
     def _dns_lookup(self):
         new_addr = socket.getaddrinfo(self._c.server, self._c.port)
@@ -680,7 +641,9 @@ class MQTTClient():
                 # connecting to broker didn't work, disconnect Wifi
                 if self._proto is not None: # defensive coding -- not sure this can be triggered
                     await self._reconnect(self._proto, "reconnect failed")
-                self._c.interface.disconnect()
+                    self._c.interface.active(False)
+                    self._c.interface.active(True)
+              #  self._c.interface.disconnect()
                 await asyncio.sleep(_CONN_DELAY)
                 continue # not falling through to force recheck of while condition
             # reconnect to Wifi
