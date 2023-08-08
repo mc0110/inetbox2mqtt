@@ -45,14 +45,14 @@ class InetboxApp:
         0x72: "mid",
         0x73: "high",
         0x74: "night",
-        0x77: "auto"
+        0x77: "auto",
     }
     AIRCON_OPERATING_STATUS = {
         0x0: "off",
         0x4: "vent",
         0x5: "cool",
         0x6: "hot",
-        0x7: "auto"
+        0x7: "auto",
     }
     VENT_OR_OPERATING_STATUS = {
         0x01: "off",
@@ -422,20 +422,20 @@ class InetboxApp:
 
         # get current status buffer contents as dict
         # routine is needed twice to calculate the correct checksum
-#        try:
-        binary_buffer_contents = bytearray(0)
-        for key in keys:
-            map_key = status_buffer_map[key][2]
-            val = status_buffer_map[key][1]
-            if (map_key == ""):
-                s = 0
-                binary_buffer_contents += s.to_bytes(val, "little")
-            else:
-                binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
-#         except KeyError:
-#             self.updates_to_send = False
-#             return None
-        self.log.debug(f"result of heater status-transfer: {binary_buffer_contents.hex(" ")}")
+        try:
+            binary_buffer_contents = bytearray(0)
+            for key in keys:
+                map_key = status_buffer_map[key][2]
+                val = status_buffer_map[key][1]
+                if (map_key == ""):
+                    s = 0
+                    binary_buffer_contents += s.to_bytes(val, "little")
+                else:
+                    binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
+        except KeyError:
+            self.upload_buffer = False
+            return None
+        self.log.debug(f"result of heater status-transfer: {binary_buffer_contents.hex(' ')}")
 
 # calculate checksum
         self.status["checksum"] = [calculate_checksum(
@@ -446,19 +446,19 @@ class InetboxApp:
             )[self.STATUS_HEADER_CHECKSUM_START :]  
         ), True]
 
-#        try:
-        binary_buffer_contents = bytearray(0)
-        for key in keys:
-            map_key = status_buffer_map[key][2]
-            val = status_buffer_map[key][1]
-            if (map_key == ""):
-                s = 0
-                binary_buffer_contents += s.to_bytes(val, "little")
-            else:
-                binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
-#         except KeyError:
-#             self.updates_to_send = False
-#             return None
+        try:
+            binary_buffer_contents = bytearray(0)
+            for key in keys:
+                map_key = status_buffer_map[key][2]
+                val = status_buffer_map[key][1]
+                if (map_key == ""):
+                    s = 0
+                    binary_buffer_contents += s.to_bytes(val, "little")
+                else:
+                    binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
+        except KeyError:
+            self.updates_to_send = False
+            return None
 
         self.upload_buffer = True
 
@@ -497,18 +497,21 @@ class InetboxApp:
 
         # get current status buffer contents as dict
         # routine is needed twice to calculate the correct checksum
-#        try:
-        binary_buffer_contents = bytearray(0)
-        for key in keys:
-            map_key = status_buffer_map[key][2]
-            val = status_buffer_map[key][1]
-            if (map_key == ""):
-#                s = status_buffer_map[key][3]
-                s=0
-                binary_buffer_contents += s.to_bytes(val, "little")
-            else:
-                binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
-        self.log.debug(f"result of aircon status-transfer: {binary_buffer_contents.hex(" ")}")
+        try:
+            binary_buffer_contents = bytearray(0)
+            for key in keys:
+                map_key = status_buffer_map[key][2]
+                val = status_buffer_map[key][1]
+                if (map_key == ""):
+    #                s = status_buffer_map[key][3]
+                    s=0
+                    binary_buffer_contents += s.to_bytes(val, "little")
+                else:
+                    binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
+        except KeyError:
+            self.upload02_buffer = False
+            return None
+        self.log.debug(f"result of aircon status-transfer: {binary_buffer_contents.hex(' ')}")
 
 # calculate checksum
         self.status["checksum"] = [calculate_checksum(
@@ -519,19 +522,21 @@ class InetboxApp:
             )[self.STATUS_HEADER_CHECKSUM_START :]  
         ), True]
 
-#        try:
-        binary_buffer_contents = bytearray(0)
-        for key in keys:
-            map_key = status_buffer_map[key][2]
-            val = status_buffer_map[key][1]
-            if (map_key == ""):
-                s = 0
-                binary_buffer_contents += s.to_bytes(val, "little")
-            else:
-                binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
-
+        try:
+            binary_buffer_contents = bytearray(0)
+            for key in keys:
+                map_key = status_buffer_map[key][2]
+                val = status_buffer_map[key][1]
+                if (map_key == ""):
+                    s = 0
+                    binary_buffer_contents += s.to_bytes(val, "little")
+                else:
+                    binary_buffer_contents += self.status[map_key][0].to_bytes(val, "little")
+        except KeyError:
+            self.upload02_buffer = False
+            return None
         self.upload02_buffer = True
-
+        
         send_buffer = self.STATUS_BUFFER_PREAMBLE + self.STATUS_BUFFER_HEADER_WRITE_02_STATUS + binary_buffer_contents
 
         s = [
