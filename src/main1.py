@@ -42,6 +42,7 @@ connect = None
 lin = None
 dc = None
 sl = None
+kill_flg = False
 
 # Change the following configs to suit your environment
 S_TOPIC_1       = 'service/truma/set/'
@@ -86,6 +87,7 @@ HA_CONFIG = {
 # Universal callback function for all subscriptions
 def callback(topic, msg, retained, qos):
     global connect
+    global kill_flg
     log.debug(str(topic)+" "+str(msg))
     topic = str(topic)
     topic = topic[2:-1]
@@ -173,6 +175,7 @@ async def main():
     global repo_update
     global connect
     global file
+    global kill_flg
     log.info("main-loop is running")
     connect.p.set_led("mqtt_led", False)
     connect.set_mqtt(1)
@@ -184,6 +187,7 @@ async def main():
     i = 0
     while True:
         await asyncio.sleep(10) # Update every 10sec
+        if kill_flg: 1/0
         if file: logging._stream.flush()
         s =lin.app.get_all(True)
         for key in s.keys():
@@ -241,6 +245,23 @@ async def sl_loop():
         #print("Angle X: " + str(sl.get_roll()) + "      Angle Y: " +str(sl.get_pitch()) )
         await asyncio.sleep_ms(100)
 
+async def ctrl_loop():
+    loop = asyncio.get_event_loop()
+    a=asyncio.create_task(main())
+    b=asyncio.create_task(lin_loop())
+    if not(dc == None):
+        c=asyncio.create_task(dc_loop())
+    if not(sl == None):
+        d=asyncio.create_task(sl_loop())
+    while True:
+        await asyncio.sleep(10)
+        if a.done():
+            log.info("Restart main_loop")
+            a=asyncio.create_task(main())
+        if b.done():
+            log.info("Restart lin_loop")
+            b=asyncio.create_task(lin_loop())
+    
 
 def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     global connect
@@ -291,24 +312,13 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
 
     connect.config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
     connect.set_proc(subscript = callback, connect = conn_callback)
-#    connect.config.subs_cb = callback
-#    connect.config.connect_coro = conn_callback
 
     if not(dc == None):
         HA_CONFIG.update(dc.HA_DC_CONFIG)
     if not(sl == None):
         HA_CONFIG.update(sl.HA_SL_CONFIG)
         
-    loop = asyncio.get_event_loop()
-#    client = MQTTClient(config)
-
-
-    a=asyncio.create_task(main())
-    b=asyncio.create_task(lin_loop())
-    if not(dc == None):
-        c=asyncio.create_task(dc_loop())
-    if not(sl == None):
-        d=asyncio.create_task(sl_loop())
-    loop.run_forever()
+    asyncio.run(ctrl_loop())    
+    #loop.run_forever()
 
 
