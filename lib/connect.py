@@ -115,6 +115,7 @@ class Connect():
             self.p.set_led("mqtt_led", False)
             self.wifi_flg = False
             self.mqtt_flg = False
+            self.connect()
             if self.wifi_state != None: await self.wifi_state(stat) 
 
     def set_proc(self, wifi = None, connect = None, subscript = None):
@@ -175,6 +176,8 @@ class Connect():
             return 0
         
     # boot-counts
+    # ask and decrease with -1 or empty
+    # 
     def boot_count(self, set=-1):
         if set == -1:
             if (self.BOOT_CNT in os.listdir("/")):
@@ -362,6 +365,7 @@ class Connect():
                     ipconfig = self.lan_if.ifconfig()
                     self.lan_if.ifconfig(self.fixIP, ipconfig[1], ipconfig[2],ipconfig[3])
                 self.con_if = self.lan_if
+                self.boot_count(10)
                 return 1
 
 
@@ -411,11 +415,12 @@ class Connect():
             i += 1
             time.sleep(1)
             self.p.toggle_led("mqtt_led")
-            if i>30:
+            if i>60:
                 self.log.debug("Connection couldn't be established - aborted")
                 self.sta_if.active(False)
                 self.sta_if = None
                 if self.run_mode() == 1:
+                    # boot_count() > 0, decreased
                     if self.boot_count():
                         soft_reset()
                     else:    
@@ -440,6 +445,8 @@ class Connect():
         self.p.set_led("mqtt_led", 1)
         self.log.debug(self.get_state())
         self.con_if = self.sta_if
+        # set boot_count back, connection is realized
+        self.boot_count(10)
         return 1
 
     def set_mqtt(self, sta=-1):
