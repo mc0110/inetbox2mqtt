@@ -310,25 +310,34 @@ class Connect():
 
     def connect(self):
         self.dhcp = True
+        self.lan = False
         if self.creds():
             cred = self.read_json_creds()
             self.dhcp = (cred["STATIC"] != "1")
+            self.lan = (cred["LAN"] == "1")
             if cred["IP"] == "":
                 self.dhcp = True
             else:
                 self.fixIP = cred["IP"]
-        self.log.info(f"DHCP: {self.dhcp}")        
-        self.log.info(f"fixedIP: {self.fixIP}")        
-        # set LAN connection    
-        if self.set_lan(1) == 1:
-            self.log.info(f"LAN Interface started")        
-            return 1
-        # set wifi connection
-        elif self.set_sta(1) == 1:
-            self.log.info(f"WLAN Interface started")        
-            return 1
         else:
             return 0
+        self.log.info(f"DHCP: {self.dhcp}")        
+        self.log.info(f"fixedIP: {self.fixIP}")        
+        self.log.info(f"LAN: {self.lan}")        
+        # set LAN connection
+        if self.lan:
+            self.log.info(f"LAN Interface starting")        
+            if self.set_lan(1) == 1:
+                self.log.info(f"LAN Interface started")        
+                return 1
+        # set wifi connection
+        else:
+            self.log.info(f"WLAN Interface starting")        
+            if self.set_sta(1) == 1:
+                self.log.info(f"WLAN Interface started")        
+                return 1
+            else:
+                return 0
         
     def set_lan(self, sta=-1):
         if sta == -1:
@@ -336,37 +345,48 @@ class Connect():
    
         if sta==1:
             if not(self.p.get_data("lan")):
+                self.log.info("LAN device not defined")
                 return 0
             else:
-                self.log.info("LAN-Connection")
+                if not(self.lan):
+                    return 0
+            self.log.info("LAN device configured")
+            try:
+                self.log.debug("LAN-Connection")
                 self.lan_if = network.LAN(mdc=Pin(self.p.get_pin("mdc")), mdio=Pin(self.p.get_pin("mdio")), ref_clk=Pin(self.p.get_pin("ref_clk")),
                                   ref_clk_mode=False, power=None, id=None, phy_addr=0, phy_type=network.PHY_KSZ8081)
-                try:
-                    time.sleep(0.1)
-                    lan.active(False)
-                except:
-                    i=1 
+            except:
+                    if self.boot_count():
+                        reset()
+                    else:
+                        soft_reset()
+            try:
                 time.sleep(0.1)
-                self.lan_if.active(True)
-                self.log.info(f"isconnected: {self.lan_if.isconnected()}")      # check if the station is connected to an AP
+                self.lan_if.active(False)
+            except:
+                pass
+            time.sleep(0.1)
+            self.lan_if.active(True)
+            self.log.debug(f"isconnected: {self.lan_if.isconnected()}")      # check if the station is connected to an AP
 
-                self.log.info(f"Mac: {self.lan_if.config('mac')}")      # get the interface's MAC address
+            self.log.debug(f"Mac: {self.lan_if.config('mac')}")      # get the interface's MAC address
+            time.sleep(0.1)
+            ipconfig = self.lan_if.ifconfig()
+            self.log.info("Waiting for DHCP...")
+
+            while (ipconfig[0]=="0.0.0.0"):
                 time.sleep(0.1)
+            #    lan.active(True)
+                self.log.debug(f"lan.status: {self.lan_if.status()}")
                 ipconfig = self.lan_if.ifconfig()
-                self.log.info("Waiting for DHCP...")
 
-                while (ipconfig[0]=="0.0.0.0"):
-                    time.sleep(0.1)
-                #    lan.active(True)
-                    self.log.info(f"lan.status: {self.lan_if.status()}")
-                    ipconfig = self.lan_if.ifconfig()
-
-                if not(self.dhcp):
-                    ipconfig = self.lan_if.ifconfig()
-                    self.lan_if.ifconfig(self.fixIP, ipconfig[1], ipconfig[2],ipconfig[3])
-                self.con_if = self.lan_if
-                self.boot_count(10)
-                return 1
+            if not(self.dhcp):
+                ipconfig = self.lan_if.ifconfig()
+#                    self.lan_if.ifconfig([self.fixIP])
+                self.lan_if.ifconfig([self.fixIP, ipconfig[1], ipconfig[2],ipconfig[3]])
+            self.con_if = self.lan_if
+            self.boot_count(10)
+            return 1
 
 
     def set_sta(self, sta=-1):
@@ -441,6 +461,7 @@ class Connect():
             self.sta_if.ifconfig((self.fixIP, ipconfig[1], ipconfig[2], ipconfig[3]))
         
         self.log.debug("STA connection connected successful")
+        self.log.debug(f"Mac: {self.sta_if.config('mac')}")      # get the interface's MAC address
         self.log.info("Wifi connected: " + str(self.sta_if.ifconfig()[0]))
         self.p.set_led("mqtt_led", 1)
         self.log.debug(self.get_state())
