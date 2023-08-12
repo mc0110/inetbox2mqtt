@@ -304,8 +304,11 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     else:
         dc = None
     if activate_spiritlevel:
-        log.info("Activate spirit_level set to true, using I2C- on GPIO 25(scl), 26(sda)")
-        i2c = I2C(w.p.get_data("sl_i2c"), w.p.get_data("sl_sda"), w.p.get_data("sl_scl"), freq=400000)
+        # debugging from Christian S. - thanks a lot for this hint
+        sda = w.p.get_data("sl_sda")
+        scl = w.p.get_data("sl_scl")
+        log.info(f"Activate spirit_level set to true, using I2C- on GPIO {scl}(scl), {sda}(sda)")
+        i2c = I2C(sda=Pin(sda), scl=Pin(scl), freq=400000)
         time.sleep(1.5)
         sl = spirit_level(i2c)
         
