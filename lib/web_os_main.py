@@ -37,7 +37,7 @@ async def mqtt_loop():
     await connect.loop_mqtt()
 
         
-def run(w, lin_debug, inet_debug, webos_debug, naw_debug, log_file):
+def run(w, lin_debug, inet_debug, webos_debug, naw_debug, logfile):
     global lin
     global connect
     connect = w
@@ -50,7 +50,7 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, log_file):
 
     # connect.set_proc(subscript = connect.callback, connect = connect.conn_callback)
         
-    log.info(f"run lin:{lin_debug} inet:{inet_debug} webos:{webos_debug} naw:{naw_debug} file:{log_file}")
+    log.info(f"run lin:{lin_debug} inet:{inet_debug} webos:{webos_debug} naw:{naw_debug} file:{logfile}")
     # debug=True for debugging
     
     # hw-specific configuration
@@ -75,7 +75,7 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, log_file):
         
     # Initialize the lin-object
     lin = Lin(serial, w.p, lin_debug, inet_debug)
-    os.init(w, lin, naw, webos_debug, log_file)
+    os.init(w, lin, naw, webos_debug, logfile)
 
     naw.STATIC_DIR = "/"
     

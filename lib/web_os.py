@@ -20,9 +20,6 @@ naw = Nanoweb(100)
 # client = MQTTClient(config)
 test_mqtt = False
 
-
-
-
 def init(w, l, n, debug=False, logfile=False):
     if debug:
         log.setLevel(logging.DEBUG)
@@ -68,11 +65,6 @@ async def command_loop():
     global soft_reboot
     global connect
     global file
-#     log.debug(f"command_loop:")
-#     connect.set_mqtt(1)
-#     log.debug(f"await loop_mqtt")
-#     await connect.loop_mqtt()
-    log.debug(f"finished loop_mqtt")
     while True:
         if file:
             logging._stream.flush()
@@ -90,33 +82,6 @@ async def command_loop():
             await asyncio.sleep(5) # Update every 10sec
             log.info("Reset chip")
             reset()
-            
-#         if repo_update:
-#             await asyncio.sleep(10) # Update every 10sec
-#             if not(repo_update): return
-#             import cred
-#             rel_new = cred.read_repo_rel()
-#             repo_update_comment = " update to rel: " + rel_new
-#             repo_success = True
-#             if (rel_new != gh.rel_no):
-#                 repo_update_comment = " update to rel: " + rel_new
-#                 await asyncio.sleep(5) # sleep for 5s to send it to browser
-#                 # loop for update-process
-#                 for i, st in cred.update_repo():
-#                     print(i, st)
-#                     repo_success = repo_success and st
-#                     if st:
-#                         repo_update_comment = i + " loaded"
-#                     else:
-#                         repo_update_comment = i + " not successful"    
-#                     await asyncio.sleep(5) # sleep for 500ms
-#                 # gh.refresh_connect_state()
-#             else: # no update neccesary   
-#                 repo_update_comment = "repo up to date"
-#                 await asyncio.sleep(5) # sleep
-#             repo_update = False
-        gh.connect.p.toggle_led("mqtt_led")
-        
 
 # Declare route directly with decorator
 @naw.route('/')
