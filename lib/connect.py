@@ -46,6 +46,8 @@ class Connect():
     platform = ""
     python = ""
     appname = "undefined"
+    # mqtt-blink-time in ms
+    blink_t = 100
 
         
     def __init__(self, hw, fn=None, debug_log=False):
@@ -84,13 +86,35 @@ class Connect():
         self.config.subs_cb = self.c_subscripted
         self.config.connect_coro = self.c_connected
         self.config.wifi_coro = self.w_state
+        
+        asyncio.create_task(self.mqtt_blink())
           
         self.p.set_led("lin_led",0)
-        self.p.set_led("mqtt_led",0)        
+        # self.p.set_led("mqtt_led",0)        
         if self.platform == 'rp2':
             import rp2
             rp2.country('DE')
 
+    def mqtt_blink_ok(self):
+        self.blink_t = 1000
+        
+    def mqtt_blink_search(self):
+        self.blink_t = 50
+        
+    def mqtt_blink_err(self):
+        self.blink_t = 300
+        
+    async def mqtt_blink(self):
+        while 1:
+            if self.blink_t != None:
+                self.p.set_led("mqtt_led", True)
+                await asyncio.sleep_ms(self.blink_t)
+                self.p.set_led("mqtt_led", False)
+                await asyncio.sleep_ms(self.blink_t)
+            else:    
+                self.p.set_led("mqtt_led", False)
+        
+        
     async def c_subscripted(self, topic, msg, retained, qos):
         self.log.debug("Received topic:" + str(topic) + " > payload: " + str(msg) + "qos: " + str(qos))
         if self.subscripted != None: await self.subscripted(topic, msg, retained, qos)
@@ -99,6 +123,7 @@ class Connect():
     # define subscriptions
     async def c_connected(self, client):
         self.log.info("MQTT connected")
+        self.mqtt_blink_ok()
         self.mqtt_flg = True
         if self.connected != None:
             await self.connected(client)        
@@ -107,15 +132,18 @@ class Connect():
     async def w_state(self, stat):
         if stat:
             self.log.info("Interface connected: " + str(self.con_if.ifconfig()[0]))
+            self.mqtt_blink_ok()
             self.wifi_flg = True
             if self.wifi_state != None: await self.wifi_state(stat) 
         else:
             self.log.info("Wifi connection lost")
             self.sta_if = None
-            self.p.set_led("mqtt_led", False)
+            #self.p.set_led("mqtt_led", False)
             self.wifi_flg = False
             self.mqtt_flg = False
-            self.connect()
+            self.mqtt_blink_search()
+            self.connect(False)
+            self.mqtt_blink_err()            
             if self.wifi_state != None: await self.wifi_state(stat) 
 
     def set_proc(self, wifi = None, connect = None, subscript = None):
@@ -308,7 +336,7 @@ class Connect():
         # print(self.get_state())
         return 1
 
-    def connect(self):
+    def connect(self, t=True):
         self.dhcp = True
         self.lan = False
         if self.creds():
@@ -329,16 +357,21 @@ class Connect():
             self.log.info(f"LAN Interface starting")        
             if self.set_lan(1) == 1:
                 self.log.info(f"LAN Interface started")        
-                return 1
         # set wifi connection
         else:
             self.log.info(f"WLAN Interface starting")        
             if self.set_sta(1) == 1:
-                self.log.info(f"WLAN Interface started")        
-                return 1
+                self.log.info(f"WLAN Interface started")
+                self.log.info(f"MQTT connection starting")        
+                if t:
+                    s = self.set_mqtt(1)
+                    return s
+                else:
+                    return 0
             else:
                 return 0
-        
+
+
     def set_lan(self, sta=-1):
         if sta == -1:
             return int((self.lan_if != None))
@@ -434,7 +467,7 @@ class Connect():
             print(".",end='')
             i += 1
             time.sleep(1)
-            self.p.toggle_led("mqtt_led")
+            #self.p.toggle_led("mqtt_led")
             if i>60:
                 self.log.debug("Connection couldn't be established - aborted")
                 self.sta_if.active(False)
@@ -449,7 +482,7 @@ class Connect():
                 elif self.run_mode() > 1:  
                     soft_reset()
 
-                self.p.set_led("mqtt_led", 0)
+                # self.p.set_led("mqtt_led", 0)
                 self.set_ap(1)  # sta-cred wrong, established ap-connection
                 return 0  # sta-cred wrong, established ap-connection
         if err:
@@ -463,7 +496,7 @@ class Connect():
         self.log.debug("STA connection connected successful")
         self.log.debug(f"Mac: {self.sta_if.config('mac')}")      # get the interface's MAC address
         self.log.info("Wifi connected: " + str(self.sta_if.ifconfig()[0]))
-        self.p.set_led("mqtt_led", 1)
+        # self.p.set_led("mqtt_led", 1)
         self.log.debug(self.get_state())
         self.con_if = self.sta_if
         # set boot_count back, connection is realized
@@ -474,58 +507,38 @@ class Connect():
         if sta == -1:
             return (self.mqtt_flg and self.wifi_flg)
         
-        if sta == 1:
-            self.log.debug("Try to open wifi and mqtt connection")
+        if sta:
+            self.log.info("Try to open mqtt connection")
             # Decrypt your encrypted credentials
             # c = crypt()
             if self.creds():
                 cred = self.read_json_creds()
                 self.log.info("Found Credentials")
                 self.config.server   = cred["MQTT"]
-#                self.config.ssid     = cred["SSID"] 
-#                self.config.wifi_pw  = cred["WIFIPW"] 
                 self.config.user     = cred["UN"] 
                 self.config.password = cred["UPW"]
                 port = 1883
                 if cred["PORT"] != "":
                     port = int(cred["PORT"])
                     self.log.info(f"MQTT Port is switched to port: {port}")
-                    #self.config.port = port
                 self.config.interface = self.con_if    
                 self.config.clean     = True
                 self.config.keepalive = 60  # last will after 60sek off
                 self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important for clean connect
                 self.client = MQTTClient(self.config)
-                err_no = 1
+                self.log.info("Start mqtt connect task")
+                asyncio.create_task(self.client.connect())
+                return 1
             else:
                 self.log.debug("no Credentials found")
+                return 0
         else:
             self.log.debug("Reset Wifi and MQTT-client")
             s = network.WLAN(network.STA_IF)
             s.disconnect()
             self.mqtt_flg = False
             self.wifi_flg = False
-            self.client = None
-               
-    async def loop_mqtt(self):
-        if not(self.mqtt_flg and self.wifi_flg):
-            if not(self.client == None):
-                err_no = 1
-                while err_no:
-                    try:
-#                        self.set_sta(1)
-                        await self.client.connect()
-                        err_no = 0
-                    except:
-                        # connect throws an error
-                        err_no += 1
-                    if err_no > 5:
-                        if self.run_mode():
-                            if not(self.boot_count()):
-                                self.run_mode = 0
-                            reset()    
-                return (self.mqtt_flg and self.wifi_flg)                    
-                    
+            self.client = None                   
 
     # write values from the given dict (l) to crypt-file (needs crypto_keys_lib)
     def store_creds(self, l):

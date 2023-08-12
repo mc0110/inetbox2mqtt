@@ -177,9 +177,9 @@ async def main():
     global file
     global kill_flg
     log.info("main-loop is running")
-    connect.p.set_led("mqtt_led", False)
-    connect.set_mqtt(1)
-    await connect.loop_mqtt()
+    # connect.p.set_led("mqtt_led", False)
+    # connect.set_mqtt(1)
+    # await connect.loop_mqtt()
             
     await del_ha_autoconfig(connect.client)
     await set_ha_autoconfig(connect.client)
