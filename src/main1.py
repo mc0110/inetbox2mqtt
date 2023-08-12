@@ -169,8 +169,6 @@ async def set_ha_autoconfig(c):
         except:
             log.debug("Publishing error in set_ha_autoconfig")
     await c.publish(Pub_Prefix + "release", connect.rel_no, qos=1)
-            
-        
 
 # main publisher-loop
 async def main():
