@@ -50,13 +50,13 @@ class Connect():
     blink_t = 100
 
         
-    def __init__(self, hw, fn=None, debug_log=False):
+    def __init__(self, hw, fn=None, debuglog=False):
         if hw == None: hw = "RP2"
         print("HW: ", hw)
         self.log = logging.getLogger(__name__)
 #        self.c_coro = self.c_callback
 #        self.w_coro = self.w_state
-        if debug_log:
+        if debuglog:
             self.log.setLevel(logging.DEBUG)
         else:    
             self.log.setLevel(logging.INFO)
@@ -354,15 +354,15 @@ class Connect():
         self.log.info(f"LAN: {self.lan}")        
         # set LAN connection
         if self.lan:
-            self.log.info(f"LAN Interface starting")        
+            self.log.debug(f"LAN Interface starting")        
             if self.set_lan(1) == 1:
-                self.log.info(f"LAN Interface started")        
+                self.log.debug(f"LAN Interface started")        
         # set wifi connection
         else:
-            self.log.info(f"WLAN Interface starting")        
+            self.log.debug(f"WLAN Interface starting")        
             if self.set_sta(1) == 1:
-                self.log.info(f"WLAN Interface started")
-                self.log.info(f"MQTT connection starting")        
+                self.log.debug(f"WLAN Interface started")
+                self.log.debug(f"MQTT connection starting")        
                 if t:
                     s = self.set_mqtt(1)
                     return s
@@ -383,7 +383,7 @@ class Connect():
             else:
                 if not(self.lan):
                     return 0
-            self.log.info("LAN device configured")
+            self.log.debug("LAN device configured")
             try:
                 self.log.debug("LAN-Connection")
                 self.lan_if = network.LAN(mdc=Pin(self.p.get_pin("mdc")), mdio=Pin(self.p.get_pin("mdio")), ref_clk=Pin(self.p.get_pin("ref_clk")),
@@ -508,7 +508,7 @@ class Connect():
             return (self.mqtt_flg and self.wifi_flg)
         
         if sta:
-            self.log.info("Try to open mqtt connection")
+            self.log.debug("Try to open mqtt connection")
             # Decrypt your encrypted credentials
             # c = crypt()
             if self.creds():
@@ -533,7 +533,7 @@ class Connect():
                 self.log.debug("no Credentials found")
                 return 0
         else:
-            self.log.debug("Reset Wifi and MQTT-client")
+            self.log.info("Reset Wifi and MQTT-client")
             s = network.WLAN(network.STA_IF)
             s.disconnect()
             self.mqtt_flg = False

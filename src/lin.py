@@ -17,6 +17,7 @@
 from tools import calculate_checksum, PIN_MAP
 import inetboxapp
 import logging
+import uasyncio as asyncio
 
 
 class Lin:
@@ -116,7 +117,7 @@ class Lin:
     def no_answer(self, s, p):
         if self.stop_async:
             self.stop_async = self.response_waiting()
-        if self.app.upload_buffer or self.app.upload02_buffer: self.updates_to_send = True
+        self.updates_to_send = (self.app.upload_buffer or self.app.upload02_buffer)
         if p.startswith("_"): return
         self.log.debug(p)
 
@@ -165,13 +166,13 @@ class Lin:
             self.log.debug("heater_status to be generated")
             self.cmd_buf = self.app._get_status_buffer_for_writing()
             self.stop_async = True
-            self.app.upload_buffer = False
+            if self.app.upload_buffer > 0: self.app.upload_buffer -= 1
 
         if self.app.upload02_buffer:
             self.log.debug("aircon_status to be generated")
             self.cmd_buf = self.app._get_status_buffer1_for_writing()
             self.stop_async = True
-            self.app.upload02_buffer = False
+            if self.app.upload02_buffer > 0: self.app.upload02_buffer -= 1
 
         if (self.cmd_buf == None) or (self.cmd_buf == {}):
             self.log.debug("cmd_buffer is empty")
@@ -188,7 +189,7 @@ class Lin:
         self.cnt_in += 1
         if not(self.cnt_in % self.CNT_IN_MAX):
             self.cnt_in=0
-            self.app.status["alive"][1] = True 
+            self.app.status["alive"] = ["ON", True, False] 
 # Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
             if self.d8_alive:
                 self.app.status["alive"][0] = "ON"
@@ -199,7 +200,7 @@ class Lin:
 
 
 
-    def loop_serial(self):
+    async def loop_serial(self):
 
         self.status_monitor()        
         # New input process: idea is, nothing to forget. So there is a turing-machine nessecary. This read 1 byte and decide to switch in the next level or to throw the input away
@@ -229,18 +230,21 @@ class Lin:
 # Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
         if raw_pid == 0xd8:
             self.d8_alive = True
-            self.app.status["alive"][1] = True 
-            self.app.status["alive"][0] = "ON"
+            self.app.status["alive"] = ["ON", True, False] 
             self.pin_map.set_led("lin_led", True)
 #            self.log.debug(f"in < {line.hex(" ")}")
-            if self.app.upload_buffer or self.app.upload02_buffer: self.updates_to_send = True
-            if self.updates_to_send:
+            s = False
+            if not(self.app.upload_wait): s = (self.app.upload_buffer or self.app.upload02_buffer)
+            if s:
+                self.app.upload_wait = 4
                 self.stop_async = True
                 self.log.debug("0x18 - update-requested")
                 self._send_answer(bytearray.fromhex("ff ff ff ff ff ff ff ff 27".replace(" ","")))
                 return
             else:
                 self._send_answer(bytearray.fromhex("fe ff ff ff ff ff ff ff 28".replace(" ","")))
+                if self.app.upload_wait:
+                    self.app.upload_wait -= 1
                 return
 # send requested answer to 0x3d -> 0x7d with parity) but only, if I have the need to answer
         if raw_pid == 0x7d:

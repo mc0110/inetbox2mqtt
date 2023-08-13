@@ -118,10 +118,10 @@ def callback(topic, msg, retained, qos):
         log.info("Received command: "+str(topic)+" payload: "+str(msg))
         if topic in lin.app.status.keys():
             log.info("inet-key:"+str(topic)+" value: "+str(msg))
-            try:
-                lin.app.set_status(topic, msg)
-            except Exception as e:
-                log.debug(Exception(e))
+#            try:
+            lin.app.set_status(topic, msg)
+#            except Exception as e:
+#                log.debug(Exception(e))
                 # send via mqtt
         elif not(dc == None):
             if topic in dc.status.keys():
@@ -153,22 +153,25 @@ async def conn_callback(client):
 # HA autodiscovery - delete all entities
 async def del_ha_autoconfig(c):
     for i in HA_CONFIG.keys():
+        await asyncio.sleep(0) # clean asyncio programming
         try:
             await c.publish(HA_CONFIG[i][0], "{}", qos=1)
         except:
             log.debug("Publishing error in del_ha_autoconfig")
+    log.info("del ha_autoconfig completed")
         
 # HA auto discovery: define all auto config entities         
 async def set_ha_autoconfig(c):
     global connect
-    log.info("set ha_autoconfig")
     for i in HA_CONFIG.keys():
+        await asyncio.sleep(0) # clean asyncio programming
         try:
             await c.publish(HA_CONFIG[i][0], HA_CONFIG[i][1], qos=1)
 #            print(i,": [" + HA_CONFIG[i][0] + "payload: " + HA_CONFIG[i][1] + "]")
         except:
             log.debug("Publishing error in set_ha_autoconfig")
     await c.publish(Pub_Prefix + "release", connect.rel_no, qos=1)
+    log.info("set ha_autoconfig completed")
 
 # main publisher-loop
 async def main():
@@ -176,13 +179,14 @@ async def main():
     global connect
     global file
     global kill_flg
-    log.info("main-loop is running")
+    log.debug("main-loop is running")
     # connect.p.set_led("mqtt_led", False)
     # connect.set_mqtt(1)
     # await connect.loop_mqtt()
             
     await del_ha_autoconfig(connect.client)
     await set_ha_autoconfig(connect.client)
+    log.info("Initializing completed")
     
     i = 0
     while True:
@@ -224,7 +228,7 @@ async def lin_loop():
     await asyncio.sleep(1) # Delay at begin
     log.info("lin-loop is running")
     while True:
-        lin.loop_serial()
+        await lin.loop_serial()
         if not(lin.stop_async): # full performance to send buffer
             await asyncio.sleep_ms(1)
 

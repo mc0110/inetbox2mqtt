@@ -32,7 +32,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 log.info(f"release no: {rel_no}")
-w=connect.Connect(args.get_key("hw"))
+w=connect.Connect(args.get_key("hw"), debuglog=args.check("connect=debug"))
 w.appname = appname
 w.rel_no = rel_no
 
