@@ -183,7 +183,8 @@ async def main():
     # connect.p.set_led("mqtt_led", False)
     # connect.set_mqtt(1)
     # await connect.loop_mqtt()
-            
+    while not(connect.mqtt_flg):
+        await asyncio.sleep_ms(500)
     await del_ha_autoconfig(connect.client)
     await set_ha_autoconfig(connect.client)
     log.info("Initializing completed")
@@ -274,7 +275,6 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     global sl
     global file
     connect = w
-    
     file = logfile
     cred = connect.read_json_creds()
     activate_duoControl  = (cred["ADC"] == "1")
@@ -317,8 +317,12 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     # Initialize the lin-object
     lin = Lin(serial, w.p, lin_debug, inet_debug)
 
+    connect.connect(0)
+    connect.set_mqtt(1)
     connect.config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
     connect.set_proc(subscript = callback, connect = conn_callback)
+    connect.set_mqtt(2)
+    connect.set_mqtt(3)
 
     if not(dc == None):
         HA_CONFIG.update(dc.HA_DC_CONFIG)

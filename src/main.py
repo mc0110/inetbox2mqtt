@@ -77,7 +77,7 @@ if (w.run_mode() > 1):
 else:
     if w.creds() and (w.run_mode() == 1):
         log.info("Normal mode activated - for chance to OS-mode type in terminal:")
-        w.connect()
+#        w.connect()
         print(">>>import os")
         print(">>>os.remove('run_mode.dat'")    
         import main1
@@ -85,7 +85,7 @@ else:
     else:
         log.info("OS mode activated")
         w.set_ap(1)
-        w.connect()
+#        w.connect()
         
         import web_os_main
         web_os_main.run(w, args.check("lin=debug"), args.check("inet=debug"), args.check("webos=debug"), args.check("naw=debug"), args.get_key("file")!=None)

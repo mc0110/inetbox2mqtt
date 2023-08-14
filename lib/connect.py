@@ -88,6 +88,7 @@ class Connect():
         self.config.wifi_coro = self.w_state
         
         asyncio.create_task(self.mqtt_blink())
+        self.mqtt_blink_search()
           
         self.p.set_led("lin_led",0)
         # self.p.set_led("mqtt_led",0)        
@@ -96,13 +97,13 @@ class Connect():
             rp2.country('DE')
 
     def mqtt_blink_ok(self):
-        self.blink_t = 1000
+        self.blink_t = 1500
         
     def mqtt_blink_search(self):
-        self.blink_t = 50
+        self.blink_t = 150
         
     def mqtt_blink_err(self):
-        self.blink_t = 300
+        self.blink_t = 500
         
     async def mqtt_blink(self):
         while 1:

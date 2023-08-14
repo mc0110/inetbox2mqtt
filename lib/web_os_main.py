@@ -29,18 +29,19 @@ async def lin_loop():
         if not(lin.stop_async):
             await asyncio.sleep_ms(1)
 
-async def mqtt_loop():
-    global connect
-    log.info(f"mqtt_loop:")
-    connect.set_mqtt(1)
-    log.info(f"await loop_mqtt")
-    await connect.loop_mqtt()
+# async def mqtt_loop():
+#     global connect
+#     log.info(f"mqtt_loop:")
+#     connect.set_mqtt(1)
+#     log.info(f"await loop_mqtt")
+#     await connect.loop_mqtt()
 
         
 def run(w, lin_debug, inet_debug, webos_debug, naw_debug, logfile):
     global lin
     global connect
     connect = w
+    await connect.connect()
     if naw_debug:
         log.setLevel(logging.DEBUG)
         naw = Nanoweb(80, debug = True)
@@ -66,8 +67,14 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, logfile):
     os.init(w, lin, naw, webos_debug, logfile)
 
     naw.STATIC_DIR = "/"
+
+    connect.connect(0)
+    connect.set_mqtt(1)
+    connect.set_mqtt(2)
+    connect.set_mqtt(3)
     
     loop = asyncio.get_event_loop()
+
     log.info("Start nanoweb server")
     loop.create_task(naw.run())
     loop.create_task(lin_loop())
