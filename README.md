@@ -137,7 +137,7 @@ You can now also carry out the INIT process in this mode. Details are described 
 
 After entering the login credentials, the boot mode needs to be switched from "OS-Run" to "Normal-Run" to start full communication with the MQTT broker. Press on the "OS mode after reboot" button to toggle to the "Normal mode after reboot" state. (The button toggles between those two states and shows which mode will be started after the next reboot.)
 
-After rebooting in "normal-run" mode, inetbox2mqtt is ready for use. If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with two confirmation messages. If it only connects via MQTT, but no messages are send, you probably did not switch to "Normal-Run" mode properly.
+After rebooting in "normal-run" mode, inetbox2mqtt is ready for use. If everything is correctly set up and the port is rebooted, it should connect to the MQTT broker with two confirmation messages.
 
 For placing the files and creating the credentials on the port, it does not need to be connected to the CPplus. You can also swap between 2 different credential-files, e.g. you are working on your computer at home for configuring and then swap to the RV-credentials in your motorhome.
 
