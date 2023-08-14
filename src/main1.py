@@ -115,9 +115,9 @@ def callback(topic, msg, retained, qos):
                 connect.run_mode(3)
                 soft_reset()
             return
-        log.info("Received command: "+str(topic)+" payload: "+str(msg))
+#        log.info("Received command: "+str(topic)+" payload: "+str(msg))
         if topic in lin.app.status.keys():
-            log.info("inet-key:"+str(topic)+" value: "+str(msg))
+            log.info(f"inetbox: {topic}: {msg}")
 #            try:
             lin.app.set_status(topic, msg)
 #            except Exception as e:
@@ -125,7 +125,7 @@ def callback(topic, msg, retained, qos):
                 # send via mqtt
         elif not(dc == None):
             if topic in dc.status.keys():
-                log.info("dc-key:"+str(topic)+" value: "+str(msg))
+                log.info(f"dc-key: {topic}: {msg}")
 #                try:
                 dc.set_status(topic, msg)
 #                except Exception as e:

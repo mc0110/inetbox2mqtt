@@ -589,7 +589,7 @@ class InetboxApp:
             if self.status[key][0] != old_data:
                 self.status[key][2] = True
 #        self.upload_buffer = True
-        print("Status:",self.status)
+#        print("Status:",self.status)
 # check for heater-items        
         map_key = []
         for k in self.STATUS_BUFFER_TYPES[self.STATUS_BUFFER_HEADER_WRITE_STATUS]:
