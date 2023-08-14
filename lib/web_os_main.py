@@ -25,8 +25,8 @@ async def lin_loop():
     await asyncio.sleep(1) # Delay at begin
     log.info("lin-loop is running")
     while True:
-        lin.loop_serial()
-        if not(lin.stop_async):
+        await lin.loop_serial()
+        if not(lin.stop_async): # full performance to send buffer
             await asyncio.sleep_ms(1)
 
 # async def mqtt_loop():
@@ -41,7 +41,6 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, logfile):
     global lin
     global connect
     connect = w
-    await connect.connect()
     if naw_debug:
         log.setLevel(logging.DEBUG)
         naw = Nanoweb(80, debug = True)
@@ -61,20 +60,30 @@ def run(w, lin_debug, inet_debug, webos_debug, naw_debug, logfile):
         serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=Pin(w.p.get_data("lin_rx")), tx=Pin(w.p.get_data("lin_tx"))) # this is the HW-UART-no 2
     if (w.platform=="esp32"):
         serial = UART(w.p.get_data("lin_uart"), baudrate=9600, bits=8, parity=None, stop=1, timeout=3, rx=w.p.get_data("lin_rx"), tx=w.p.get_data("lin_tx")) # this is the HW-UART-no 2    
-            
+    
+#     if (w.platform == "esp32"):
+#         
+#         log.info("Found ESP32 Board, using UART2 for LIN on GPIO 16(rx), 17(tx)")
+#         # ESP32-specific hw-UART (#2)
+#         serial = UART(2, baudrate=9600, bits=8, parity=None, stop=1, timeout=3) # this is the HW-UART-no 2
+#     elif (w.platform == "rp2"):
+#         # RP2 pico w -specific hw-UART (#2)
+#         log.info("Found Raspberry Pico Board, using UART1 for LIN on GPIO 4(tx), 5(rx)")
+#         serial = UART(1, baudrate=9600, tx=Pin(4), rx=Pin(5), timeout=3) # this is the HW-UART1 in RP2 pico w
+#     else:
+#         log.debug("No compatible Board found!")
+        
     # Initialize the lin-object
     lin = Lin(serial, w.p, lin_debug, inet_debug)
     os.init(w, lin, naw, webos_debug, logfile)
 
     naw.STATIC_DIR = "/"
-
-    connect.connect(0)
-    connect.set_mqtt(1)
-    connect.set_mqtt(2)
-    connect.set_mqtt(3)
     
-    loop = asyncio.get_event_loop()
+#    connect.config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
+#    connect.set_proc(subscript = callback, connect = conn_callback)
 
+
+    loop = asyncio.get_event_loop()
     log.info("Start nanoweb server")
     loop.create_task(naw.run())
     loop.create_task(lin_loop())

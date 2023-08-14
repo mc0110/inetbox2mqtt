@@ -88,7 +88,6 @@ class Connect():
         self.config.wifi_coro = self.w_state
         
         asyncio.create_task(self.mqtt_blink())
-        self.mqtt_blink_search()
           
         self.p.set_led("lin_led",0)
         # self.p.set_led("mqtt_led",0)        
@@ -97,13 +96,13 @@ class Connect():
             rp2.country('DE')
 
     def mqtt_blink_ok(self):
-        self.blink_t = 1500
+        self.blink_t = 1000
         
     def mqtt_blink_search(self):
-        self.blink_t = 150
+        self.blink_t = 50
         
     def mqtt_blink_err(self):
-        self.blink_t = 500
+        self.blink_t = 300
         
     async def mqtt_blink(self):
         while 1:
@@ -525,7 +524,8 @@ class Connect():
                 self.config.interface = self.con_if    
                 self.config.clean     = True
                 self.config.keepalive = 60  # last will after 60sek off
-                self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important for clean connect
+#                self.config.set_last_will("test/alive", "OFF", retain=True, qos=0)  # last will is important for clean connect
+                self.config.set_last_will("service/truma/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
                 self.client = MQTTClient(self.config)
                 self.log.info("Start mqtt connect task")
                 asyncio.create_task(self.client.connect())
