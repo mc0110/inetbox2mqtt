@@ -42,7 +42,6 @@ connect = None
 lin = None
 dc = None
 sl = None
-kill_flg = False
 
 # Change the following configs to suit your environment
 S_TOPIC_1       = 'service/truma/set/'
@@ -89,8 +88,7 @@ HA_CONFIG = {
 # Universal callback function for all subscriptions
 def callback(topic, msg, retained, qos):
     global connect
-    global kill_flg
-    log.debug(str(topic)+" "+str(msg))
+    log.debug(f"received: {topic}: {msg}")
     topic = str(topic)
     topic = topic[2:-1]
     msg = str(msg)
@@ -115,21 +113,21 @@ def callback(topic, msg, retained, qos):
                 connect.run_mode(3)
                 soft_reset()
             return
-        log.info("Received command: "+str(topic)+" payload: "+str(msg))
+#        log.info("Received command: "+str(topic)+" payload: "+str(msg))
         if topic in lin.app.status.keys():
             log.info("inet-key:"+str(topic)+" value: "+str(msg))
-#            try:
-            lin.app.set_status(topic, msg)
-#            except Exception as e:
-#                log.debug(Exception(e))
+            try:
+                lin.app.set_status(topic, msg)
+            except Exception as e:
+                log.debug(Exception(e))
                 # send via mqtt
         elif not(dc == None):
             if topic in dc.status.keys():
                 log.info("dc-key:"+str(topic)+" value: "+str(msg))
-#                try:
-                dc.set_status(topic, msg)
-#                except Exception as e:
-#                    print(exception(e))
+                try:
+                    dc.set_status(topic, msg)
+                except Exception as e:
+                    log.debug(Exception(e))
                     # send via mqtt
             else:
                 log.debug("key incl. dc is unkown")
@@ -178,20 +176,16 @@ async def main():
     global repo_update
     global connect
     global file
-    global kill_flg
     log.debug("main-loop is running")
-    # connect.p.set_led("mqtt_led", False)
-    # connect.set_mqtt(1)
-    # await connect.loop_mqtt()
             
     await del_ha_autoconfig(connect.client)
     await set_ha_autoconfig(connect.client)
     log.info("Initializing completed")
     
     i = 0
+    wd = False
     while True:
         await asyncio.sleep(10) # Update every 10sec
-        if kill_flg: 1/0
         if file: logging._stream.flush()
         s =lin.app.get_all(True)
         for key in s.keys():
@@ -200,6 +194,11 @@ async def main():
                 await connect.client.publish(Pub_Prefix+key, str(s[key]), qos=1)
             except:
                 log.debug("Error in LIN status publishing")
+        if lin.app.status["alive"][0]=="OFF":
+            if not(wd):
+                asyncio.create_task(lin.watchdog())
+                wd = True
+        else: wd = False
         if not(dc == None):        
             s = dc.get_all(True)
             for key in s.keys():

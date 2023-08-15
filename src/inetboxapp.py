@@ -274,12 +274,12 @@ class InetboxApp:
     }
 
     # array with value, mqtt-send, cpplus-send flags
-    status = {'command_counter': [1, False, False], 'alive': ["OFF", True, False], 'target_temp_water': [0, True, False],
-              'checksum': [0, False, False], 'target_temp_room': [0, True, False], 'heating_mode': [0, True, False],
-              'el_power_level': [0, True, False], 'energy_mix': [1, True, False], 'current_temp_water': [0, True, False],
-              'current_temp_room': [0, True, False], 'operating_status': [0, True, False], 'error_code': [0, False, False],
-              'aircon_operating_mode': [0, True, False], 'aircon_vent_mode': [114, True, False],
-              'target_temp_aircon': [2990, True, False], 'aircon_on': [1, True, False]}
+    status = {'command_counter': [1, False, False], 'alive': ["OFF", False, False], 'target_temp_water': [0, False, False],
+              'checksum': [0, False, False], 'target_temp_room': [0, False, False], 'heating_mode': [0, False, False],
+              'el_power_level': [0, False, False], 'energy_mix': [1, False, False], 'current_temp_water': [0, False, False],
+              'current_temp_room': [0, False, False], 'operating_status': [0, False, False], 'error_code': [0, False, False],
+              'aircon_operating_mode': [0, False, False], 'aircon_vent_mode': [114, False, False],
+              'target_temp_aircon': [2990, False, False], 'aircon_on': [1, False, False]}
 
     status_updated = False
 
@@ -584,12 +584,13 @@ class InetboxApp:
         self.log.debug(f"set_status: {key}:{value}")
         old_data = self.status[key][0]
         old_flg = self.status[key][2]
-        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), True, old_flg]
+        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), False, old_flg]
+#        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), True, old_flg]
         if not(old_flg):
             if self.status[key][0] != old_data:
                 self.status[key][2] = True
 #        self.upload_buffer = True
-#        print("Status:",self.status)
+        self.log.debug(f"Status elements: {self.status}")
 # check for heater-items        
         map_key = []
         for k in self.STATUS_BUFFER_TYPES[self.STATUS_BUFFER_HEADER_WRITE_STATUS]:

@@ -145,6 +145,7 @@ class Lin:
             self.log.debug("buffer preamble doesn't match")
             return False
         buf_id = buf[8:10]
+        self.d8_alive = True
         self.cpp_buffer[buf_id] = buf[10:]
         self.log.debug(f"Buf[{buf_id}]={self.cpp_buffer[buf_id]}")
         self.app.process_status_buffer_update(buf_id, self.cpp_buffer[buf_id])
@@ -177,6 +178,7 @@ class Lin:
         if (self.cmd_buf == None) or (self.cmd_buf == {}):
             self.log.debug("cmd_buffer is empty")
             return
+        self.d8_alive = True
         self.stop_async = True
         for i in self.cmd_buf:
             self.prepare_tl_response(i)
@@ -184,6 +186,24 @@ class Lin:
         if p.startswith("_"): return
         self.log.debug(p)
 
+    async def watchdog(self):
+        self.log.info("watchdog activated")
+        await asyncio.sleep(60)
+        if (self.app.status["alive"][0] == "ON"):
+            self.log.info("watchdog deactivated_s1")
+            return
+        await asyncio.sleep(60)
+        if (self.app.status["alive"][0] == "ON"):
+            self.log.info("watchdog deactivated_s2")
+            return
+        await asyncio.sleep(60)
+        if (self.app.status["alive"][0] == "ON"):
+            self.log.info("watchdog deactivated_s3")
+        else:
+            self.log.info("system reboot required")
+            import machine
+            machine.reset()
+    
     # check alive status
     def status_monitor(self):
         self.cnt_in += 1
