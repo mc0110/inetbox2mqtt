@@ -129,9 +129,9 @@ You can now also carry out the INIT process in this mode. Details are described 
 ### Credentials formular
 
 <div align = center>
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9c712dcf-cbb9-414e-90ed-c563a4ff2248)
 
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9324e33e-7682-4c3a-80c5-f2de4a4802a9)
+ ![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/9c712dcf-cbb9-414e-90ed-c563a4ff2248)
+
 </div>
 
 ### Switching to Normal-Run mode
