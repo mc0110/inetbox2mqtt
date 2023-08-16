@@ -164,7 +164,7 @@ class Connect():
          "LAN": ["checkbox", "LAN Support :", "8"],
          "STATIC": ["checkbox", "Static IP :", "9"],
          "IP": ["text", "IP (static):", "A"],
-         "TOPIC": ["text", "Topic root (instead of truma):", "B"],
+         "TOPIC": ["text", "Topic prefix (instead of truma):", "B"],
          "ADC": ["checkbox", "Addon DuoControl :", "C"],
          "ASL": ["checkbox", "Addon SpiritLevel:", "D"],
          }
@@ -357,6 +357,13 @@ class Connect():
             self.log.debug(f"LAN Interface starting")        
             if self.set_lan(1) == 1:
                 self.log.debug(f"LAN Interface started")        
+                if t:
+                    s = self.set_mqtt(1)
+                    return s
+                else:
+                    return 0
+            else:
+                return 0
         # set wifi connection
         else:
             self.log.debug(f"WLAN Interface starting")        
@@ -394,7 +401,7 @@ class Connect():
                     else:
                         soft_reset()
             try:
-                time.sleep(0.1)
+                time.sleep(0.5)
                 self.lan_if.active(False)
             except:
                 pass

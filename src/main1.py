@@ -321,7 +321,8 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
         topic_root = cred["TOPIC"]
     connect.config.set_last_will("service/" + topic_root + "/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
     connect.set_proc(subscript = callback, connect = conn_callback)
-
+    log.info(f"prefix: '{topic_root}' set: {S_TOPIC_1} rec: {Pub_Prefix}")
+    
     if not(dc == None):
         HA_CONFIG.update(dc.HA_DC_CONFIG)
     if not(sl == None):
