@@ -96,10 +96,10 @@ class Connect():
             rp2.country('DE')
 
     def mqtt_blink_ok(self):
-        self.blink_t = 1000
+        self.blink_t = 2000
         
     def mqtt_blink_search(self):
-        self.blink_t = 50
+        self.blink_t = 100
         
     def mqtt_blink_err(self):
         self.blink_t = 300
