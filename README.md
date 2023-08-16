@@ -1,4 +1,3 @@
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/c8ebf4db-b6b1-45ec-ba62-6fb144418d22)<div align = center>
 
 # inetbox2mqtt
 ## Control your TRUMA heater and/or Aventa aircon over a MQTT broker
