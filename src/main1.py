@@ -316,8 +316,8 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
         
     # Initialize the lin-object
     lin = Lin(serial, w.p, lin_debug, inet_debug)
-    if cred["TOPIC_ROOT"] != "":
-        TOPIC_ROOT = cred["TOPIC_ROOT"]
+    if cred["TOPIC"] != "":
+        TOPIC_ROOT = cred["TOPIC"]
     connect.config.set_last_will("service/" + TOPIC_ROOT + "/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
     connect.set_proc(subscript = callback, connect = conn_callback)
 

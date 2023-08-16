@@ -164,7 +164,7 @@ class Connect():
          "LAN": ["checkbox", "LAN Support :", "8"],
          "STATIC": ["checkbox", "Static IP :", "9"],
          "IP": ["text", "IP (static):", "A"],
-         "TOPIC_ROOT": ["text", "Topic root (instead of /truma/):", "B"],
+         "TOPIC": ["text", "Topic root (instead of /truma/):", "B"],
          "ADC": ["checkbox", "Addon DuoControl :", "C"],
          "ASL": ["checkbox", "Addon SpiritLevel:", "D"],
          }
