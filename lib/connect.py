@@ -164,9 +164,9 @@ class Connect():
          "LAN": ["checkbox", "LAN Support :", "8"],
          "STATIC": ["checkbox", "Static IP :", "9"],
          "IP": ["text", "IP (static):", "A"],
-         "ADC": ["checkbox", "Addon DuoControl :", "B"],
-         "ASL": ["checkbox", "Addon SpiritLevel:", "C"],
-    #     "OSR": ["checkbox", "OS Web:", "9"],
+         "TOPIC_ROOT": ["text", "Topic root (instead of /truma/):", "B"],
+         "ADC": ["checkbox", "Addon DuoControl :", "C"],
+         "ASL": ["checkbox", "Addon SpiritLevel:", "D"],
          }
         with open(self.CRED_JSON, "w") as f: json.dump(j, f)
 
