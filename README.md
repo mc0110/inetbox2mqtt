@@ -1,4 +1,4 @@
-<div align = center>
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/c8ebf4db-b6b1-45ec-ba62-6fb144418d22)<div align = center>
 
 # inetbox2mqtt
 ## Control your TRUMA heater and/or Aventa aircon over a MQTT broker
@@ -130,7 +130,7 @@ You can now also carry out the INIT process in this mode. Details are described 
 
 <div align = center>
 
- ![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/4c079b27-96b1-48da-882c-e5c96b4f1f34)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/cd3ad032-12d9-4fed-8775-f1370d2d7a35)
 
 </div>
 
