@@ -269,6 +269,11 @@ async def ctrl_loop():
 
 def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     global topic_root
+    global S_TOPIC_1
+    global Pub_Prefix
+    global HA_STOPIC
+    global HA_CTOPIC
+
     global connect
     global lin
     global dc
