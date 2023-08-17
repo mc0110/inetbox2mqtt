@@ -319,6 +319,13 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
     lin = Lin(serial, w.p, lin_debug, inet_debug)
     if cred["TOPIC"] != "":
         topic_root = cred["TOPIC"]
+        # redefine topics    
+        S_TOPIC_1       = 'service/' + topic_root + '/set/'
+        Pub_Prefix      = 'service/' + topic_root + '/control_status/' 
+        # Auto-discovery-function of home-assistant (HA)
+        HA_STOPIC = 'service/' + topic_root + '/control_status/'
+        HA_CTOPIC = 'service/' + topic_root + '/set/'
+
     connect.config.set_last_will("service/" + topic_root + "/control_status/alive", "OFF", retain=True, qos=0)  # last will is important
     connect.set_proc(subscript = callback, connect = conn_callback)
     log.info(f"prefix: '{topic_root}' set: {S_TOPIC_1} rec: {Pub_Prefix}")
