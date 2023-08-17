@@ -129,6 +129,8 @@ You can now also carry out the INIT process in this mode. Details are described 
 
 <div align = center>
 
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/b148a71e-5d5d-40ca-8b15-6a4a9b21ae35)
+
 
 </div>
 
