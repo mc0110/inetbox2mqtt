@@ -79,7 +79,7 @@ else:
         log.info("Normal mode activated - for chance to OS-mode type in terminal:")
         w.connect()
         print(">>>import os")
-        print(">>>os.remove('run_mode.dat'")    
+        print(">>>os.remove('run_mode.dat')")    
         import main1
         main1.run(w, args.check("lin=debug"), args.check("inet=debug"), args.check("mqtt=debug"), args.get_key("file")!=None)
     else:
