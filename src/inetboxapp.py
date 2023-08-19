@@ -274,27 +274,29 @@ class InetboxApp:
     }
 
     # array with value, mqtt-send, cpplus-send flags
-    status = {'command_counter': [1, False, False], 'alive': ["OFF", False, False], 'target_temp_water': [0, False, False],
-              'checksum': [0, False, False], 'target_temp_room': [0, False, False], 'heating_mode': [0, False, False],
-              'el_power_level': [0, False, False], 'energy_mix': [1, False, False], 'current_temp_water': [0, False, False],
-              'current_temp_room': [0, False, False], 'operating_status': [0, False, False], 'error_code': [0, False, False],
-              'aircon_operating_mode': [0, False, False], 'aircon_vent_mode': [114, False, False],
-              'target_temp_aircon': [2990, False, False], 'aircon_on': [1, False, False]}
+    status = {'command_counter': [1, False, False], 'alive': ["OFF", False, False], 'target_temp_water': [0, True, False],
+              'checksum': [0, False, False], 'target_temp_room': [0, True, False], 'heating_mode': [0, True, False],
+              'el_power_level': [0, False, False], 'energy_mix': [1, False, False], 'current_temp_water': [0, True, False],
+              'current_temp_room': [0, True, False], 'operating_status': [0, True, False], 'error_code': [0, False, False],
+              'aircon_operating_mode': [0, True, False], 'aircon_vent_mode': [114, True, False],
+              'target_temp_aircon': [2990, True, False], 'aircon_on': [1, False, False]}
 
     status_updated = False
 
     upload_buffer = 0
     upload02_buffer = 0
-    upload_wait = 4
+    upload_wait = 1
+    reflect = True
 
     display_status = {}
     log = logging.getLogger(__name__)
 
-    def __init__(self, debug):
+    def __init__(self, debug, reflect = True):
         # when requested, set logger to debug level
         if debug:
             self.log.setLevel(logging.DEBUG)
-        self.log.debug(f"Status: {self.status}")    
+        self.log.debug(f"Status: {self.status}")
+        self.reflect = reflect
 
     def map_or_debug(self, mapping, value):
         if value in mapping:
@@ -584,7 +586,9 @@ class InetboxApp:
         self.log.debug(f"set_status: {key}:{value}")
         old_data = self.status[key][0]
         old_flg = self.status[key][2]
-        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), False, old_flg]
+        # self.reflect chance the behavior of system control: True means that set commands reflected in control_status
+        # False means that the control_status only changed after feedback from truma
+        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), self.reflect, old_flg]
 #        self.status[key] = [self.STATUS_CONVERSION_FUNCTIONS[key][1](value), True, old_flg]
         if not(old_flg):
             if self.status[key][0] != old_data:
