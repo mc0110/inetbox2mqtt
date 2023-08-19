@@ -10,22 +10,47 @@ cards:
     icon_height: 40px
   - type: horizontal-stack
     cards:
-      - type: entity
-        entity: sensor.truma_clock
-        icon: m
-        name: TRUMA
       - show_name: true
         show_icon: true
-        show_state: true
-        type: glance
-        entities:
-          - entity: binary_sensor.truma_alive
-            name: Status
-        columns: 1
-      - type: entity
-        entity: sensor.truma_release
-        icon: m
-        name: Release
+        type: button
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_heat_gas
+        name: Gas
+        icon: mdi:gas-burner
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Mix 1kW
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_heat_mix1
+        icon: mdi:home-lightning-bolt-outline
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Mix 2kW
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_heat_mix2
+        icon: mdi:home-lightning-bolt
+      - show_name: true
+        show_icon: true
+        type: button
+        name: El 1kW
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_heat_elec1
+        icon: mdi:home-lightning-bolt
+      - show_name: true
+        show_icon: true
+        type: button
+        name: El 2kW
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_heat_elec2
+        icon: mdi:home-lightning-bolt
+    title: Energie
   - type: vertical-stack
     cards:
       - type: horizontal-stack
@@ -41,34 +66,22 @@ cards:
           - type: button
             name: eco
             tap_action:
-              action: call-service
-              service: climate.set_temperature
-              target:
-                entity_id: climate.truma_water
-              data:
-                temperature: 40
+              action: toggle
+            entity: input_boolean.truma_water_eco
             show_name: true
             show_icon: true
           - type: button
             name: hot
             tap_action:
-              action: call-service
-              service: climate.set_temperature
-              target:
-                entity_id: climate.truma_water
-              data:
-                temperature: 60
+              action: toggle
+            entity: input_boolean.truma_water_hot
             show_name: true
             show_icon: true
           - type: button
             name: boost
             tap_action:
-              action: call-service
-              service: climate.set_temperature
-              target:
-                entity_id: climate.truma_water
-              data:
-                temperature: 200
+              action: toggle
+            entity: input_boolean.truma_water_boost
             show_name: true
             show_icon: true
         title: Wasser
@@ -77,9 +90,6 @@ cards:
           - type: entity
             entity: sensor.truma_current_temp_water
             name: Momentan
-          - type: entity
-            entity: sensor.truma_target_temp_water
-            name: Ziel
           - show_name: true
             show_icon: true
             type: button
@@ -87,6 +97,7 @@ cards:
               action: toggle
             entity: input_boolean.truma_water_autooff
             icon: mdi:thermometer-auto
+            icon_height: 40px
             name: AutoOff
   - type: horizontal-stack
     cards:
@@ -109,93 +120,16 @@ cards:
     cards:
       - show_name: true
         show_icon: true
-        type: button
-        tap_action:
-          action: toggle
-        entity: input_boolean.truma_heat_gas
-        name: Gas
-        icon: mdi:gas-burner
-        show_state: true
-      - show_name: true
-        show_icon: true
-        type: button
-        name: Mix1
-        tap_action:
-          action: toggle
-        entity: input_boolean.truma_heat_mix1
-        icon: mdi:home-lightning-bolt-outline
-        show_state: true
-      - show_name: true
-        show_icon: true
-        type: button
-        name: Mix2
-        tap_action:
-          action: toggle
-        entity: input_boolean.truma_heat_mix2
-        icon: mdi:home-lightning-bolt
-        show_state: true
-      - show_name: true
-        show_icon: true
-        type: button
-        name: Elektrik
-        tap_action:
-          action: toggle
-        entity: input_boolean.truma_heat_elec
-        icon: mdi:home-lightning-bolt
-        show_state: true
-    title: Energie
-  - type: horizontal-stack
-    cards:
-      - show_name: false
-        show_icon: true
         show_state: true
         type: glance
         entities:
-          - entity: sensor.truma_energy_mix
-            name: Energie
-            icon: mdi:fuel-cell
-          - entity: sensor.truma_el_power_level
-            name: El-Mode
-            icon: mdi:lightning-bolt-outline
-        columns: 2
-      - show_name: false
-        show_icon: true
-        show_state: true
-        type: glance
-        entities:
-          - entity: sensor.truma_operating_status
-            name: Mode
-            icon: mdi:state-machine
-          - entity: sensor.truma_error_code
-            icon: mdi:head-question
-        columns: 2
-    title: Status
-  - type: horizontal-stack
-    cards:
-      - show_name: false
-        show_icon: true
-        show_state: true
-        type: glance
-        entities:
-          - entity: sensor.truma_target_temp_room
-            name: Target Room
-            icon: mdi:home-thermometer
-        columns: 1
-      - show_name: false
-        show_icon: true
-        show_state: true
-        type: glance
-        entities:
-          - entity: sensor.truma_target_temp_water_named
-            name: Target Water
-            icon: mdi:water-boiler-auto
-        columns: 1
-      - show_name: false
-        show_icon: true
-        show_state: true
-        type: glance
-        entities:
-          - entity: sensor.truma_heating_mode
-            name: Lüfter
-            icon: mdi:fan-auto
-        columns: 1
+          - entity: sensor.truma_clock
+            icon: m
+            name: TRUMA
+          - entity: binary_sensor.truma_alive
+            name: Status
+          - entity: sensor.truma_release
+            icon: m
+            name: Release
+        columns: 3
+        title: Status
