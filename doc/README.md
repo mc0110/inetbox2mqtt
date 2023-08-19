@@ -14,7 +14,8 @@ Bidirectional means that the values can be set both in the CPplus display and in
 ## Lovelance frontend cards in home assistant
 ### TRUMA heater
 
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/dff5907b-1c10-46fe-bbdf-28d9e63b0690)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/b1c4a1a1-2010-4d82-beb7-28aea156389f)
+
 
 ### TRUMA aircon
 
