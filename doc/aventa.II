@@ -5,8 +5,95 @@ cards:
     type: button
     tap_action:
       action: toggle
-    entity: input_boolean.aventa_ctrl
+    entity: input_boolean.truma_aventa_ctrl
     icon: mdi:air-conditioner
     icon_height: 40px
   - type: thermostat
     entity: climate.aventa
+  - type: horizontal-stack
+    cards:
+      - show_name: true
+        show_icon: true
+        type: button
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_om_vent
+        name: Vent
+        icon: mdi:fan
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Auto
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_om_auto
+        icon: mdi:auto-mode
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Cool
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_om_cool
+        icon: mdi:air-conditioner
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Hot
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_om_hot
+        icon: mdi:heat-pump
+    title: Modus
+  - type: horizontal-stack
+    cards:
+      - show_name: true
+        show_icon: true
+        type: button
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_vm_night
+        name: night
+        icon: mdi:sleep
+      - show_name: true
+        show_icon: true
+        type: button
+        name: auto
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_vm_auto
+        icon: mdi:auto-mode
+      - show_name: true
+        show_icon: true
+        type: button
+        name: low
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_vm_low
+        icon: mdi:fan-chevron-down
+      - show_name: true
+        show_icon: true
+        type: button
+        name: mid
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_vm_mid
+        icon: mdi:fan
+      - show_name: true
+        show_icon: true
+        type: button
+        name: high
+        tap_action:
+          action: toggle
+        entity: input_boolean.truma_aventa_vm_high
+        icon: mdi:fan-chevron-up
+    title: Ventilator
+  - type: entities
+    entities:
+      - entity: sensor.truma_aircon_operating_mode
+      - entity: sensor.truma_aircon_vent_mode
+      - entity: sensor.truma_target_temp_aircon
+      - entity: sensor.truma_aventa_op_mode
+      - entity: sensor.truma_aventa_vm_mode
+    show_header_toggle: false
+    title: Status
