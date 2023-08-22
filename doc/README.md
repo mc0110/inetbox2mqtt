@@ -19,7 +19,8 @@ Bidirectional means that the values can be set both in the CPplus display and in
 
 ### TRUMA aircon
 
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/a70454ac-5690-4fed-965a-a8ca04f57a06)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/bb6eada0-2a99-4e01-858c-9046c9ccf0ec)
+
 
 
 You find both lovelance-cards also as file in this directory. 
