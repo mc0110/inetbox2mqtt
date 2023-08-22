@@ -32,11 +32,10 @@ The upper part shows the hot water (a climate entity is also generated for this)
 
 The room thermostat lets the TRUMA take over the temperature control. If the room temperature is changed, the changed temperature is communicated to the TRUMA. Since the TRUMA can only set the temperature to within one degree (Celsius), the target temperature is rounded off accordingly by the thermostat element. The heating can be switched off via the thermostat.
 
-The control / adjustments of hot water and room temperature can also be made via the CPplus, so communication is fully bidirectional. The entries made there are then also transferred to the HA entities.
+The full control can also be made via the CPplus, so communication is bidirectional. The entries made there are then also transferred to the HA entities. Pls keep in mind, that the communication needs sometimes a few seconds, so keep calm.
 
 Furthermore, the operating modes of the TRUMA (gas, mixed, electric) can be preselected. In addition to the PRESETS, the heating can also be controlled very easily via automations using the climate.set_temperature service.
 
-In the lower part you can observe the status of the CPplus. This part is without functionality and can be omitted.
 
 ## Celsius vs. Fahrenheit
 This example works only if CPplus and Home Assistant are set to Celsius. Initial tests with systems set to Fahrenheit show problems. If someone could send their approaches to solving this, that would be great.
