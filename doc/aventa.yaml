@@ -70,7 +70,7 @@ climate:
   - platform: generic_thermostat
     name: Aventa
     heater: input_boolean.aventa_button
-    target_sensor: sensor.innentemperatur
+    target_sensor: sensor.truma_current_temp_room
     min_temp: 18
     max_temp: 30
     ac_mode: true
@@ -502,49 +502,3 @@ automation:
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "off"
-
-  # - alias: "Aventa switch on"
-  #   id: "d09"
-  #   trigger:
-  #     - platform: state
-  #       entity_id: climate.aventa
-  #       attribute: hvac_action
-  #       from: "off"
-  #   action:
-  #     - choose:
-  #         - conditions:
-  #             condition: state
-  #             entity_id: input_boolean.truma_aventa_ctrl
-  #             state: "on"
-  #           sequence:
-  #             - service: homeassistant.turn_on
-  #               entity_id: input_boolean.truma_aventa_switch
-  #             - service: climate.turn_on
-  #               entity_id: climate.aventa
-  #             - service: mqtt.publish
-  #               data:
-  #                 topic: "service/truma/set/aircon_operating_mode"
-  #                 payload_template: >
-  #                   {{ states("sensor.truma_aventa_op_mode") }}
-  #             - service: mqtt.publish
-  #               data:
-  #                 topic: "service/truma/set/aircon_vent_mode"
-  #                 payload_template: >
-  #                   {{ states("sensor.truma_aventa_vm_mode") }}
-  #             - service: mqtt.publish
-  #               data:
-  #                 topic: "service/truma/set/target_temp_aircon"
-  #                 payload_template: >
-  #                   {{ (state_attr('climate.aventa', 'temperature'))|round() }}
-  #     - choose:
-  #         - conditions:
-  #             condition: state
-  #             entity_id: input_boolean.truma_aventa_ctrl
-  #             state: "off"
-  #           sequence:
-  #             - service: homeassistant.turn_off
-  #               entity_id: input_boolean.truma_aventa_switch
-  #             - service: climate.set_hvac_mode
-  #               entity_id: climate.aventa
-  #               data:
-  #                 hvac_mode: "off"

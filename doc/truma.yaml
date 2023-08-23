@@ -151,8 +151,6 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.truma_target_temp_room
-        for:
-          seconds: 10
     action:
       - choose:
           - conditions:
@@ -287,8 +285,6 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.truma_target_temp_water
-        for:
-          seconds: 10
     action:
       - choose:
           - conditions:
@@ -325,7 +321,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "eco"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_water_eco
@@ -347,7 +342,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "hot"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_water_hot
@@ -369,7 +363,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "boost"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_water_boost
@@ -398,7 +391,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "off"
-        for: 10  
     action:
       - service: climate.turn_off
         entity_id: climate.truma_water
@@ -445,13 +437,9 @@ automation:
       - platform: state
         entity_id: climate.truma_water
         attribute: temperature
-        for:
-          seconds: 10
       - platform: state
         entity_id: sensor.truma_target_temp_water_mode
         from: "off"
-        for:
-          seconds: 10
     action:
       - choose:
           conditions:
@@ -530,7 +518,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_energy_mode
         to: "elec2"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_elec2
@@ -559,7 +546,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_energy_mode
         to: "elec1"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_elec1
@@ -589,7 +575,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_energy_mode
         to: "mix1"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_mix1
@@ -619,7 +604,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_energy_mode
         to: "mix2"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_mix2
@@ -649,7 +633,6 @@ automation:
       - platform: state
         entity_id: sensor.truma_energy_mode
         to: "gas"
-        for: 10
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_gas
