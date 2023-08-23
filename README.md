@@ -222,9 +222,9 @@ If you want to set values, then you must use the corresponding set-topics. The l
 
 To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
 
-The same applies to energy_mix and el_power_level, which should be set together. 
+The same applies to energy_mix and el_power_level, which should be set together. Of course, only certain constellations of ***energy_mix*** and ***el_power_level*** make sense here if the heating has an electric and a combustion unit. The commands are the same for diesel and gas burners, by the way. Valid combinations are (gas-0, mix-900, mix-1800, electricity-900, electricity-1800).
 
-For further explanation see command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
+For the Aventa aircon are also only possible certain pairs of ***aircon_operating_mode*** and ***aircon_vent_mode*** (off-low, auto-auto, vent/cool/hot-low/mid/high).
 
 The system commands are an extension of the command scope and allow restarting the port, changing the operating mode and updating the software status with the GITHUB release. 
 
