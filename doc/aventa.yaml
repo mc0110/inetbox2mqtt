@@ -483,7 +483,7 @@ automation:
                     {{ states("sensor.truma_aventa_vm_mode") }}
               - service: mqtt.publish
                 data:
-                  topic: "service/truma/set/truma_target_temp_aircon"
+                  topic: "service/truma/set/target_temp_aircon"
                   payload_template: >
                     {{ (state_attr('climate.aventa', 'temperature'))|round() }}
       - choose:
