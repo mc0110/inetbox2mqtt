@@ -418,8 +418,7 @@ automation:
             - service: climate.turn_off
               entity_id: climate.truma_water
             - service: homeassistant.turn_off
-              entity_id: input_boolean.truma_water_switch
-# Notification is individual
+              entity_id: input_boolean.truma_water_switch  
             - service: notify.whatsapp
               data_template:
                 message: "TRUMA-Water is warm"

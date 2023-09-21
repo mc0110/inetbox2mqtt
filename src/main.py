@@ -13,7 +13,7 @@ from args import Args
 UPDATE = "update.py"
 
 appname = "inetbox2mqtt"
-rel_no = "2.6.4"
+rel_no = "2.6.5"
 
 
 #sleep to give some boards time to initialize, for example Rpi Pico W
