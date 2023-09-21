@@ -338,9 +338,9 @@ automation:
               entity_id: climate.truma_water
             - service: homeassistant.turn_off
               entity_id: input_boolean.truma_water_switch  
-            - service: notify.whatsapp
-              data_template:
-                message: "TRUMA-Water is warm"
+#            - service: notify.whatsapp
+#              data_template:
+#                message: "TRUMA-Water is warm"
 
   - alias: "TRUMA water switch on"
     id: "c32"
