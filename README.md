@@ -13,7 +13,7 @@
 <br>
 
 - **Communicate over MQTT protocol to simulate a TRUMA INETBOX**
-- **new: Full control of all TRUMA Heater and TRUMA Aventa air conditioning modes**.
+- **new: Full control of TRUMA Combi-heater and TRUMA Aventa air conditioning modes**.
 - **new: Support of different hw constellations via pin configuration tables**
 - **new: Support of different mqtt ports and static IP-configuration**
 - **new: Support of LAN-connections**
@@ -43,7 +43,7 @@ The software works on all ESP32 models and probably, with small adjustments (UAR
 ## Disclaimer
 I have tested my solution for the ESP32/RP2 pico in different environments so far, including my own TRUMA/CPplus version. Most of the tests ran straight *out of the box*. 
 
-Please note that older versions of CPplus (e.g. C3.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu <[example given](https://videopress.com/embed/oXHpx1Ge)> on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx). Several users have successfully taken this step, so the procedure can be recommended.
+Please note that older versions of CPplus (e.g. C3.xx.xx) use a different protocol for communication with the inetbox. See the INIT menu <[example given](https://videopress.com/embed/oXHpx1Ge)> on the CPplus to find the version numbers. Therefore, the data can be read but no commands can be set. If you still want to use the inetbox2mqtt, you can replace the CPplus with a newer one (e.g. C4.03.00). New CPplus can also control older TRUMA heaters (e.g. H5.xx.xx). Please note that other device types of the manufacturer use other control sequences. These are not currently supported. Several users have successfully taken this step, so the procedure can be recommended.
 
 Please ensure that your tests are carried out with a clean electrical setup, preferably already in the *proof of concept* phase in a stable housing, in order to prevent short circuits or bad connections. Since the LIN connection has a plug, it is advisable to also realise the power supply via a plug. Most problems during realisation can be traced back to defective components due to short circuits or missing ground connections
 
@@ -222,9 +222,9 @@ If you want to set values, then you must use the corresponding set-topics. The l
 
 To switch on the room heating, target_temp_room > 4 and heating_mode = eco must be set together. For this purpose, the respective commands should be sent immediately after each other. 
 
-The same applies to energy_mix and el_power_level, which should be set together. 
+The same applies to energy_mix and el_power_level, which should be set together. Of course, only certain constellations of ***energy_mix*** and ***el_power_level*** make sense here if the heating has an electric and a combustion unit. The commands are the same for diesel and gas burners, by the way. Valid combinations are (gas-0, mix-900, mix-1800, electricity-900, electricity-1800).
 
-For further explanation see command usage [INETBOX](https://github.com/danielfett/inetbox.py). 
+For the Aventa aircon, only certain pairs of ***aircon_operating_mode*** and ***aircon_vent_mode*** payloads are possible (off-low, auto-auto, vent/cool/hot-low/mid/high).
 
 The system commands are an extension of the command scope and allow restarting the port, changing the operating mode and updating the software status with the GITHUB release. 
 

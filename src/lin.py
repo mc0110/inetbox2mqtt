@@ -67,6 +67,7 @@ class Lin:
         self.cnt_rows = 1
         if lin_debug:
             self.log.setLevel(logging.DEBUG)
+        self.lin_debug = lin_debug    
         self.app = inetboxapp.InetboxApp(inet_debug)
         self.pin_map.set_led("lin_led", False)
 
@@ -200,9 +201,12 @@ class Lin:
         if (self.app.status["alive"][0] == "ON"):
             self.log.info("watchdog deactivated_s3")
         else:
-            self.log.info("system reboot required")
-            import machine
-            machine.reset()
+            if self.lin_debug:
+                self.log.debug("system reboot in debug_mode suppressed")
+            else:    
+                self.log.info("system reboot required")
+                import machine
+                machine.reset()
     
     # check alive status
     def status_monitor(self):

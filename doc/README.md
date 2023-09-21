@@ -14,11 +14,12 @@ Bidirectional means that the values can be set both in the CPplus display and in
 ## Lovelance frontend cards in home assistant
 ### TRUMA heater
 
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/dff5907b-1c10-46fe-bbdf-28d9e63b0690)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/d53bb678-4d01-48fa-a6ce-1a7ffec84303)
+
 
 ### TRUMA aircon
 
-![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/a70454ac-5690-4fed-965a-a8ca04f57a06)
+![grafik](https://github.com/mc0110/inetbox2mqtt/assets/10268240/55b823fe-1d2f-42d5-9986-6dc8de31b01e)
 
 
 You find both lovelance-cards also as file in this directory. 
@@ -31,11 +32,10 @@ The upper part shows the hot water (a climate entity is also generated for this)
 
 The room thermostat lets the TRUMA take over the temperature control. If the room temperature is changed, the changed temperature is communicated to the TRUMA. Since the TRUMA can only set the temperature to within one degree (Celsius), the target temperature is rounded off accordingly by the thermostat element. The heating can be switched off via the thermostat.
 
-The control / adjustments of hot water and room temperature can also be made via the CPplus, so communication is fully bidirectional. The entries made there are then also transferred to the HA entities.
+The full control can also be made via the CPplus, so communication is bidirectional. The entries made there are then also transferred to the HA entities. Pls keep in mind, that the communication needs sometimes a few seconds, so keep calm.
 
 Furthermore, the operating modes of the TRUMA (gas, mixed, electric) can be preselected. In addition to the PRESETS, the heating can also be controlled very easily via automations using the climate.set_temperature service.
 
-In the lower part you can observe the status of the CPplus. This part is without functionality and can be omitted.
 
 ## Celsius vs. Fahrenheit
 This example works only if CPplus and Home Assistant are set to Celsius. Initial tests with systems set to Fahrenheit show problems. If someone could send their approaches to solving this, that would be great.
