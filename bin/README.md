@@ -1,14 +1,14 @@
-# Image V2.6 1 for ESP32 and for WOMOLIN ESP32 Interface V1 and V2
+# Image V2.6.5 for ESP32 and V2.6.4 for WOMOLIN ESP32 Interface V1 and V2
 
 The flash_esp32_xxxx.bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v261_4M.bin
+      esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v265_4M.bin
 
 The address 0 is not a typo.
 
 This image contains a first version that supports both the LAN port and WLAN use. Furthermore, static IP addresses or DHCP can now be set. There is also a version for both WOMOLIN variants, version 1 and version 2. The yellow network led informs about mqtt-activities and also about Lin-interface-communication. In version 2 the normal setup supports LIN1. If you want to support LIN2, the second LIN-decoder, you need to change in args.dat the entry hw=WOMOLIN to hw=WOMOLIN_LIN2:
 
-      esptool.py write_flash 0 flash_womolin_inetbox2mqtt_v261_4M.bin
+      esptool.py write_flash 0 flash_womolin_inetbox2mqtt_v264_4M.bin
 
 
 ***The development of this software and also just the maintenance in the different variants has already cost many hours of time. This is only possible with your support. So if you use this software, I deserve more than a beer. Many thanks for this in advance. For this purpose, you will find the Sponsorship button on the right side of the page.***
