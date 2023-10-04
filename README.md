@@ -89,7 +89,7 @@ The ESP32 with 4M memory does not have enough main storage in the standard micro
 
 The .bin file contains both the python and the .py files. This allows the whole project to be flashed onto the ESP32 in one go. For this, you can use the esptool. In my case, it finds the serial port of the ESP32 automatically, but the port can also be specified. The ESP32 must be in programming mode (GPIO0 to GND at startup). The command to flash the complete .bin file to the ESP32 is:
 
-    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v250_4M.bin
+    esptool.py write_flash 0 flash_esp32_inetbox2mqtt_v265_4M.bin
 
 Alternatively, you can also use the Adafruit online tool (of course only running with Chrome or Edge): 
     
