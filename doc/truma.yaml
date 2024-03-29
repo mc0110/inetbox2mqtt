@@ -15,8 +15,6 @@ input_boolean:
     name: "TRUMA Zentralschalter"
   truma_button:
     name: "TRUMA Heater State"
-  truma_water_button:
-    name: "TRUMA Water State"
   truma_water_autooff:
     name: "TRUMA Water State"
 
