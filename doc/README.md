@@ -5,7 +5,7 @@ First of all, I would like to ask you to send me **examples of your smarthome sy
 
 ## TRUMA heater and Aventa AirCon - example for frontends in Home Assistant
 
-Since I use a Home Assistant system myself, you can currently only find the implementation of the mqtt-protocol-transfer in HA. 
+Since I use a Home Assistant system myself, you can currently only find the implementation of the mqtt-protocol-transfer in HA. The files now are modified (in November 2024) to the changed HA yaml-syntax.
 
 The given truma.yaml is a package in the HA logic, so please note the explanations about [packages](https://www.home-assistant.io/docs/configuration/packages/) in the HA documentation.An example of fully control from a smart home solution as example of bidirectional operation from Home Assistant. 
 
