@@ -419,7 +419,7 @@ automation:
             - action: homeassistant.turn_off
               entity_id: input_boolean.truma_water_switch  
             - action: notify.whatsapp
-              data_template:
+              data:
                 message: "TRUMA-Water is warm"
 
   - alias: "TRUMA water switch on"
