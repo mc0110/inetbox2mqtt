@@ -188,7 +188,7 @@ automation:
       - service: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_room"
-          payload_template: >
+          payload: >
             {{ (state_attr('climate.truma', 'temperature'))|round() }}
       - service: mqtt.publish
         data:
@@ -236,7 +236,7 @@ automation:
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_room"
-                  payload_template: >
+                  payload: >
                     {{ (state_attr('climate.truma', 'temperature'))|round() }}
               - service: mqtt.publish
                 data:
@@ -451,7 +451,7 @@ automation:
             - service: mqtt.publish
               data:
                 topic: "service/truma/set/target_temp_water"
-                payload_template: >
+                payload: >
                   {% if states('input_boolean.truma_water_eco')=='on' %}
                   40
                   {% elif states('input_boolean.truma_water_hot')=='on' %}
@@ -484,7 +484,7 @@ automation:
   #     - service: mqtt.publish
   #       data:
   #         topic: "service/truma/set/target_temp_water"
-  #         payload_template: >
+  #         payload: >
   #           {% set temp = state_attr('climate.truma_water', 'temperature') %}
   #           {% if temp < 20 %}
   #           0
