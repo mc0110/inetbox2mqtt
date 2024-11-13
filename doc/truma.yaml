@@ -1,6 +1,7 @@
 #  MIT License
 #
 # Copyright (c) 2023  Dr. Magnus Christ (mc0110)
+# modified in 2024, now using the new yaml syntax
 #
 # This YAML is part of the inetbox2mqtt project and is based on the automatically generated entities.
 #
@@ -113,19 +114,19 @@ climate:
 automation:
   - alias: "TRUMA Fan"
     id: "c21"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.truma_heating_mode
         for:
           seconds: 10
-    action:
+    actions:
       - choose:
           - conditions:
               condition: state
               entity_id: sensor.truma_heating_mode
               state: "high"
             sequence:
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_fan_mode
       - choose:
           - conditions:
@@ -133,7 +134,7 @@ automation:
               entity_id: sensor.truma_heating_mode
               state: "eco"
             sequence:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 entity_id: input_boolean.truma_fan_mode
       - choose:
           - conditions:
@@ -141,29 +142,29 @@ automation:
               entity_id: sensor.truma_heating_mode
               state: "off"
             sequence:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 entity_id: input_boolean.truma_fan_mode
 
   - alias: "TRUMA Bidirectional Change Room Temperature"
     id: "c22"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.truma_target_temp_room
-    action:
+    actions:
       - choose:
           - conditions:
               condition: numeric_state
               entity_id: sensor.truma_target_temp_room
               above: 4
             sequence:
-              - service: climate.set_temperature
+              - action: climate.set_temperature
                 entity_id: climate.truma
                 data:
                   temperature: |
                     {{ states('sensor.truma_target_temp_room')| float }}
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_switch
-              - service: climate.turn_on
+              - action: climate.turn_on
                 entity_id: climate.truma
       - choose:
           - conditions:
@@ -171,74 +172,74 @@ automation:
               entity_id: sensor.truma_target_temp_room
               below: 5
             sequence:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 entity_id: input_boolean.truma_switch
-              - service: climate.turn_off
+              - action: climate.turn_off
                 entity_id: climate.truma
 
   - alias: "TRUMA climate change"
     id: "c23"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.truma
         attribute: temperature
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_switch
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_room"
           payload: >
             {{ (state_attr('climate.truma', 'temperature'))|round() }}
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/heating_mode"
           payload: "eco"
 
   - alias: "TRUMA set off"
     id: "c24"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.truma
         attribute: hvac_action
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.truma_ctrl
         to: "off"
-    action:
-      - service: climate.turn_off
+    actions:
+      - action: climate.turn_off
         entity_id: climate.truma
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_room"
           payload: "0"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/heating_mode"
           payload: "off"
 
   - alias: "TRUMA switch on"
     id: "c26"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.truma
         attribute: hvac_action
         from: "off"
-    action:
+    actions:
       - choose:
           - conditions:
               condition: state
               entity_id: input_boolean.truma_ctrl
               state: "on"
             sequence:
-              - service: climate.turn_on
+              - action: climate.turn_on
                 entity_id: climate.truma
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_room"
                   payload: >
                     {{ (state_attr('climate.truma', 'temperature'))|round() }}
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/heating_mode"
                   payload: "eco"
@@ -248,31 +249,31 @@ automation:
               entity_id: input_boolean.truma_ctrl
               state: "off"
             sequence:
-              - service: climate.set_hvac_mode
+              - action: climate.set_hvac_mode
                 entity_id: climate.truma
                 data:
                   hvac_mode: "off"
 
   - alias: "TRUMA set fan to high"
     id: "c27"
-    trigger:
-      platform: state
+    triggers:
+      trigger: state
       entity_id: input_boolean.truma_fan_mode
       to: "on"
-    action:
-      - service: mqtt.publish
+    actions:
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/heating_mode"
           payload: "high"
 
   - alias: "TRUMA set fan to eco"
     id: "c28"
-    trigger:
-      platform: state
+    triggers:
+      trigger: state
       entity_id: input_boolean.truma_fan_mode
       to: "off"
-    action:
-      - service: mqtt.publish
+    actions:
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/heating_mode"
           payload: "eco"
@@ -280,24 +281,24 @@ automation:
   # TRUMA Water Control
   - alias: "TRUMA Bidirectional Change Water Temperature"
     id: "c30"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.truma_target_temp_water
-    action:
+    actions:
       - choose:
           - conditions:
               condition: numeric_state
               entity_id: sensor.truma_target_temp_water
               above: 0
             sequence:
-              - service: climate.set_temperature
+              - action: climate.set_temperature
                 entity_id: climate.truma_water
                 data:
                   temperature: |
                     {{ states('sensor.truma_target_temp_water')| float }}
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_water_switch
-              - service: climate.turn_on
+              - action: climate.turn_on
                 entity_id: climate.truma_water
       - choose:
           - conditions:
@@ -305,150 +306,150 @@ automation:
               entity_id: sensor.truma_target_temp_water
               below: 1
             sequence:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 entity_id: input_boolean.truma_water_switch
-              - service: climate.turn_off
+              - action: climate.turn_off
                 entity_id: climate.truma_water
 
   - alias: "TRUMA water set mode"
     id: "c30_1"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_water_eco
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "eco"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_water_eco
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_hot
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_boost
-      - service: climate.set_temperature
+      - action: climate.set_temperature
         entity_id: climate.truma_water
         data:
           temperature: 40
 
   - alias: "TRUMA water set mode2"
     id: "c30_2"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_water_hot
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "hot"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_water_hot
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_eco
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_boost
-      - service: climate.set_temperature
+      - action: climate.set_temperature
         entity_id: climate.truma_water
         data:
           temperature: 60
 
   - alias: "TRUMA water set mode3"
     id: "c30_3"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_water_boost
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "boost"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_water_boost
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_hot
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_eco
-      - service: climate.set_temperature
+      - action: climate.set_temperature
         entity_id: climate.truma_water
         data:
           temperature: 65
 
   - alias: "TRUMA water set off"
     id: "c31"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.truma_water
         attribute: hvac_action
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.truma_water_switch
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.truma_ctrl
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_target_temp_water_mode
         to: "off"
-    action:
-      - service: climate.turn_off
+    actions:
+      - action: climate.turn_off
         entity_id: climate.truma_water
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_water_switch
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_water"
           payload: "0"
 
   - alias: "TRUMA Water autoswitch off"
     id: "c34"
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.truma_current_temp_water
         above: 54
         for: "00:10:00"
-    action:
+    actions:
       - choose:
           conditions:
             condition: state
             entity_id: input_boolean.truma_water_autooff
             state: "on"
           sequence:
-            - service: climate.turn_off
+            - action: climate.turn_off
               entity_id: climate.truma_water
-            - service: homeassistant.turn_off
+            - action: homeassistant.turn_off
               entity_id: input_boolean.truma_water_switch  
-            - service: notify.whatsapp
+            - action: notify.whatsapp
               data_template:
                 message: "TRUMA-Water is warm"
 
   - alias: "TRUMA water switch on"
     id: "c32"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.truma_water
         attribute: hvac_action
         from: "off"
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.truma_water_status
         from: "off"
-      - platform: state
+      - trigger: state
         entity_id: climate.truma_water
         attribute: temperature
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_target_temp_water_mode
         from: "off"
-    action:
+    actions:
       - choose:
           conditions:
             condition: state
             entity_id: input_boolean.truma_ctrl
             state: "on"
           sequence:
-            - service: homeassistant.turn_on
+            - action: homeassistant.turn_on
               entity_id: input_boolean.truma_water_switch
-            - service: climate.turn_on
+            - action: climate.turn_on
               entity_id: climate.truma_water
-            - service: mqtt.publish
+            - action: mqtt.publish
               data:
                 topic: "service/truma/set/target_temp_water"
                 payload: >
@@ -465,23 +466,23 @@ automation:
             entity_id: input_boolean.truma_ctrl
             state: "off"
           sequence:
-            - service: climate.turn_off
+            - action: climate.turn_off
               entity_id: climate.truma_water
-            - service: homeassistant.turn_off
+            - action: homeassistant.turn_off
               entity_id: input_boolean.truma_water_switch
 
   # - alias: "TRUMA water temperature change"
   #   id: "c33"
-  #   trigger:
-  #     - platform: state
+  #   triggers:
+  #     - trigger: state
   #       entity_id: climate.truma_water
   #       attribute: temperature
   #       for:
   #         seconds: 3
-  #   action:
-  #     - service: homeassistant.turn_on
+  #   actions:
+  #     - action: homeassistant.turn_on
   #       entity_id: input_boolean.truma_water_switch
-  #     - service: mqtt.publish
+  #     - action: mqtt.publish
   #       data:
   #         topic: "service/truma/set/target_temp_water"
   #         payload: >
@@ -498,154 +499,154 @@ automation:
 
   - alias: "Switchoff TRUMA without shore-power"
     id: "c35"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.shore_power_in
         to: "off"
-    action:
-      - service: homeassistant.turn_off
+    actions:
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_ctrl
 
   - alias: "TRUMA switch elec2"
     id: "c40"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_heat_elec2
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_energy_mode
         to: "elec2"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_elec2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_gas
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/energy_mix"
           payload: "electricity"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/el_power_level"
           payload: "1800"
   - alias: "TRUMA switch elec1"
     id: "c401"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_heat_elec1
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_energy_mode
         to: "elec1"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_elec1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_gas
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/energy_mix"
           payload: "electricity"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/el_power_level"
           payload: "900"
 
   - alias: "TRUMA switch mix1"
     id: "c41"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_heat_mix1
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_energy_mode
         to: "mix1"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_mix1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_gas
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/energy_mix"
           payload: "mix"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/el_power_level"
           payload: "900"
 
   - alias: "TRUMA switch mix2"
     id: "c42"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_heat_mix2
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_energy_mode
         to: "mix2"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_mix2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_gas
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/energy_mix"
           payload: "mix"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/el_power_level"
           payload: "1800"
 
   - alias: "TRUMA switch gas"
     id: "c43"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_heat_gas
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_energy_mode
         to: "gas"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_heat_gas
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec2
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_elec1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix1
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_heat_mix2
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/energy_mix"
           payload: "gas"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/el_power_level"
           payload: "0"
