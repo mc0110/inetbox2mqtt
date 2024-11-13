@@ -3,6 +3,7 @@
 # AVENTA Control
 #
 # Copyright (c) 2023  Dr. Magnus Christ (mc0110)
+# modified in 2024, using the new yaml-syntax
 #
 # This YAML is part of the inetbox2mqtt project and is based on the automatically generated entities.
 #
@@ -83,22 +84,22 @@ climate:
 automation:
   - alias: "TRUMA switch Aventa OM Vent"
     id: "d01"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_om_vent
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         to: "vent"
         for: 10
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_om_vent
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_cool
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_hot
       - choose:
           - conditions:
@@ -106,31 +107,31 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "vent"
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_vm_low
 
   - alias: "TRUMA switch Aventa OM auto"
     id: "d02"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_om_auto
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         to: "auto"
         for: 10
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_om_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_vent
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_cool
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_hot
       - choose:
           - conditions:
@@ -138,31 +139,31 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "auto"
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_vm_auto
 
   - alias: "TRUMA switch Aventa OM cool"
     id: "d03"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_om_cool
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         to: "cool"
         for: 10
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_om_cool
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_vent
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_hot
       - choose:
           - conditions:
@@ -170,31 +171,31 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "cool"
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_vm_low
 
   - alias: "TRUMA switch Aventa OM hot"
     id: "d04"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_om_hot
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         to: "hot"
         for: 10
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_om_hot
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_cool
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_om_vent
       - choose:
           - conditions:
@@ -202,32 +203,32 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "hot"
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_vm_low
 
   - alias: "TRUMA switch Aventa VM Night"
     id: "d001"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_vm_night
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_vent_mode
         to: "night"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_vm_night
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_low
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_mid
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_high
       - choose:
           - conditions:
@@ -235,30 +236,30 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: "night"
 
   - alias: "TRUMA switch Aventa VM Auto"
     id: "d002"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_vm_auto
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_vent_mode
         to: "auto"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_vm_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_night
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_low
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_mid
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_high
       - choose:
           - conditions:
@@ -266,30 +267,30 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: "auto"
 
   - alias: "TRUMA switch Aventa VM low"
     id: "d003"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_vm_low
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_vent_mode
         to: "low"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_vm_low
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_night
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_mid
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_high
       - choose:
           - conditions:
@@ -297,30 +298,30 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: "low"
 
   - alias: "TRUMA switch Aventa VM mid"
     id: "d004"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_vm_mid
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_vent_mode
         to: "mid"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_vm_mid
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_night
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_low
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_high
       - choose:
           - conditions:
@@ -328,30 +329,30 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: "mid"
 
   - alias: "TRUMA switch Aventa VM high"
     id: "d005"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.truma_aventa_vm_high
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_vent_mode
         to: "high"
-    action:
-      - service: homeassistant.turn_on
+    actions:
+      - action: homeassistant.turn_on
         entity_id: input_boolean.truma_aventa_vm_high
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_night
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_auto
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_mid
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_vm_low
       - choose:
           - conditions:
@@ -359,43 +360,43 @@ automation:
               entity_id: input_boolean.truma_aventa_switch
               state: "on"
             sequence:
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: "high"
 
   - alias: "Aventa climate change"
     id: "d06"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.truma_target_temp_aircon  
-    action:
+    actions:
       - choose:
           - conditions:
               condition: numeric_state
               entity_id: sensor.truma_target_temp_aircon
               above: 15
             sequence:
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_switch
-              - service: climate.set_temperature
+              - action: climate.set_temperature
                 entity_id: climate.aventa
                 data:
                   temperature: |
                     {{ states('sensor.truma_target_temp_aircon')| float }}
-              - service: climate.turn_on
+              - action: climate.turn_on
                 entity_id: climate.aventa
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_aircon"
                   payload: >
                     {{ (state_attr('climate.aventa', 'temperature'))|round(1) }}
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: >
                     {{ states("sensor.truma_aventa_op_mode") }}
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: >
@@ -403,12 +404,12 @@ automation:
 
   - alias: "Aventa climate change"
     id: "d0601"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.aventa
         attribute: temperature
-    action:
-      - service: mqtt.publish
+    actions:
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_aircon"
           payload: >
@@ -416,72 +417,72 @@ automation:
 
   - alias: "Aventa set off"
     id: "d07"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.aventa
         attribute: hvac_action
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.truma_aventa_ctrl
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         to: "off"
-    action:
-      # - service: mqtt.publish
+    actions:
+      # - action: mqtt.publish
       #   data:
       #     topic: "service/truma/set/aircon_operating_mode"
       #     payload: "auto"
-      # - service: mqtt.publish
+      # - action: mqtt.publish
       #   data:
       #     topic: "service/truma/set/aircon_vent_mode"
       #     payload: "auto"
       # - delay: 20    
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/aircon_operating_mode"
           payload: "off"
-      - service: mqtt.publish
+      - action: mqtt.publish
         data:
           topic: "service/truma/set/aircon_vent_mode"
           payload: "low"
-      - service: homeassistant.turn_off
+      - action: homeassistant.turn_off
         entity_id: input_boolean.truma_aventa_switch
-      - service: climate.turn_off
+      - action: climate.turn_off
         entity_id: climate.aventa
 
   - alias: "Aventa switch on"
     id: "d09"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: climate.aventa
         attribute: hvac_action
         from: "off"
-      - platform: state
+      - trigger: state
         entity_id: sensor.truma_aircon_operating_mode
         from: "off"  
-    action:
+    actions:
       - choose:
           - conditions:
               condition: state
               entity_id: input_boolean.truma_aventa_ctrl
               state: "on"
             sequence:
-              - service: climate.turn_on
+              - action: climate.turn_on
                 entity_id: climate.aventa
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 entity_id: input_boolean.truma_aventa_switch
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: >
                     {{ states("sensor.truma_aventa_op_mode") }}
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
                   payload: >
                     {{ states("sensor.truma_aventa_vm_mode") }}
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_aircon"
                   payload: >
@@ -492,13 +493,13 @@ automation:
               entity_id: input_boolean.truma_aventa_ctrl
               state: "off"
             sequence:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 entity_id: input_boolean.truma_aventa_switch
-              - service: climate.set_hvac_mode
+              - action: climate.set_hvac_mode
                 entity_id: climate.aventa
                 data:
                   hvac_mode: "off"
-              - service: mqtt.publish
+              - action: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
                   payload: "off"
