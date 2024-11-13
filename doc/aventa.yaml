@@ -388,17 +388,17 @@ automation:
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_aircon"
-                  payload_template: >
+                  payload: >
                     {{ (state_attr('climate.aventa', 'temperature'))|round(1) }}
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
-                  payload_template: >
+                  payload: >
                     {{ states("sensor.truma_aventa_op_mode") }}
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
-                  payload_template: >
+                  payload: >
                     {{ states("sensor.truma_aventa_vm_mode") }}
 
   - alias: "Aventa climate change"
@@ -411,7 +411,7 @@ automation:
       - service: mqtt.publish
         data:
           topic: "service/truma/set/target_temp_aircon"
-          payload_template: >
+          payload: >
             {{ (state_attr('climate.aventa', 'temperature'))|round(1) }}
 
   - alias: "Aventa set off"
@@ -474,17 +474,17 @@ automation:
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_operating_mode"
-                  payload_template: >
+                  payload: >
                     {{ states("sensor.truma_aventa_op_mode") }}
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/aircon_vent_mode"
-                  payload_template: >
+                  payload: >
                     {{ states("sensor.truma_aventa_vm_mode") }}
               - service: mqtt.publish
                 data:
                   topic: "service/truma/set/target_temp_aircon"
-                  payload_template: >
+                  payload: >
                     {{ (state_attr('climate.aventa', 'temperature'))|round() }}
       - choose:
           - conditions:
