@@ -331,8 +331,9 @@ def run(w, lin_debug, inet_debug, mqtt_debug, logfile):
         # debugging from Christian S. - thanks a lot for this hint
         sda = w.p.get_data("sl_sda")
         scl = w.p.get_data("sl_scl")
+        # debugging from Markus (trinler007) - thanks a lot for this hint
         log.info(f"Activate spirit_level set to true, using I2C- on GPIO {scl}(scl), {sda}(sda)")
-        i2c = I2C(sda=Pin(sda), scl=Pin(scl), freq=400000)
+        i2c = I2C(1, sda=Pin(sda), scl=Pin(scl), freq=400000)
         time.sleep(1.5)
         sl = spirit_level(i2c)
         
