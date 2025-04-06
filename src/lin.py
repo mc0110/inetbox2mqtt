@@ -70,6 +70,7 @@ class Lin:
         self.lin_debug = lin_debug    
         self.app = inetboxapp.InetboxApp(inet_debug)
         self.pin_map.set_led("lin_led", False)
+        print("Lin initialized")
 
     def response_waiting(self):
         return len(self.ts_response_buffer)
@@ -127,11 +128,11 @@ class Lin:
         pass
 #        if self.info:
 #            print()
-#             print("Overview received buffers")
-#             for key in self.cpp_buffer.keys():
+#            print("Overview received buffers")
+#            for key in self.cpp_buffer.keys():
 #                 print(f"Buf[{key}]={self.cpp_buffer[key]}")
-#             print("-----------------------------")
-#             print()
+#            print("-----------------------------")
+#            print()
 
 
     def assemble_cpp_buffer(self):
@@ -232,31 +233,44 @@ class Lin:
         if not(self.serial.any()):
             return
         self.pin_map.dtoggle_led("lin_led")
-        line = self.serial.read(1)
-        if self.loop_state: # this means level 2
-            if line[0] == 0x55: # here it is clear, we saw a correct synchronizing
-                line = bytes([0x00, 0x55]) + self.serial.read(1)
-                self.loop_state = False
-                # this is the exit point of the turing machine
-            else: # recycling the byte, if it is 0x00 
-                self.loop_state = (line[0] == 0x00) # e.g. 0x00 0x00 0x55 would be found
+        #line = self.serial.read()
+        ##if self.loop_state: # this means level 2
+        ##    if line[0] == 0x55: # here it is clear, we saw a correct synchronizing
+        ##        line = bytes([0x00, 0x55]) + self.serial.read(1)
+        ##        self.loop_state = False
+        ##        # this is the exit point of the turing machine
+        ##    else: # recycling the byte, if it is 0x00 
+        ##        self.loop_state = (line[0] == 0x00) # e.g. 0x00 0x00 0x55 would be found
+        ##        return
+        ##else: # this is level 1 - waiting for 0x00 for next level
+        ##    self.loop_state = (line[0] == 0x00)
+        ##    if not(self.loop_state):
+        ##        #if self.debug:
+        ##       print(f"in < {line[0]:02x} not a proper sync -wait for sync-")
+        ##        pass
+        ##    return
+        line = b'\x00'+ self.serial.read(1)
+        while(not line[1]==0x55 ):
+            if self.serial.any()==0:
                 return
-        else: # this is level 1 - waiting for 0x00 for next level
-            self.loop_state = (line[0] == 0x00)
-            if not(self.loop_state):
-#                if self.debug: print(f"in < {line[0]:02x} not a proper sync -wait for sync-")
-                pass
-            return
+            line = b'\x00'+ self.serial.read(1)
+            
+        line += self.serial.read(1)
+        #line = self.serial.read(2)
+
+        #if(not len(line)==11 ):
+        #    
+        #    return
 
         raw_pid = line[2]
-        if raw_pid in self.DISPLAY_STATUS_PIDS: print(f"status-message found with {raw_pid:x}")
+        if raw_pid in self.DISPLAY_STATUS_PIDS: print(f"status-message found with {raw_pid:x}")#0x20 0x61 0xe2 
 
 # Same approach for the raw PID 0xD8. This corresponds to a PID 0x18
         if raw_pid == 0xd8:
             self.d8_alive = True
             self.app.status["alive"] = ["ON", True, False] 
             self.pin_map.set_led("lin_led", True)
-#            self.log.debug(f"in < {line.hex(" ")}")
+            self.log.debug(f"in < {line.hex(" ")}")
             s = False
             if not(self.app.upload_wait): s = (self.app.upload_buffer or self.app.upload02_buffer)
             if s:
@@ -273,16 +287,22 @@ class Lin:
 # send requested answer to 0x3d -> 0x7d with parity) but only, if I have the need to answer
         if raw_pid == 0x7d:
             if self.response_waiting():
-#                self.log.debug(f"in < {line.hex(" ")}")        
+                self.log.debug(f"in < {line.hex(" ")}")        
                 self._answer_tl_request()
                 return
             else: return
               
         while self.serial.any()<9:
             pass
-        
+        #print("Debug:ici")
         line += self.serial.read(9)
-
+        deb=""
+        for b in line:
+            deb=deb+f"{b:02x} "
+        if(len(line)>2):
+            print("debug:%s, %d, 0x%x"%(deb,len(line),line[2]))
+        else:
+            print("debug:%s, %d"%(deb,len(line)))
         # the idea is to trigger events from the loop-timing
         # seeing completed rows at this point (rows means LIN-frames)
         # but we don't use this functionality at the moment
@@ -290,7 +310,7 @@ class Lin:
         self.cnt_rows = self.cnt_rows % self.CNT_ROWS_MAX
         if not(self.cnt_rows): self.display_status()
         
-#        self.log.debug(f"in < {line.hex(" ")}")
+        self.log.debug(f"in < {line.hex(" ")}")
 #        if len(line) != 12:
 #            return              # exit, length isn't correct
 #
