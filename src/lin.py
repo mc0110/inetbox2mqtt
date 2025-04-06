@@ -233,6 +233,7 @@ class Lin:
         if not(self.serial.any()):
             return
         self.pin_map.dtoggle_led("lin_led")
+        ####### Many thanks to florent314 see also issue #69
         #line = self.serial.read()
         ##if self.loop_state: # this means level 2
         ##    if line[0] == 0x55: # here it is clear, we saw a correct synchronizing
